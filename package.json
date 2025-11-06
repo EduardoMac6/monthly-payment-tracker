@@ -1,0 +1,19 @@
+{
+  "name": "monthly-payment-tracker",
+  "version": "1.0.0",
+  "description": "Control de pagos mensuales",
+  "main": "dist/scripts.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "tsc --watch"
+  },
+  "keywords": ["payment", "tracker", "typescript"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
+
+
