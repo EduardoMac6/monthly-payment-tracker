@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control de Pagos</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pastel-green': '#DAFF7E',      // Verde claro pastel
+                        'lime-vibrant': '#A4EA01',      // Verde lima vibrante
+                        'deep-black': '#1A1A1A',        // Negro profundo
+                        'light-gray': '#F6F6F6',         // Gris muy claro
+                        'pure-white': '#FFFFFF',         // Blanco puro
+                    }
+                }
+            }
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -15,53 +30,53 @@
         }
     </style>
 </head>
-<body class="bg-gray-200 flex items-center justify-center min-h-screen p-4">
+<body class="bg-pastel-green flex items-center justify-center min-h-screen p-4 md:p-6">
 
-    <div class=" w-full max-w-4xl mx-auto">
-        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+    <div class="w-full max-w-4xl mx-auto">
+        <div class="bg-pure-white rounded-[2rem] shadow-2xl p-6 md:p-8">
             <header class="mb-8 text-center">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Control de Pagos</h1>
-                <p class="text-gray-500 mt-2">Seguimiento de tu plan de pagos a 12 meses.</p>
+                <h1 class="text-3xl md:text-4xl font-bold text-deep-black">Control de Pagos</h1>
+                <p class="text-gray-600 mt-2">Seguimiento de tu plan de pagos a 12 meses.</p>
             </header>
 
             <!-- Resumen de Totales -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <div class="summary-card bg-blue-500 text-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-lg font-semibold text-blue-100">Costo Total</h2>
-                    <p id="total-cost" class="text-3xl font-bold mt-2">$6,390.00</p>
+                <div class="summary-card bg-lime-vibrant text-deep-black p-6 rounded-3xl shadow-lg">
+                    <h2 class="text-lg font-semibold text-deep-black/80">Costo Total</h2>
+                    <p id="total-cost" class="text-3xl font-bold mt-2 text-deep-black">$6,390.00</p>
                 </div>
-                <div class="summary-card bg-green-500 text-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-lg font-semibold text-green-100">Total Pagado</h2>
-                    <p id="total-paid" class="text-3xl font-bold mt-2">$0.00</p>
+                <div class="summary-card bg-pure-white border-2 border-pastel-green text-deep-black p-6 rounded-3xl shadow-lg">
+                    <h2 class="text-lg font-semibold text-gray-700">Total Pagado</h2>
+                    <p id="total-paid" class="text-3xl font-bold mt-2 text-deep-black">$0.00</p>
                 </div>
-                <div class="summary-card bg-red-500 text-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-lg font-semibold text-red-100">Saldo Restante</h2>
-                    <p id="remaining-balance" class="text-3xl font-bold mt-2">$6,390.00</p>
+                <div class="summary-card bg-deep-black text-pure-white p-6 rounded-3xl shadow-lg">
+                    <h2 class="text-lg font-semibold text-pure-white/90">Saldo Restante</h2>
+                    <p id="remaining-balance" class="text-3xl font-bold mt-2 text-pure-white">$6,390.00</p>
                 </div>
             </div>
 
             <!-- Tabla de Pagos -->
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto rounded-3xl">
                 <table class="w-full text-left table-auto">
                     <thead>
-                        <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                            <th class="py-3 px-4 md:px-6 text-left rounded-l-lg">Mes</th>
-                            <th class="py-3 px-4 md:px-6 text-center">Pago Mensual</th>
-                            <th class="py-3 px-4 md:px-6 text-center rounded-r-lg">Estado</th>
+                        <tr class="bg-deep-black text-pure-white uppercase text-sm leading-normal">
+                            <th class="py-4 px-4 md:px-6 text-left rounded-tl-3xl">Mes</th>
+                            <th class="py-4 px-4 md:px-6 text-center">Pago Mensual</th>
+                            <th class="py-4 px-4 md:px-6 text-center rounded-tr-3xl">Estado</th>
                         </tr>
                     </thead>
-                    <tbody id="payment-table-body" class="text-gray-700 text-sm font-light">
+                    <tbody id="payment-table-body" class="text-deep-black text-sm font-light bg-pure-white">
                         <!-- Las filas de los meses se generarán con JavaScript -->
                     </tbody>
                 </table>
             </div>
             <!-- Botones de acción -->
-            <div class="flex gap-4 justify-end mt-4">
-                <button id="save-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition">Guardar</button>
-                <button id="clear-btn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition">Borrar Registro</button>
+            <div class="flex gap-4 justify-end mt-6">
+                <button id="save-btn" class="bg-lime-vibrant hover:bg-pastel-green text-deep-black font-semibold py-3 px-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105">Guardar</button>
+                <button id="clear-btn" class="bg-deep-black hover:bg-gray-800 text-pure-white font-semibold py-3 px-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105">Borrar Registro</button>
             </div>
         </div>
-        <footer class="text-center mt-6 text-gray-500 text-sm">
+        <footer class="text-center mt-6 text-deep-black/70 text-sm">
             <p>Creado para un control financiero simple y efectivo.</p>
         </footer>
     </div>

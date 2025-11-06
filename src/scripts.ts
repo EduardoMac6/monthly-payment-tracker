@@ -30,14 +30,26 @@ document.addEventListener('DOMContentLoaded', function (): void {
                 ? (totalCost - (monthlyPayment * (numberOfMonths - 1))) 
                 : monthlyPayment;
             
+            // Clases especiales para la última fila (esquinas redondeadas inferiores)
+            const isLastRow: boolean = i === numberOfMonths;
+            const rowClasses: string = isLastRow 
+                ? 'border-b-0 hover:bg-light-gray transition-colors' 
+                : 'border-b border-gray-200 hover:bg-light-gray transition-colors';
+            const firstCellClasses: string = isLastRow 
+                ? 'py-4 px-4 md:px-6 text-left whitespace-nowrap rounded-bl-3xl' 
+                : 'py-4 px-4 md:px-6 text-left whitespace-nowrap';
+            const lastCellClasses: string = isLastRow 
+                ? 'py-4 px-4 md:px-6 text-center rounded-br-3xl' 
+                : 'py-4 px-4 md:px-6 text-center';
+            
             tableHTML += `
-                <tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-4 px-4 md:px-6 text-left whitespace-nowrap">
-                        <span class="font-medium">Mes ${i}</span>
+                <tr class="${rowClasses}">
+                    <td class="${firstCellClasses}">
+                        <span class="font-medium text-deep-black">Mes ${i}</span>
                     </td>
-                    <td class="py-4 px-4 md:px-6 text-center font-mono">${currencyFormatter.format(payment)}</td>
-                    <td class="py-4 px-4 md:px-6 text-center">
-                        <select class="payment-status bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" data-amount="${payment}">
+                    <td class="py-4 px-4 md:px-6 text-center font-mono text-deep-black font-semibold">${currencyFormatter.format(payment)}</td>
+                    <td class="${lastCellClasses}">
+                        <select class="payment-status bg-pure-white border-2 border-gray-300 text-deep-black text-sm rounded-2xl focus:ring-2 focus:ring-lime-vibrant focus:border-lime-vibrant block w-full p-3 font-medium transition-all" data-amount="${payment}">
                             <option value="pendiente" selected>Pendiente</option>
                             <option value="pagado">Pagado</option>
                         </select>
@@ -61,10 +73,13 @@ document.addEventListener('DOMContentLoaded', function (): void {
                 }
             }
             // Cambiar color del select según el estado
-            select.classList.toggle('bg-green-100', select.value === 'pagado');
-            select.classList.toggle('border-green-400', select.value === 'pagado');
-            select.classList.toggle('bg-gray-50', select.value === 'pendiente');
-            select.classList.toggle('border-gray-300', select.value === 'pendiente');
+            if (select.value === 'pagado') {
+                select.classList.remove('bg-pure-white', 'border-gray-300');
+                select.classList.add('bg-lime-vibrant', 'border-lime-vibrant', 'text-deep-black', 'font-semibold');
+            } else {
+                select.classList.remove('bg-lime-vibrant', 'border-lime-vibrant', 'text-deep-black', 'font-semibold');
+                select.classList.add('bg-pure-white', 'border-gray-300');
+            }
         });
 
         const remaining: number = totalCost - currentTotalPaid;
