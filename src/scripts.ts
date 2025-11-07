@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function (): void {
-    // --- Configuración Inicial ---
+    // --- Initial Setup ---
     const totalCost: number = 6390.00;
     const monthlyPayment: number = 533.00;
     const numberOfMonths: number = 12;
@@ -9,28 +9,28 @@ document.addEventListener('DOMContentLoaded', function (): void {
     const remainingBalanceEl: HTMLElement | null = document.getElementById('remaining-balance');
     const totalCostEl: HTMLElement | null = document.getElementById('total-cost');
 
-    // Validar que los elementos existan
+    // Validate that the required elements exist
     if (!tableBody || !totalPaidEl || !remainingBalanceEl || !totalCostEl) {
-        console.error('No se encontraron los elementos necesarios en el DOM');
+        console.error('Required DOM elements were not found');
         return;
     }
 
-    // --- Formateador de Moneda ---
+    // --- Currency Formatter ---
     const currencyFormatter: Intl.NumberFormat = new Intl.NumberFormat('es-MX', {
         style: 'currency',
         currency: 'MXN'
     });
 
-    // --- Función para Generar la Tabla ---
+    // --- Generate the Table ---
     function generateTable(): void {
         let tableHTML: string = '';
         for (let i: number = 1; i <= numberOfMonths; i++) {
-            // Ajuste para el último pago para que el total sea exacto
+            // Adjust the final payment so the total matches exactly
             const payment: number = (i === numberOfMonths) 
                 ? (totalCost - (monthlyPayment * (numberOfMonths - 1))) 
                 : monthlyPayment;
             
-            // Clases especiales para la última fila (esquinas redondeadas inferiores)
+            // Special classes for the last row (rounded bottom corners)
             const isLastRow: boolean = i === numberOfMonths;
             const rowClasses: string = isLastRow 
                 ? 'border-b-0 hover:bg-light-gray transition-colors' 
@@ -45,16 +45,16 @@ document.addEventListener('DOMContentLoaded', function (): void {
             tableHTML += `
                 <tr class="${rowClasses}">
                     <td class="${firstCellClasses}">
-                        <span class="font-medium text-deep-black">Mes ${i}</span>
+                        <span class="font-medium text-deep-black">Month ${i}</span>
                     </td>
                     <td class="py-4 px-4 md:px-6 text-center font-mono text-deep-black font-semibold">${currencyFormatter.format(payment)}</td>
                     <td class="${lastCellClasses}">
                         <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full justify-center">
-                            <input type="checkbox" class="payment-toggle sr-only peer" data-amount="${payment}" aria-label="Marcar mes ${i} como pagado" role="switch">
+                            <input type="checkbox" class="payment-toggle sr-only peer" data-amount="${payment}" aria-label="Mark month ${i} as paid" role="switch">
                             <span class="toggle-track relative inline-flex h-8 w-14 flex-shrink-0 items-center rounded-full bg-gray-300 transition-all duration-300 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-lime-vibrant">
                                 <span class="toggle-thumb absolute left-1 top-1 h-6 w-6 rounded-full bg-pure-white shadow-md transition-transform duration-300 ease-out transform"></span>
                             </span>
-                            <span class="status-label text-sm font-semibold text-gray-500 transition-colors duration-300">Pendiente</span>
+                            <span class="status-label text-sm font-semibold text-gray-500 transition-colors duration-300">Pending</span>
                         </label>
                     </td>
                 </tr>
@@ -79,20 +79,20 @@ document.addEventListener('DOMContentLoaded', function (): void {
             thumb?.classList.add('translate-x-6');
             statusLabel?.classList.remove('text-gray-500');
             statusLabel?.classList.add('text-deep-black');
-            statusLabel && (statusLabel.textContent = 'Pagado');
-            label.setAttribute('data-state', 'pagado');
+            statusLabel && (statusLabel.textContent = 'Paid');
+            label.setAttribute('data-state', 'paid');
         } else {
             track?.classList.remove('bg-lime-vibrant', 'shadow-inner');
             track?.classList.add('bg-gray-300');
             thumb?.classList.remove('translate-x-6');
             statusLabel?.classList.remove('text-deep-black');
             statusLabel?.classList.add('text-gray-500');
-            statusLabel && (statusLabel.textContent = 'Pendiente');
-            label.setAttribute('data-state', 'pendiente');
+            statusLabel && (statusLabel.textContent = 'Pending');
+            label.setAttribute('data-state', 'pending');
         }
     }
 
-    // --- Función para Calcular y Actualizar Totales ---
+    // --- Calculate and Update Totals ---
     function updateTotals(): void {
         let currentTotalPaid: number = 0;
         const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
@@ -110,42 +110,41 @@ document.addEventListener('DOMContentLoaded', function (): void {
 
         const remaining: number = totalCost - currentTotalPaid;
 
-        // Actualizar los elementos del DOM con formato
+        // Update DOM elements with formatted values
         totalPaidEl!.textContent = currencyFormatter.format(currentTotalPaid);
         remainingBalanceEl!.textContent = currencyFormatter.format(remaining);
         totalCostEl!.textContent = currencyFormatter.format(totalCost);
     }
 
-    // --- Función para Guardar Estado en localStorage ---
+    // --- Save Payment Status to localStorage ---
     function savePaymentStatus(): void {
         const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
         const statusArray: string[] = [];
         paymentToggles.forEach((toggle: HTMLInputElement): void => {
-            statusArray.push(toggle.checked ? 'pagado' : 'pendiente');
+            statusArray.push(toggle.checked ? 'paid' : 'pending');
         });
         localStorage.setItem('paymentStatus', JSON.stringify(statusArray));
     }
 
-    // --- Función para Cargar Estado desde localStorage ---
+    // --- Load Payment Status from localStorage ---
     function loadPaymentStatus(): void {
         const savedStatus: string | null = localStorage.getItem('paymentStatus');
         const statusArray: string[] = savedStatus ? JSON.parse(savedStatus) : [];
         const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
         paymentToggles.forEach((toggle: HTMLInputElement, idx: number): void => {
             if (statusArray[idx]) {
-                toggle.checked = statusArray[idx] === 'pagado';
+                const status: string = statusArray[idx];
+                toggle.checked = status === 'paid' || status === 'pagado';
             }
             updateToggleVisual(toggle);
         });
     }
-    
-
-    // --- Inicialización y Event Listeners ---
+    // --- Initialization and Event Listeners ---
     generateTable();
-    loadPaymentStatus(); // Cargar estado guardado
-    updateTotals(); // Calcular totales iniciales
+    loadPaymentStatus(); // Load saved status
+    updateTotals(); // Calculate initial totals
 
-    // Actualiza totales al cambiar el estado, pero NO guarda automáticamente
+    // Update totals when a toggle changes, but do not save automatically
     tableBody!.addEventListener('change', function(event: Event): void {
         const target: EventTarget | null = event.target;
         if (target instanceof HTMLInputElement && target.classList.contains('payment-toggle')) {
@@ -153,27 +152,27 @@ document.addEventListener('DOMContentLoaded', function (): void {
         }
     });
 
-    // Botón Guardar
+    // Save button
     const saveBtn: HTMLElement | null = document.getElementById('save-btn');
     if (saveBtn) {
         saveBtn.addEventListener('click', function(): void {
             savePaymentStatus();
-            alert('¡Registro guardado!');
+            alert('Record saved!');
         });
     }
 
-    // Botón Borrar Registro
+    // Clear Records button
     const clearBtn: HTMLElement | null = document.getElementById('clear-btn');
     if (clearBtn) {
         clearBtn.addEventListener('click', function(): void {
-            if (confirm('¿Seguro que deseas borrar el registro de pagos?')) {
+            if (confirm('Are you sure you want to clear the payment records?')) {
                 localStorage.removeItem('paymentStatus');
                 location.reload();
             }
         });
     }
 
-    // --- Tema oscuro/claro ---
+    // --- Light/Dark Theme Toggle ---
     const themeToggle: HTMLElement | null = document.getElementById('theme-toggle');
     const body: HTMLElement = document.body;
 
