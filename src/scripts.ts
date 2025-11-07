@@ -49,10 +49,13 @@ document.addEventListener('DOMContentLoaded', function (): void {
                     </td>
                     <td class="py-4 px-4 md:px-6 text-center font-mono text-deep-black font-semibold">${currencyFormatter.format(payment)}</td>
                     <td class="${lastCellClasses}">
-                        <select class="payment-status bg-pure-white border-2 border-gray-300 text-deep-black text-sm rounded-2xl focus:ring-2 focus:ring-lime-vibrant focus:border-lime-vibrant block w-full p-3 font-medium transition-all" data-amount="${payment}">
-                            <option value="pendiente" selected>Pendiente</option>
-                            <option value="pagado">Pagado</option>
-                        </select>
+                        <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full justify-center">
+                            <input type="checkbox" class="payment-toggle sr-only peer" data-amount="${payment}" aria-label="Marcar mes ${i} como pagado" role="switch">
+                            <span class="toggle-track relative inline-flex h-8 w-14 flex-shrink-0 items-center rounded-full bg-gray-300 transition-all duration-300 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-lime-vibrant">
+                                <span class="toggle-thumb absolute left-1 top-1 h-6 w-6 rounded-full bg-pure-white shadow-md transition-transform duration-300 ease-out transform"></span>
+                            </span>
+                            <span class="status-label text-sm font-semibold text-gray-500 transition-colors duration-300">Pendiente</span>
+                        </label>
                     </td>
                 </tr>
             `;
@@ -60,26 +63,49 @@ document.addEventListener('DOMContentLoaded', function (): void {
         tableBody!.innerHTML = tableHTML;
     }
 
+    function updateToggleVisual(toggle: HTMLInputElement): void {
+        const label: HTMLLabelElement | null = toggle.closest('label');
+        if (!label) {
+            return;
+        }
+
+        const track: HTMLElement | null = label.querySelector<HTMLElement>('.toggle-track');
+        const thumb: HTMLElement | null = label.querySelector<HTMLElement>('.toggle-thumb');
+        const statusLabel: HTMLElement | null = label.querySelector<HTMLElement>('.status-label');
+
+        if (toggle.checked) {
+            track?.classList.remove('bg-gray-300');
+            track?.classList.add('bg-lime-vibrant', 'shadow-inner');
+            thumb?.classList.add('translate-x-6');
+            statusLabel?.classList.remove('text-gray-500');
+            statusLabel?.classList.add('text-deep-black');
+            statusLabel && (statusLabel.textContent = 'Pagado');
+            label.setAttribute('data-state', 'pagado');
+        } else {
+            track?.classList.remove('bg-lime-vibrant', 'shadow-inner');
+            track?.classList.add('bg-gray-300');
+            thumb?.classList.remove('translate-x-6');
+            statusLabel?.classList.remove('text-deep-black');
+            statusLabel?.classList.add('text-gray-500');
+            statusLabel && (statusLabel.textContent = 'Pendiente');
+            label.setAttribute('data-state', 'pendiente');
+        }
+    }
+
     // --- Función para Calcular y Actualizar Totales ---
     function updateTotals(): void {
         let currentTotalPaid: number = 0;
-        const paymentSelects: NodeListOf<HTMLSelectElement> = document.querySelectorAll<HTMLSelectElement>('.payment-status');
+        const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
 
-        paymentSelects.forEach((select: HTMLSelectElement): void => {
-            if (select.value === 'pagado') {
-                const amount: string | undefined = select.dataset.amount;
+        paymentToggles.forEach((toggle: HTMLInputElement): void => {
+            if (toggle.checked) {
+                const amount: string | undefined = toggle.dataset.amount;
                 if (amount) {
                     currentTotalPaid += parseFloat(amount);
                 }
             }
-            // Cambiar color del select según el estado
-            if (select.value === 'pagado') {
-                select.classList.remove('bg-pure-white', 'border-gray-300');
-                select.classList.add('bg-lime-vibrant', 'border-lime-vibrant', 'text-deep-black', 'font-semibold');
-            } else {
-                select.classList.remove('bg-lime-vibrant', 'border-lime-vibrant', 'text-deep-black', 'font-semibold');
-                select.classList.add('bg-pure-white', 'border-gray-300');
-            }
+
+            updateToggleVisual(toggle);
         });
 
         const remaining: number = totalCost - currentTotalPaid;
@@ -92,10 +118,10 @@ document.addEventListener('DOMContentLoaded', function (): void {
 
     // --- Función para Guardar Estado en localStorage ---
     function savePaymentStatus(): void {
-        const paymentSelects: NodeListOf<HTMLSelectElement> = document.querySelectorAll<HTMLSelectElement>('.payment-status');
+        const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
         const statusArray: string[] = [];
-        paymentSelects.forEach((select: HTMLSelectElement): void => {
-            statusArray.push(select.value);
+        paymentToggles.forEach((toggle: HTMLInputElement): void => {
+            statusArray.push(toggle.checked ? 'pagado' : 'pendiente');
         });
         localStorage.setItem('paymentStatus', JSON.stringify(statusArray));
     }
@@ -104,11 +130,12 @@ document.addEventListener('DOMContentLoaded', function (): void {
     function loadPaymentStatus(): void {
         const savedStatus: string | null = localStorage.getItem('paymentStatus');
         const statusArray: string[] = savedStatus ? JSON.parse(savedStatus) : [];
-        const paymentSelects: NodeListOf<HTMLSelectElement> = document.querySelectorAll<HTMLSelectElement>('.payment-status');
-        paymentSelects.forEach((select: HTMLSelectElement, idx: number): void => {
+        const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
+        paymentToggles.forEach((toggle: HTMLInputElement, idx: number): void => {
             if (statusArray[idx]) {
-                select.value = statusArray[idx];
+                toggle.checked = statusArray[idx] === 'pagado';
             }
+            updateToggleVisual(toggle);
         });
     }
     
@@ -121,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function (): void {
     // Actualiza totales al cambiar el estado, pero NO guarda automáticamente
     tableBody!.addEventListener('change', function(event: Event): void {
         const target: EventTarget | null = event.target;
-        if (target instanceof HTMLSelectElement && target.classList.contains('payment-status')) {
+        if (target instanceof HTMLInputElement && target.classList.contains('payment-toggle')) {
             updateTotals();
         }
     });
