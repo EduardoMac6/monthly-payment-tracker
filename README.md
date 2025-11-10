@@ -1,99 +1,74 @@
-# Monthly Payment Tracker
+# DebtLite — Monthly Payment Tracker
 
-A simple web app to track monthly payments, built with TypeScript.
+A lightweight web experience that helps users plan and monitor monthly payments from an onboarding screen through a detailed dashboard.
 
 ## 🚀 Features
 
-- Track monthly payments across 12 months
-- Automatic totals and remaining balance
-- Saves state in localStorage
-- Responsive, modern UI
-- Written in TypeScript
+- Guided onboarding in `pages/start.html` to capture the total amount and repayment timeline.
+- Dashboard in `pages/dashboard.html` with a payment summary and interactive status table.
+- Payment progress persists in `localStorage`; onboarding selections are stored in `sessionStorage`.
+- Responsive UI built with Tailwind CSS and optimized for accessibility.
+- TypeScript source compiled to production-ready JavaScript.
 
-## 📋 Prerequisites
-
-- Node.js (v14+)
-- npm (bundled with Node.js)
-
-## 🛠️ Setup
-
-1) Clone the repository:
-```bash
-git clone <repo-url>
-cd monthly-payment-tracker
-```
-
-2) Install dependencies:
-```bash
-npm install
-```
-
-## 🏗️ Development
-
-### Build TypeScript
-Compile TypeScript to JavaScript:
-```bash
-npm run build
-```
-This generates `dist/scripts.js`, which is referenced by `index.html`.
-
-### Watch mode
-Rebuild automatically on file changes:
-```bash
-npm run watch
-```
-
-## 📦 Project Structure
+## 📂 Project structure
 
 ```
 monthly-payment-tracker/
+├── assets/                 # Static assets (logos, icons)
+│   └── images/
+├── dist/                   # Compiled JavaScript
+│   └── scripts.js
+├── pages/
+│   ├── start.html          # Onboarding step
+│   └── dashboard.html      # Main payment dashboard
 ├── src/
-│   └── scripts.ts          # TypeScript source
-├── dist/
-│   └── scripts.js          # Compiled JavaScript
-├── index.html              # Main page
-├── package.json            # Scripts and dependencies
-├── tsconfig.json           # TypeScript config
-└── README.md               # This file
+│   └── scripts.ts          # TypeScript logic
+├── index.html              # Redirect into `pages/start.html`
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
-## 🌐 Deploy
+## 🛠️ Getting started
 
-### GitHub Pages (simple option)
-1) Make sure the project is built:
-```bash
-npm run build
-```
-2) Commit and push everything to GitHub (including the `dist/` folder).
-3) In your GitHub repo: go to **Settings** → **Pages**.
-4) Select the `main` branch and folder `/root`.
-5) Save. Your site will be available at:
-```
-https://<your-username>.github.io/monthly-payment-tracker/
-```
+1. **Clone and install**
+   ```bash
+   git clone <repo-url>
+   cd monthly-payment-tracker
+   npm install
+   ```
 
-### Important Notes
-- Always run `npm run build` before committing so `dist/scripts.js` is up to date.
-- The `dist/` folder should be included in the repository for GitHub Pages (no CI) to work.
+2. **Build TypeScript**
+   ```bash
+   npm run build
+   ```
+   The compiled bundle is saved to `dist/scripts.js` for the dashboard.
 
-## 🔧 Available Scripts
-- `npm run build` — Compile TypeScript to JavaScript
-- `npm run watch` — Compile and watch for changes
+3. **Run the product flow**
+   - Open `index.html` in a browser to access the onboarding screen.
+   - Enter the amount you want to manage and choose the number of months.
+   - Click `Continue` to load the dashboard with your selections applied.
 
-## 📝 Configuration
-You can adjust payment values in `src/scripts.ts`:
-```typescript
-const totalCost = 6390.00;        // Total cost
-const monthlyPayment = 533.00;    // Monthly payment
-const numberOfMonths = 12;        // Number of months
-```
+> Note: Payment configuration now happens in the UI. Editing `src/scripts.ts` is no longer necessary for setting amounts; selections from `pages/start.html` are passed via `sessionStorage`.
 
-## 🛡️ Tech Stack
+## 🔁 Development workflow
+
+- `npm run build` — Compile once.
+- `npm run watch` — Rebuild automatically when `src/scripts.ts` changes.
+
+## 🌐 Quick deploy (GitHub Pages)
+
+1. Run `npm run build`.
+2. Ensure `dist/` is up to date and committed.
+3. Push the repository to GitHub.
+4. Enable GitHub Pages for the main branch with the `/root` folder.
+
+## 🧱 Tech stack
+
 - TypeScript
-- HTML5
-- Tailwind CSS (via CDN)
-- localStorage
+- HTML5 + Tailwind CSS (via CDN)
+- localStorage / sessionStorage
 
 ## 📄 License
-MIT
 
+MIT
