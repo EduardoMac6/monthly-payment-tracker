@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DebtLite</title>
+    <link rel="icon" type="image/x-icon" href="../fav.ico">
+    <link rel="shortcut icon" href="../fav.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pastel-green': '#DAFF7E',
+                        'lime-vibrant': '#A4EA01',
+                        'deep-black': '#1A1A1A',
+                        'pure-white': '#FFFFFF',
+                        'soft-gray': '#F3F4F6'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-pastel-green min-h-screen flex items-center justify-center p-6">
+    <main class="w-full max-w-lg bg-pure-white rounded-[2rem] shadow-2xl px-8 py-10 space-y-8">
+        <header class="text-center space-y-4">
+            <img src="../assets/images/Logo_Debtlite_black.svg" alt="DebtLite logo" class="mx-auto h-16">
+            <p class="text-deep-black/70 text-base">Manage your monthly payments effortlessly.</p>
+        </header>
+
+        <section class="space-y-6" aria-labelledby="amount-label">
+            <div class="space-y-2">
+                <label id="amount-label" for="amount-input" class="text-sm font-medium text-deep-black">How much money do you want to manage?</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-deep-black/60">$</span>
+                    <input
+                        id="amount-input"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        inputmode="decimal"
+                        placeholder="Enter the total amount"
+                        class="w-full rounded-2xl border border-soft-gray pl-10 pr-4 py-3 text-lg text-deep-black focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-transparent transition"
+                        aria-describedby="amount-helper">
+                </div>
+                <p id="amount-helper" class="text-xs text-deep-black/60">Enter the full amount you plan to split into monthly payments.</p>
+            </div>
+
+            <div class="space-y-3">
+                <h2 class="text-sm font-medium text-deep-black">Select the number of months</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" role="group" aria-label="Repayment options">
+                    <button type="button" data-months="3" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray">
+                        3 months
+                    </button>
+                    <button type="button" data-months="6" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray">
+                        6 months
+                    </button>
+                    <button type="button" data-months="9" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray">
+                        9 months
+                    </button>
+                    <button type="button" data-months="12" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray">
+                        12 months
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <footer class="space-y-3">
+            <button
+                id="continue-btn"
+                type="button"
+                class="w-full rounded-2xl bg-deep-black text-pure-white py-3 text-base font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-deep-black disabled:bg-deep-black/40 disabled:text-pure-white/70"
+                disabled>
+                Continue
+            </button>
+            <p class="text-xs text-center text-deep-black/60">Continuing will take you to your dashboard for detailed planning.</p>
+        </footer>
+    </main>
+
+    <script>
+        const amountInput = document.getElementById('amount-input');
+        const monthButtons = Array.from(document.querySelectorAll('.month-button'));
+        const continueBtn = document.getElementById('continue-btn');
+
+        let selectedMonths = null;
+
+        const updateContinueState = () => {
+            const amountValue = parseFloat(amountInput.value);
+            const hasValidAmount = !Number.isNaN(amountValue) && amountValue > 0;
+            const hasMonths = Boolean(selectedMonths);
+            continueBtn.disabled = !(hasValidAmount && hasMonths);
+        };
+
+        amountInput.addEventListener('input', updateContinueState);
+
+        monthButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                selectedMonths = button.dataset.months;
+
+                monthButtons.forEach((btn) => {
+                    const isActive = btn === button;
+                    btn.classList.toggle('bg-lime-vibrant', isActive);
+                    btn.classList.toggle('text-deep-black', isActive);
+                    btn.classList.toggle('bg-soft-gray/40', !isActive);
+                    btn.setAttribute('aria-pressed', isActive.toString());
+                });
+
+                updateContinueState();
+            });
+        });
+
+        continueBtn.addEventListener('click', () => {
+            const amountValue = parseFloat(amountInput.value);
+
+            if (!continueBtn.disabled) {
+                sessionStorage.setItem('debtLiteAmount', amountValue.toString());
+                sessionStorage.setItem('debtLiteMonths', selectedMonths);
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>
+

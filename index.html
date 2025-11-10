@@ -2,94 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=pages/start.html">
     <title>DebtLite</title>
-    <link rel="icon" type="image/x-icon" href="./fav.ico">
-    <link rel="shortcut icon" href="./fav.ico">
-    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'pastel-green': '#DAFF7E',      // Light pastel green
-                        'lime-vibrant': '#A4EA01',      // Vibrant lime green
-                        'deep-black': '#1A1A1A',        // Deep black
-                        'light-gray': '#F6F6F6',         // Very light gray
-                        'pure-white': '#FFFFFF',         // Pure white
-                    }
-                }
-            }
-        }
+        window.location.href = 'pages/start.html';
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Covered+By+Your+Grace&family=Gloria+Hallelujah&family=Poly:ital@0;1&family=Roboto:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .heading-title {
-            font-family: 'Poly', serif;
-        }
-        .summary-card {
-            transition: all 0.3s ease-in-out;
-        }
-    </style>
 </head>
-<body class="bg-pastel-green flex items-center justify-center min-h-screen p-4 md:p-6">
-
-    <div class="w-full max-w-4xl mx-auto">
-        <div class="bg-pure-white rounded-[2rem] shadow-2xl p-6 md:p-8">
-            <header class="mb-8 text-center">
-                <h1 class="heading-title flex justify-center" aria-label="DebtLite">
-                    <img src="assets/images/Logo_Debtlite_black.svg" alt="DebtLite" class="h-12 md:h-16">
-                </h1>
-                <p class="text-gray-600 mt-2">Track your 12-month payment plan.</p>
-            </header>
-
-            <!-- Totals Summary -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <div class="summary-card bg-lime-vibrant text-deep-black p-6 rounded-3xl shadow-lg">
-                    <h2 class="text-lg font-semibold text-deep-black/80">Total Cost</h2>
-                    <p id="total-cost" class="text-3xl font-bold mt-2 text-deep-black">$6,390.00</p>
-                </div>
-                <div class="summary-card bg-pure-white border-2 border-pastel-green text-deep-black p-6 rounded-3xl shadow-lg">
-                    <h2 class="text-lg font-semibold text-gray-700">Total Paid</h2>
-                    <p id="total-paid" class="text-3xl font-bold mt-2 text-deep-black">$0.00</p>
-                </div>
-                <div class="summary-card bg-deep-black text-pure-white p-6 rounded-3xl shadow-lg">
-                    <h2 class="text-lg font-semibold text-pure-white/90">Remaining Balance</h2>
-                    <p id="remaining-balance" class="text-3xl font-bold mt-2 text-pure-white">$6,390.00</p>
-                </div>
-            </div>
-
-            <!-- Tabla de Pagos -->
-            <div class="overflow-x-auto rounded-3xl">
-                <table class="w-full text-left table-auto">
-                    <thead>
-                        <tr class="bg-deep-black text-pure-white uppercase text-sm leading-normal">
-                            <th class="py-4 px-4 md:px-6 text-left rounded-tl-3xl">Month</th>
-                            <th class="py-4 px-4 md:px-6 text-center">Monthly Payment</th>
-                            <th class="py-4 px-4 md:px-6 text-center rounded-tr-3xl">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="payment-table-body" class="text-deep-black text-sm font-light bg-pure-white">
-                        <!-- Month rows are generated via TypeScript -->
-                    </tbody>
-                </table>
-            </div>
-            <!-- Action Buttons -->
-            <div class="flex gap-4 justify-end mt-6">
-                <button id="save-btn" class="bg-lime-vibrant hover:bg-pastel-green text-deep-black font-semibold py-3 px-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105">Save</button>
-                <button id="clear-btn" class="bg-deep-black hover:bg-gray-800 text-pure-white font-semibold py-3 px-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105">Clear Records</button>
-            </div>
-        </div>
-        <footer class="text-center mt-6 text-deep-black/70 text-sm">
-            <p>Designed for simple, effective financial tracking.</p>
-        </footer>
-    </div>
-    <script src="dist/scripts.js"></script>
+<body>
+    <p>If you are not redirected, <a href="pages/start.html">click here to continue to DebtLite.</a></p>
 </body>
 </html>
+
