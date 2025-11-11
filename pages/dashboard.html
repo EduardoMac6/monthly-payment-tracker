@@ -6,9 +6,16 @@
         <title>DebtLite</title>
         <link rel="icon" type="image/x-icon" href="../fav.ico">
         <link rel="shortcut icon" href="../fav.ico">
+        <script>
+            const savedThemePreference = localStorage.getItem('debtLiteTheme');
+            if (savedThemePreference === 'dark') {
+                document.documentElement.classList.add('dark');
+            }
+        </script>
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {
+                darkMode: 'class',
                 theme: {
                     extend: {
                         colors: {
@@ -16,7 +23,10 @@
                             'lime-vibrant': '#A4EA01',
                             'deep-black': '#1A1A1A',
                             'pure-white': '#FFFFFF',
-                            'soft-gray': '#F3F4F6'
+                            'soft-gray': '#F3F4F6',
+                            'night-sky': '#0B1120',
+                            'graphite': '#1F2933',
+                            'charcoal-gray': '#2D3748'
                         }
                     }
                 }
@@ -31,30 +41,42 @@
             }
         </style>
     </head>
-<body class="bg-pastel-green flex items-center justify-center min-h-screen p-4 md:p-6">
+<body class="bg-pastel-green dark:bg-night-sky flex items-center justify-center min-h-screen p-4 md:p-6 transition-colors duration-300 text-deep-black dark:text-pure-white">
 
     <div class="w-full max-w-4xl mx-auto">
-        <div class="bg-pure-white rounded-[2rem] shadow-2xl p-6 md:p-8">
-            <header class="mb-8 text-center">
+        <div class="bg-pure-white dark:bg-graphite rounded-[2rem] shadow-2xl p-6 md:p-8 transition-colors duration-300">
+            <div class="flex justify-end">
+                <button
+                    id="theme-toggle"
+                    type="button"
+                    aria-pressed="false"
+                    class="group inline-flex items-center gap-2 rounded-full border border-soft-gray bg-soft-gray/40 px-4 py-2 text-sm font-semibold text-deep-black transition hover:bg-soft-gray focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-vibrant dark:border-charcoal-gray dark:bg-charcoal-gray/60 dark:text-pure-white dark:hover:bg-charcoal-gray">
+                    <span id="theme-toggle-icon" aria-hidden="true">🌞</span>
+                    <span class="sr-only">Toggle theme</span>
+                    <span id="theme-toggle-label" class="capitalize">Light</span>
+                </button>
+            </div>
+            <header class="mb-8 text-center space-y-4">
                 <h1 class="heading-title flex justify-center" aria-label="DebtLite">
-                    <img src="../assets/images/Logo_Debtlite_black.svg" alt="DebtLite" class="h-12 md:h-16">
+                    <img src="../assets/images/Logo_Debtlite_black.svg" alt="DebtLite" class="h-12 md:h-16 dark:hidden">
+                    <img src="../assets/images/Logo_Debtlite_wite.svg" alt="" aria-hidden="true" class="h-12 md:h-16 hidden dark:block">
                 </h1>
-                <p class="text-gray-600 mt-2">Track your 12-month payment plan.</p>
+                <p class="text-gray-600 dark:text-pure-white/70 mt-2 transition-colors duration-300">Track your 12-month payment plan.</p>
             </header>
 
             <!-- Totals Summary -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <div class="summary-card bg-lime-vibrant text-deep-black p-6 rounded-3xl shadow-lg">
+                <div class="summary-card bg-lime-vibrant dark:bg-lime-vibrant/90 text-deep-black p-6 rounded-3xl shadow-lg transition-colors duration-300">
                     <h2 class="text-lg font-semibold text-deep-black/80">Total Cost</h2>
                     <p id="total-cost" class="text-3xl font-bold mt-2 text-deep-black">$6,390.00</p>
                 </div>
-                <div class="summary-card bg-pure-white border-2 border-pastel-green text-deep-black p-6 rounded-3xl shadow-lg">
-                    <h2 class="text-lg font-semibold text-gray-700">Total Paid</h2>
-                    <p id="total-paid" class="text-3xl font-bold mt-2 text-deep-black">$0.00</p>
+                <div class="summary-card bg-pure-white border-2 border-pastel-green text-deep-black p-6 rounded-3xl shadow-lg transition-colors duration-300 dark:bg-graphite dark:border-charcoal-gray dark:text-pure-white">
+                    <h2 class="text-lg font-semibold text-gray-700 dark:text-pure-white/80">Total Paid</h2>
+                    <p id="total-paid" class="text-3xl font-bold mt-2 text-deep-black dark:text-pure-white">$0.00</p>
                 </div>
-                <div class="summary-card bg-deep-black text-pure-white p-6 rounded-3xl shadow-lg">
-                    <h2 class="text-lg font-semibold text-pure-white/90">Remaining Balance</h2>
-                    <p id="remaining-balance" class="text-3xl font-bold mt-2 text-pure-white">$6,390.00</p>
+                <div class="summary-card bg-deep-black text-pure-white p-6 rounded-3xl shadow-lg transition-colors duration-300 dark:bg-pure-white dark:text-deep-black">
+                    <h2 class="text-lg font-semibold text-pure-white/90 dark:text-deep-black/80">Remaining Balance</h2>
+                    <p id="remaining-balance" class="text-3xl font-bold mt-2 text-pure-white dark:text-deep-black">$6,390.00</p>
                 </div>
             </div>
 
@@ -62,23 +84,23 @@
             <div class="overflow-x-auto rounded-3xl">
                 <table class="w-full text-left table-auto">
                     <thead>
-                        <tr class="bg-deep-black text-pure-white uppercase text-sm leading-normal">
+                        <tr class="bg-deep-black text-pure-white uppercase text-sm leading-normal dark:bg-charcoal-gray dark:text-pure-white/90 transition-colors duration-300">
                             <th class="py-4 px-4 md:px-6 text-left rounded-tl-3xl">Month</th>
                             <th class="py-4 px-4 md:px-6 text-center">Monthly Payment</th>
                             <th class="py-4 px-4 md:px-6 text-center rounded-tr-3xl">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="payment-table-body" class="text-deep-black text-sm font-light bg-pure-white">
+                    <tbody id="payment-table-body" class="text-deep-black text-sm font-light bg-pure-white dark:bg-graphite dark:text-pure-white transition-colors duration-300">
                         <!-- Month rows are generated via TypeScript -->
                     </tbody>
                 </table>
             </div>
             <!-- Action Buttons -->
             <div class="flex gap-4 justify-end mt-6">
-                <button id="clear-btn" class="bg-deep-black hover:bg-gray-800 text-pure-white font-semibold py-3 px-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105">Clear Records</button>
+                <button id="clear-btn" class="bg-deep-black hover:bg-gray-800 text-pure-white font-semibold py-3 px-6 rounded-2xl shadow-lg transition-all duration-300 transform hover:scale-105 dark:bg-pure-white dark:text-deep-black dark:hover:bg-pure-white/90">Clear Records</button>
             </div>
         </div>
-        <footer class="text-center mt-6 text-deep-black/70 text-sm">
+        <footer class="text-center mt-6 text-deep-black/70 dark:text-pure-white/70 text-sm transition-colors duration-300">
             <p>Designed for simple, effective financial tracking.</p>
         </footer>
     </div>

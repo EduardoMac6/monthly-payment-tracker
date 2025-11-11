@@ -33,11 +33,11 @@ document.addEventListener('DOMContentLoaded', function (): void {
             // Special classes for the last row (rounded bottom corners)
             const isLastRow: boolean = i === numberOfMonths;
             const rowClasses: string = isLastRow 
-                ? 'border-b-0 hover:bg-light-gray transition-colors' 
-                : 'border-b border-gray-200 hover:bg-light-gray transition-colors';
+                ? 'border-b-0 hover:bg-soft-gray/40 transition-colors dark:hover:bg-charcoal-gray/60' 
+                : 'border-b border-gray-200 hover:bg-soft-gray/40 transition-colors dark:border-charcoal-gray/50 dark:hover:bg-charcoal-gray/60';
             const firstCellClasses: string = isLastRow 
-                ? 'py-4 px-4 md:px-6 text-left whitespace-nowrap rounded-bl-3xl' 
-                : 'py-4 px-4 md:px-6 text-left whitespace-nowrap';
+                ? 'py-4 px-4 md:px-6 text-left whitespace-nowrap rounded-bl-3xl text-deep-black dark:text-pure-white' 
+                : 'py-4 px-4 md:px-6 text-left whitespace-nowrap text-deep-black dark:text-pure-white';
             const lastCellClasses: string = isLastRow 
                 ? 'py-4 px-4 md:px-6 text-center rounded-br-3xl' 
                 : 'py-4 px-4 md:px-6 text-center';
@@ -45,16 +45,16 @@ document.addEventListener('DOMContentLoaded', function (): void {
             tableHTML += `
                 <tr class="${rowClasses}">
                     <td class="${firstCellClasses}">
-                        <span class="font-medium text-deep-black">Month ${i}</span>
+                        <span class="font-medium text-deep-black dark:text-pure-white">Month ${i}</span>
                     </td>
-                    <td class="py-4 px-4 md:px-6 text-center font-mono text-deep-black font-semibold">${currencyFormatter.format(payment)}</td>
+                    <td class="py-4 px-4 md:px-6 text-center font-mono text-deep-black dark:text-pure-white font-semibold">${currencyFormatter.format(payment)}</td>
                     <td class="${lastCellClasses}">
-                        <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full justify-center">
+                        <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full justify-center text-deep-black dark:text-pure-white">
                             <input type="checkbox" class="payment-toggle sr-only peer" data-amount="${payment}" aria-label="Mark month ${i} as paid" role="switch">
-                            <span class="toggle-track relative inline-flex h-8 w-14 flex-shrink-0 items-center rounded-full bg-gray-300 transition-all duration-300 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-lime-vibrant">
-                                <span class="toggle-thumb absolute left-1 top-1 h-6 w-6 rounded-full bg-pure-white shadow-md transition-transform duration-300 ease-out transform"></span>
+                            <span class="toggle-track relative inline-flex h-8 w-14 flex-shrink-0 items-center rounded-full bg-gray-300 transition-all duration-300 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-lime-vibrant dark:bg-charcoal-gray peer-focus-visible:ring-offset-pure-white dark:peer-focus-visible:ring-offset-graphite">
+                                <span class="toggle-thumb absolute left-1 top-1 h-6 w-6 rounded-full bg-pure-white shadow-md transition-transform duration-300 ease-out transform dark:bg-pure-white"></span>
                             </span>
-                            <span class="status-label text-sm font-semibold text-gray-500 transition-colors duration-300">Pending</span>
+                            <span class="status-label text-sm font-semibold text-gray-500 dark:text-gray-300 transition-colors duration-300">Pending</span>
                         </label>
                     </td>
                 </tr>
@@ -77,16 +77,16 @@ document.addEventListener('DOMContentLoaded', function (): void {
             track?.classList.remove('bg-gray-300');
             track?.classList.add('bg-lime-vibrant', 'shadow-inner');
             thumb?.classList.add('translate-x-6');
-            statusLabel?.classList.remove('text-gray-500');
-            statusLabel?.classList.add('text-deep-black');
+            statusLabel?.classList.remove('text-gray-500', 'dark:text-gray-300');
+            statusLabel?.classList.add('text-deep-black', 'dark:text-pure-white');
             statusLabel && (statusLabel.textContent = 'Paid');
             label.setAttribute('data-state', 'paid');
         } else {
             track?.classList.remove('bg-lime-vibrant', 'shadow-inner');
             track?.classList.add('bg-gray-300');
             thumb?.classList.remove('translate-x-6');
-            statusLabel?.classList.remove('text-deep-black');
-            statusLabel?.classList.add('text-gray-500');
+            statusLabel?.classList.remove('text-deep-black', 'dark:text-pure-white');
+            statusLabel?.classList.add('text-gray-500', 'dark:text-gray-300');
             statusLabel && (statusLabel.textContent = 'Pending');
             label.setAttribute('data-state', 'pending');
         }
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function (): void {
     const initialTotals: TotalsSnapshot = updateTotals(); // Calculate initial totals
     savePaymentStatus(initialTotals); // Persist snapshot
 
-    // Update totals when a toggle changes, but do not save automatically
+    // Update totals when a toggle changes and persist automatically
     tableBody!.addEventListener('change', function(event: Event): void {
         const target: EventTarget | null = event.target;
         if (target instanceof HTMLInputElement && target.classList.contains('payment-toggle')) {
@@ -172,19 +172,42 @@ document.addEventListener('DOMContentLoaded', function (): void {
         clearBtn.addEventListener('click', function(): void {
             if (confirm('Are you sure you want to clear the payment records?')) {
                 localStorage.removeItem('paymentStatus');
+                localStorage.removeItem('paymentTotals');
                 location.reload();
             }
         });
     }
 
     // --- Light/Dark Theme Toggle ---
-    const themeToggle: HTMLElement | null = document.getElementById('theme-toggle');
-    const body: HTMLElement = document.body;
+    type ThemeChoice = 'light' | 'dark';
 
-    if (themeToggle) {
-        themeToggle.addEventListener('click', function(): void {
-            body.classList.toggle('dark-mode');
-        });
+    const themeToggle: HTMLButtonElement | null = document.getElementById('theme-toggle') as HTMLButtonElement | null;
+    const themeIcon: HTMLElement | null = document.getElementById('theme-toggle-icon');
+    const themeLabel: HTMLElement | null = document.getElementById('theme-toggle-label');
+    const rootElement: HTMLElement = document.documentElement;
+
+    function updateThemeToggleUI(theme: ThemeChoice): void {
+        themeToggle?.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+        if (themeIcon) {
+            themeIcon.textContent = theme === 'dark' ? '🌙' : '🌞';
+        }
+        if (themeLabel) {
+            themeLabel.textContent = theme === 'dark' ? 'Dark' : 'Light';
+        }
     }
+
+    function applyTheme(theme: ThemeChoice): void {
+        rootElement.classList.toggle('dark', theme === 'dark');
+        localStorage.setItem('debtLiteTheme', theme);
+        updateThemeToggleUI(theme);
+    }
+
+    const storedThemePreference: ThemeChoice = localStorage.getItem('debtLiteTheme') === 'dark' ? 'dark' : 'light';
+    applyTheme(storedThemePreference);
+
+    themeToggle?.addEventListener('click', function(): void {
+        const isDark: boolean = rootElement.classList.contains('dark');
+        applyTheme(isDark ? 'light' : 'dark');
+    });
 });
 

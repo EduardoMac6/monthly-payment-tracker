@@ -6,9 +6,16 @@
     <title>DebtLite</title>
     <link rel="icon" type="image/x-icon" href="../fav.ico">
     <link rel="shortcut icon" href="../fav.ico">
+    <script>
+        const savedThemePreference = localStorage.getItem('debtLiteTheme');
+        if (savedThemePreference === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -16,7 +23,10 @@
                         'lime-vibrant': '#A4EA01',
                         'deep-black': '#1A1A1A',
                         'pure-white': '#FFFFFF',
-                        'soft-gray': '#F3F4F6'
+                        'soft-gray': '#F3F4F6',
+                        'night-sky': '#0B1120',
+                        'graphite': '#1F2933',
+                        'charcoal-gray': '#2D3748'
                     }
                 }
             }
@@ -42,30 +52,42 @@
         }
     </style>
 </head>
-<body class="bg-pastel-green min-h-screen flex items-center justify-center p-6">
-    <main class="w-full max-w-lg bg-pure-white rounded-[2rem] shadow-2xl px-8 py-10 space-y-8">
+<body class="bg-pastel-green dark:bg-night-sky min-h-screen flex items-center justify-center p-6 transition-colors duration-300 text-deep-black dark:text-pure-white">
+    <main class="w-full max-w-lg bg-pure-white dark:bg-graphite rounded-[2rem] shadow-2xl px-8 py-10 space-y-8 transition-colors duration-300">
+        <div class="flex justify-end">
+            <button
+                id="theme-toggle"
+                type="button"
+                aria-pressed="false"
+                class="group inline-flex items-center gap-2 rounded-full border border-soft-gray bg-soft-gray/40 px-4 py-2 text-sm font-semibold text-deep-black transition hover:bg-soft-gray focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-vibrant dark:border-charcoal-gray dark:bg-charcoal-gray/60 dark:text-pure-white dark:hover:bg-charcoal-gray">
+                <span id="theme-toggle-icon" aria-hidden="true">🌞</span>
+                <span class="sr-only">Toggle theme</span>
+                <span id="theme-toggle-label" class="capitalize">Light</span>
+            </button>
+        </div>
         <header class="text-center space-y-4">
-            <img src="../assets/images/Logo_Debtlite_black.svg" alt="DebtLite logo" class="mx-auto h-16">
-            <p class="text-deep-black/70 text-base">Manage your monthly payments effortlessly.</p>
+            <img src="../assets/images/Logo_Debtlite_black.svg" alt="DebtLite logo" class="mx-auto h-16 dark:hidden">
+            <img src="../assets/images/Logo_Debtlite_wite.svg" alt="" aria-hidden="true" class="mx-auto h-16 hidden dark:block">
+            <p class="text-deep-black/70 dark:text-pure-white/70 text-base transition-colors duration-300">Manage your monthly payments effortlessly.</p>
         </header>
 
         <section class="space-y-6" aria-labelledby="plan-label amount-label">
             <div class="space-y-2">
-                <label id="plan-label" for="plan-name" class="text-sm font-medium text-deep-black">Name Your Payment Plan (o Give Your Plan a Name)</label>
+                <label id="plan-label" for="plan-name" class="text-sm font-medium text-deep-black dark:text-pure-white transition-colors duration-300">Name Your Payment Plan (o Give Your Plan a Name)</label>
                 <input
                     id="plan-name"
                     type="text"
                     placeholder="e.g. Laptop upgrade"
                     autocomplete="off"
-                    class="w-full rounded-2xl border border-soft-gray px-4 py-3 text-lg text-deep-black focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-transparent transition"
+                    class="w-full rounded-2xl border border-soft-gray bg-pure-white px-4 py-3 text-lg text-deep-black placeholder:text-deep-black/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-transparent transition-colors duration-300 dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:placeholder:text-pure-white/60 dark:focus:ring-pure-white"
                     aria-describedby="plan-helper">
-                <p id="plan-helper" class="text-xs text-deep-black/60">Give your debt a clear name so you can find it easily later.</p>
+                <p id="plan-helper" class="text-xs text-deep-black/60 dark:text-pure-white/60 transition-colors duration-300">Give your debt a clear name so you can find it easily later.</p>
             </div>
 
             <div class="space-y-2">
-                <label id="amount-label" for="amount-input" class="text-sm font-medium text-deep-black">Total Amount to Manage (Debt)</label>
+                <label id="amount-label" for="amount-input" class="text-sm font-medium text-deep-black dark:text-pure-white transition-colors duration-300">Total Amount to Manage (Debt)</label>
                 <div class="relative">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-deep-black/60">$</span>
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-deep-black/60 dark:text-pure-white/60 transition-colors duration-300">$</span>
                     <input
                         id="amount-input"
                         type="number"
@@ -73,25 +95,25 @@
                         step="0.01"
                         inputmode="decimal"
                         placeholder="Enter the total amount"
-                        class="w-full rounded-2xl border border-soft-gray pl-10 pr-4 py-3 text-lg text-deep-black focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-transparent transition"
+                        class="w-full rounded-2xl border border-soft-gray bg-pure-white pl-10 pr-4 py-3 text-lg text-deep-black placeholder:text-deep-black/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-transparent transition-colors duration-300 dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:placeholder:text-pure-white/60 dark:focus:ring-pure-white"
                         aria-describedby="amount-helper">
                 </div>
-                <p id="amount-helper" class="text-xs text-deep-black/60">Enter the full amount you plan to split into monthly payments.</p>
+                <p id="amount-helper" class="text-xs text-deep-black/60 dark:text-pure-white/60 transition-colors duration-300">Enter the full amount you plan to split into monthly payments.</p>
             </div>
 
             <div class="space-y-3">
-                <h2 class="text-sm font-medium text-deep-black">Select the number of months</h2>
+                <h2 class="text-sm font-medium text-deep-black dark:text-pure-white transition-colors duration-300">Select the number of months</h2>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" role="group" aria-label="Repayment options">
-                    <button type="button" data-months="3" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray">
+                    <button type="button" data-months="3" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
                         3 months
                     </button>
-                    <button type="button" data-months="6" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray">
+                    <button type="button" data-months="6" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
                         6 months
                     </button>
-                    <button type="button" data-months="9" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray">
+                    <button type="button" data-months="9" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
                         9 months
                     </button>
-                    <button type="button" data-months="12" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray">
+                    <button type="button" data-months="12" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
                         12 months
                     </button>
                 </div>
@@ -102,15 +124,44 @@
             <button
                 id="continue-btn"
                 type="button"
-                class="w-full rounded-2xl bg-deep-black text-pure-white py-3 text-base font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-deep-black disabled:bg-deep-black/40 disabled:text-pure-white/70"
+                class="w-full rounded-2xl bg-deep-black text-pure-white py-3 text-base font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-deep-black disabled:bg-deep-black/40 disabled:text-pure-white/70 dark:bg-pure-white dark:text-deep-black dark:focus:ring-pure-white dark:focus:ring-offset-night-sky dark:disabled:bg-pure-white/40 dark:disabled:text-deep-black/60"
                 disabled>
                 Continue
             </button>
-            <p class="text-xs text-center text-deep-black/60">Continuing will take you to your dashboard for detailed planning.</p>
+            <p class="text-xs text-center text-deep-black/60 dark:text-pure-white/60 transition-colors duration-300">Continuing will take you to your dashboard for detailed planning.</p>
         </footer>
     </main>
 
     <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-toggle-icon');
+        const themeLabel = document.getElementById('theme-toggle-label');
+        const rootElement = document.documentElement;
+
+        const updateThemeToggleUI = (theme) => {
+            themeToggle?.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+            if (themeIcon) {
+                themeIcon.textContent = theme === 'dark' ? '🌙' : '🌞';
+            }
+            if (themeLabel) {
+                themeLabel.textContent = theme === 'dark' ? 'Dark' : 'Light';
+            }
+        };
+
+        const applyTheme = (theme) => {
+            rootElement.classList.toggle('dark', theme === 'dark');
+            localStorage.setItem('debtLiteTheme', theme);
+            updateThemeToggleUI(theme);
+        };
+
+        const storedThemePreference = localStorage.getItem('debtLiteTheme') === 'dark' ? 'dark' : 'light';
+        applyTheme(storedThemePreference);
+
+        themeToggle?.addEventListener('click', () => {
+            const isCurrentlyDark = rootElement.classList.contains('dark');
+            applyTheme(isCurrentlyDark ? 'light' : 'dark');
+        });
+
         const planNameInput = document.getElementById('plan-name');
         const amountInput = document.getElementById('amount-input');
         const monthButtons = Array.from(document.querySelectorAll('.month-button'));
