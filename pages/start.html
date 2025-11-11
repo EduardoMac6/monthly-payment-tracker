@@ -29,6 +29,17 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
     </style>
 </head>
 <body class="bg-pastel-green min-h-screen flex items-center justify-center p-6">
@@ -38,9 +49,21 @@
             <p class="text-deep-black/70 text-base">Manage your monthly payments effortlessly.</p>
         </header>
 
-        <section class="space-y-6" aria-labelledby="amount-label">
+        <section class="space-y-6" aria-labelledby="plan-label amount-label">
             <div class="space-y-2">
-                <label id="amount-label" for="amount-input" class="text-sm font-medium text-deep-black">How much money do you want to manage?</label>
+                <label id="plan-label" for="plan-name" class="text-sm font-medium text-deep-black">Name Your Payment Plan (o Give Your Plan a Name)</label>
+                <input
+                    id="plan-name"
+                    type="text"
+                    placeholder="e.g. Laptop upgrade"
+                    autocomplete="off"
+                    class="w-full rounded-2xl border border-soft-gray px-4 py-3 text-lg text-deep-black focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-transparent transition"
+                    aria-describedby="plan-helper">
+                <p id="plan-helper" class="text-xs text-deep-black/60">Give your debt a clear name so you can find it easily later.</p>
+            </div>
+
+            <div class="space-y-2">
+                <label id="amount-label" for="amount-input" class="text-sm font-medium text-deep-black">Total Amount to Manage (Debt)</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-deep-black/60">$</span>
                     <input
@@ -88,6 +111,7 @@
     </main>
 
     <script>
+        const planNameInput = document.getElementById('plan-name');
         const amountInput = document.getElementById('amount-input');
         const monthButtons = Array.from(document.querySelectorAll('.month-button'));
         const continueBtn = document.getElementById('continue-btn');
@@ -95,12 +119,14 @@
         let selectedMonths = null;
 
         const updateContinueState = () => {
+            const hasName = planNameInput.value.trim().length > 0;
             const amountValue = parseFloat(amountInput.value);
             const hasValidAmount = !Number.isNaN(amountValue) && amountValue > 0;
             const hasMonths = Boolean(selectedMonths);
-            continueBtn.disabled = !(hasValidAmount && hasMonths);
+            continueBtn.disabled = !(hasName && hasValidAmount && hasMonths);
         };
 
+        planNameInput.addEventListener('input', updateContinueState);
         amountInput.addEventListener('input', updateContinueState);
 
         monthButtons.forEach((button) => {
@@ -123,6 +149,8 @@
             const amountValue = parseFloat(amountInput.value);
 
             if (!continueBtn.disabled) {
+                const planName = planNameInput.value.trim();
+                sessionStorage.setItem('debtLiteName', planName);
                 sessionStorage.setItem('debtLiteAmount', amountValue.toString());
                 sessionStorage.setItem('debtLiteMonths', selectedMonths);
                 window.location.href = 'dashboard.html';
