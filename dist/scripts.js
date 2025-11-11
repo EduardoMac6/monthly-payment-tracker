@@ -84,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function () {
             label.setAttribute('data-state', 'pending');
         }
     }
-    // --- Calculate and Update Totals ---
     function updateTotals() {
         let currentTotalPaid = 0;
         const paymentToggles = document.querySelectorAll('.payment-toggle');
@@ -102,15 +101,21 @@ document.addEventListener('DOMContentLoaded', function () {
         totalPaidEl.textContent = currencyFormatter.format(currentTotalPaid);
         remainingBalanceEl.textContent = currencyFormatter.format(remaining);
         totalCostEl.textContent = currencyFormatter.format(totalCost);
+        return {
+            totalPaid: currentTotalPaid,
+            remaining
+        };
     }
     // --- Save Payment Status to localStorage ---
-    function savePaymentStatus() {
+    function savePaymentStatus(totals) {
+        const snapshot = totals ?? updateTotals();
         const paymentToggles = document.querySelectorAll('.payment-toggle');
         const statusArray = [];
         paymentToggles.forEach((toggle) => {
             statusArray.push(toggle.checked ? 'paid' : 'pending');
         });
         localStorage.setItem('paymentStatus', JSON.stringify(statusArray));
+        localStorage.setItem('paymentTotals', JSON.stringify(snapshot));
     }
     // --- Load Payment Status from localStorage ---
     function loadPaymentStatus() {
@@ -128,22 +133,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Initialization and Event Listeners ---
     generateTable();
     loadPaymentStatus(); // Load saved status
-    updateTotals(); // Calculate initial totals
+    const initialTotals = updateTotals(); // Calculate initial totals
+    savePaymentStatus(initialTotals); // Persist snapshot
     // Update totals when a toggle changes, but do not save automatically
     tableBody.addEventListener('change', function (event) {
         const target = event.target;
         if (target instanceof HTMLInputElement && target.classList.contains('payment-toggle')) {
-            updateTotals();
+            const updatedTotals = updateTotals();
+            savePaymentStatus(updatedTotals);
         }
     });
-    // Save button
-    const saveBtn = document.getElementById('save-btn');
-    if (saveBtn) {
-        saveBtn.addEventListener('click', function () {
-            savePaymentStatus();
-            alert('Record saved!');
-        });
-    }
     // Clear Records button
     const clearBtn = document.getElementById('clear-btn');
     if (clearBtn) {

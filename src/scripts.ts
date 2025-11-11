@@ -93,7 +93,12 @@ document.addEventListener('DOMContentLoaded', function (): void {
     }
 
     // --- Calculate and Update Totals ---
-    function updateTotals(): void {
+    type TotalsSnapshot = {
+        totalPaid: number;
+        remaining: number;
+    };
+
+    function updateTotals(): TotalsSnapshot {
         let currentTotalPaid: number = 0;
         const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
 
@@ -114,16 +119,23 @@ document.addEventListener('DOMContentLoaded', function (): void {
         totalPaidEl!.textContent = currencyFormatter.format(currentTotalPaid);
         remainingBalanceEl!.textContent = currencyFormatter.format(remaining);
         totalCostEl!.textContent = currencyFormatter.format(totalCost);
+
+        return {
+            totalPaid: currentTotalPaid,
+            remaining
+        };
     }
 
     // --- Save Payment Status to localStorage ---
-    function savePaymentStatus(): void {
+    function savePaymentStatus(totals?: TotalsSnapshot): void {
+        const snapshot: TotalsSnapshot = totals ?? updateTotals();
         const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
         const statusArray: string[] = [];
         paymentToggles.forEach((toggle: HTMLInputElement): void => {
             statusArray.push(toggle.checked ? 'paid' : 'pending');
         });
         localStorage.setItem('paymentStatus', JSON.stringify(statusArray));
+        localStorage.setItem('paymentTotals', JSON.stringify(snapshot));
     }
 
     // --- Load Payment Status from localStorage ---
@@ -142,24 +154,17 @@ document.addEventListener('DOMContentLoaded', function (): void {
     // --- Initialization and Event Listeners ---
     generateTable();
     loadPaymentStatus(); // Load saved status
-    updateTotals(); // Calculate initial totals
+    const initialTotals: TotalsSnapshot = updateTotals(); // Calculate initial totals
+    savePaymentStatus(initialTotals); // Persist snapshot
 
     // Update totals when a toggle changes, but do not save automatically
     tableBody!.addEventListener('change', function(event: Event): void {
         const target: EventTarget | null = event.target;
         if (target instanceof HTMLInputElement && target.classList.contains('payment-toggle')) {
-            updateTotals();
+            const updatedTotals: TotalsSnapshot = updateTotals();
+            savePaymentStatus(updatedTotals);
         }
     });
-
-    // Save button
-    const saveBtn: HTMLElement | null = document.getElementById('save-btn');
-    if (saveBtn) {
-        saveBtn.addEventListener('click', function(): void {
-            savePaymentStatus();
-            alert('Record saved!');
-        });
-    }
 
     // Clear Records button
     const clearBtn: HTMLElement | null = document.getElementById('clear-btn');
