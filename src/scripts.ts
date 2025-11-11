@@ -182,17 +182,27 @@ document.addEventListener('DOMContentLoaded', function (): void {
     type ThemeChoice = 'light' | 'dark';
 
     const themeToggle: HTMLButtonElement | null = document.getElementById('theme-toggle') as HTMLButtonElement | null;
-    const themeIcon: HTMLElement | null = document.getElementById('theme-toggle-icon');
     const themeLabel: HTMLElement | null = document.getElementById('theme-toggle-label');
+    const dashboardLogo: HTMLImageElement | null = document.getElementById('dashboard-logo') as HTMLImageElement | null;
     const rootElement: HTMLElement = document.documentElement;
 
     function updateThemeToggleUI(theme: ThemeChoice): void {
         themeToggle?.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-        if (themeIcon) {
-            themeIcon.textContent = theme === 'dark' ? '🌙' : '🌞';
-        }
+        themeToggle?.setAttribute('data-theme', theme);
         if (themeLabel) {
             themeLabel.textContent = theme === 'dark' ? 'Dark' : 'Light';
+        }
+    }
+
+    function updateLogo(theme: ThemeChoice): void {
+        if (!dashboardLogo) {
+            return;
+        }
+        const lightSrc: string | undefined = dashboardLogo.dataset.logoLight;
+        const darkSrc: string | undefined = dashboardLogo.dataset.logoDark;
+        const nextSrc: string | undefined = theme === 'dark' ? darkSrc : lightSrc;
+        if (nextSrc) {
+            dashboardLogo.setAttribute('src', nextSrc);
         }
     }
 
@@ -200,6 +210,7 @@ document.addEventListener('DOMContentLoaded', function (): void {
         rootElement.classList.toggle('dark', theme === 'dark');
         localStorage.setItem('debtLiteTheme', theme);
         updateThemeToggleUI(theme);
+        updateLogo(theme);
     }
 
     const storedThemePreference: ThemeChoice = localStorage.getItem('debtLiteTheme') === 'dark' ? 'dark' : 'light';

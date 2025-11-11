@@ -155,22 +155,32 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-toggle-icon');
     const themeLabel = document.getElementById('theme-toggle-label');
+    const dashboardLogo = document.getElementById('dashboard-logo');
     const rootElement = document.documentElement;
     function updateThemeToggleUI(theme) {
         themeToggle?.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-        if (themeIcon) {
-            themeIcon.textContent = theme === 'dark' ? '🌙' : '🌞';
-        }
+        themeToggle?.setAttribute('data-theme', theme);
         if (themeLabel) {
             themeLabel.textContent = theme === 'dark' ? 'Dark' : 'Light';
+        }
+    }
+    function updateLogo(theme) {
+        if (!dashboardLogo) {
+            return;
+        }
+        const lightSrc = dashboardLogo.dataset.logoLight;
+        const darkSrc = dashboardLogo.dataset.logoDark;
+        const nextSrc = theme === 'dark' ? darkSrc : lightSrc;
+        if (nextSrc) {
+            dashboardLogo.setAttribute('src', nextSrc);
         }
     }
     function applyTheme(theme) {
         rootElement.classList.toggle('dark', theme === 'dark');
         localStorage.setItem('debtLiteTheme', theme);
         updateThemeToggleUI(theme);
+        updateLogo(theme);
     }
     const storedThemePreference = localStorage.getItem('debtLiteTheme') === 'dark' ? 'dark' : 'light';
     applyTheme(storedThemePreference);
