@@ -62,7 +62,14 @@
         class="fixed top-0 left-0 z-40 flex h-full w-72 max-w-full -translate-x-full transform flex-col gap-6 bg-pure-white p-8 shadow-2xl transition-transform duration-300 dark:bg-graphite"
         aria-label="Primary navigation">
         <div class="flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-deep-black dark:text-pure-white">Your Payment Plan</h2>
+            <div class="flex items-center gap-3">
+                <a
+                    href="../index.html"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-soft-gray/50 text-deep-black transition hover:bg-soft-gray focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:ring-offset-2 dark:bg-charcoal-gray/70 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-offset-graphite"
+                    aria-label="Back to start">
+                    <span aria-hidden="true">🏠</span>
+                </a>
+            </div>
             <button
                 id="menu-close"
                 type="button"
@@ -71,6 +78,7 @@
                 ✕
             </button>
         </div>
+        <h2 class="text-lg font-semibold text-deep-black dark:text-pure-white">Your Payment Plan</h2>
         <nav class="space-y-4 text-sm font-medium text-deep-black/80 dark:text-pure-white/80">
             <a href="dashboard.html" class="block rounded-lg bg-soft-gray/50 px-4 py-3 transition hover:bg-soft-gray dark:bg-charcoal-gray/60 dark:hover:bg-charcoal-gray">
                 Overview
