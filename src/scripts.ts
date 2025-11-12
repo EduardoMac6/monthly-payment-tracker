@@ -75,15 +75,16 @@ document.addEventListener('DOMContentLoaded', function (): void {
 
         if (toggle.checked) {
             track?.classList.remove('bg-gray-300');
-            track?.classList.add('bg-lime-vibrant', 'shadow-inner');
+            track?.classList.remove('dark:bg-charcoal-gray');
+            track?.classList.add('bg-lime-vibrant', 'dark:bg-lime-vibrant/90', 'shadow-inner');
             thumb?.classList.add('translate-x-6');
             statusLabel?.classList.remove('text-gray-500', 'dark:text-gray-300');
             statusLabel?.classList.add('text-deep-black', 'dark:text-pure-white');
             statusLabel && (statusLabel.textContent = 'Paid');
             label.setAttribute('data-state', 'paid');
         } else {
-            track?.classList.remove('bg-lime-vibrant', 'shadow-inner');
-            track?.classList.add('bg-gray-300');
+            track?.classList.remove('bg-lime-vibrant', 'dark:bg-lime-vibrant/90', 'shadow-inner');
+            track?.classList.add('bg-gray-300', 'dark:bg-charcoal-gray');
             thumb?.classList.remove('translate-x-6');
             statusLabel?.classList.remove('text-deep-black', 'dark:text-pure-white');
             statusLabel?.classList.add('text-gray-500', 'dark:text-gray-300');
@@ -186,6 +187,11 @@ document.addEventListener('DOMContentLoaded', function (): void {
     const dashboardLogo: HTMLImageElement | null = document.getElementById('dashboard-logo') as HTMLImageElement | null;
     const rootElement: HTMLElement = document.documentElement;
 
+    const sidePanel: HTMLElement | null = document.getElementById('side-panel');
+    const panelOverlay: HTMLElement | null = document.getElementById('panel-overlay');
+    const menuToggle: HTMLButtonElement | null = document.getElementById('menu-toggle') as HTMLButtonElement | null;
+    const menuClose: HTMLButtonElement | null = document.getElementById('menu-close') as HTMLButtonElement | null;
+
     function updateThemeToggleUI(theme: ThemeChoice): void {
         themeToggle?.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
         themeToggle?.setAttribute('data-theme', theme);
@@ -219,6 +225,36 @@ document.addEventListener('DOMContentLoaded', function (): void {
     themeToggle?.addEventListener('click', function(): void {
         const isDark: boolean = rootElement.classList.contains('dark');
         applyTheme(isDark ? 'light' : 'dark');
+    });
+
+    function setPanelState(isOpen: boolean): void {
+        if (!sidePanel || !panelOverlay || !menuToggle) {
+            return;
+        }
+        sidePanel.classList.toggle('-translate-x-full', !isOpen);
+        panelOverlay.classList.toggle('opacity-0', !isOpen);
+        panelOverlay.classList.toggle('opacity-100', isOpen);
+        panelOverlay.classList.toggle('pointer-events-none', !isOpen);
+        menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+
+    menuToggle?.addEventListener('click', function(): void {
+        const isCurrentlyOpen: boolean = sidePanel ? !sidePanel.classList.contains('-translate-x-full') : false;
+        setPanelState(!isCurrentlyOpen);
+    });
+
+    menuClose?.addEventListener('click', function(): void {
+        setPanelState(false);
+    });
+
+    panelOverlay?.addEventListener('click', function(): void {
+        setPanelState(false);
+    });
+
+    document.addEventListener('keydown', function(event: KeyboardEvent): void {
+        if (event.key === 'Escape') {
+            setPanelState(false);
+        }
     });
 });
 

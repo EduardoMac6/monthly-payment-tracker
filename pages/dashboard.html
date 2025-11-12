@@ -39,6 +39,51 @@
     </head>
 <body class="bg-pastel-green dark:bg-night-sky flex items-center justify-center min-h-screen p-4 md:p-6 transition-colors duration-300 text-deep-black dark:text-pure-white relative">
 
+    <button
+        id="menu-toggle"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="side-panel"
+        class="absolute top-6 left-6 inline-flex flex-col gap-1.5 rounded-full bg-pure-white/80 px-4 py-3 text-deep-black shadow-md transition hover:bg-pure-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-vibrant dark:bg-graphite/80 dark:text-pure-white dark:hover:bg-graphite dark:focus:ring-offset-night-sky">
+        <span class="sr-only">Toggle menu</span>
+        <span class="h-0.5 w-6 rounded-full bg-current transition"></span>
+        <span class="h-0.5 w-6 rounded-full bg-current transition"></span>
+        <span class="h-0.5 w-6 rounded-full bg-current transition"></span>
+    </button>
+
+    <div
+        id="panel-overlay"
+        class="fixed inset-0 bg-deep-black/40 opacity-0 pointer-events-none transition-opacity duration-300"
+        aria-hidden="true"></div>
+
+    <aside
+        id="side-panel"
+        class="fixed top-0 left-0 z-40 flex h-full w-72 max-w-full -translate-x-full transform flex-col gap-6 bg-pure-white p-8 shadow-2xl transition-transform duration-300 dark:bg-graphite"
+        aria-label="Primary navigation">
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-deep-black dark:text-pure-white">Your Payment Plan</h2>
+            <button
+                id="menu-close"
+                type="button"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-soft-gray/60 text-deep-black transition hover:bg-soft-gray focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:ring-offset-2 dark:bg-charcoal-gray/80 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-offset-graphite">
+                <span class="sr-only">Close menu</span>
+                ✕
+            </button>
+        </div>
+        <nav class="space-y-4 text-sm font-medium text-deep-black/80 dark:text-pure-white/80">
+            <a href="dashboard.html" class="block rounded-lg bg-soft-gray/50 px-4 py-3 transition hover:bg-soft-gray dark:bg-charcoal-gray/60 dark:hover:bg-charcoal-gray">
+                Overview
+            </a>
+            <a href="#payment-table-body" class="block rounded-lg px-4 py-3 transition hover:bg-soft-gray dark:hover:bg-charcoal-gray">
+                Payment Schedule
+            </a>
+            <a href="#total-paid" class="block rounded-lg px-4 py-3 transition hover:bg-soft-gray dark:hover:bg-charcoal-gray">
+                Track Totals
+            </a>
+        </nav>
+    </aside>
+
     <div class="absolute top-6 right-6">
         <button
             id="theme-toggle"

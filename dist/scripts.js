@@ -67,7 +67,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const statusLabel = label.querySelector('.status-label');
         if (toggle.checked) {
             track?.classList.remove('bg-gray-300');
-            track?.classList.add('bg-lime-vibrant', 'shadow-inner');
+            track?.classList.remove('dark:bg-charcoal-gray');
+            track?.classList.add('bg-lime-vibrant', 'dark:bg-lime-vibrant/90', 'shadow-inner');
             thumb?.classList.add('translate-x-6');
             statusLabel?.classList.remove('text-gray-500', 'dark:text-gray-300');
             statusLabel?.classList.add('text-deep-black', 'dark:text-pure-white');
@@ -75,8 +76,8 @@ document.addEventListener('DOMContentLoaded', function () {
             label.setAttribute('data-state', 'paid');
         }
         else {
-            track?.classList.remove('bg-lime-vibrant', 'shadow-inner');
-            track?.classList.add('bg-gray-300');
+            track?.classList.remove('bg-lime-vibrant', 'dark:bg-lime-vibrant/90', 'shadow-inner');
+            track?.classList.add('bg-gray-300', 'dark:bg-charcoal-gray');
             thumb?.classList.remove('translate-x-6');
             statusLabel?.classList.remove('text-deep-black', 'dark:text-pure-white');
             statusLabel?.classList.add('text-gray-500', 'dark:text-gray-300');
@@ -158,6 +159,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const themeLabel = document.getElementById('theme-toggle-label');
     const dashboardLogo = document.getElementById('dashboard-logo');
     const rootElement = document.documentElement;
+    const sidePanel = document.getElementById('side-panel');
+    const panelOverlay = document.getElementById('panel-overlay');
+    const menuToggle = document.getElementById('menu-toggle');
+    const menuClose = document.getElementById('menu-close');
     function updateThemeToggleUI(theme) {
         themeToggle?.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
         themeToggle?.setAttribute('data-theme', theme);
@@ -187,5 +192,30 @@ document.addEventListener('DOMContentLoaded', function () {
     themeToggle?.addEventListener('click', function () {
         const isDark = rootElement.classList.contains('dark');
         applyTheme(isDark ? 'light' : 'dark');
+    });
+    function setPanelState(isOpen) {
+        if (!sidePanel || !panelOverlay || !menuToggle) {
+            return;
+        }
+        sidePanel.classList.toggle('-translate-x-full', !isOpen);
+        panelOverlay.classList.toggle('opacity-0', !isOpen);
+        panelOverlay.classList.toggle('opacity-100', isOpen);
+        panelOverlay.classList.toggle('pointer-events-none', !isOpen);
+        menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    }
+    menuToggle?.addEventListener('click', function () {
+        const isCurrentlyOpen = sidePanel ? !sidePanel.classList.contains('-translate-x-full') : false;
+        setPanelState(!isCurrentlyOpen);
+    });
+    menuClose?.addEventListener('click', function () {
+        setPanelState(false);
+    });
+    panelOverlay?.addEventListener('click', function () {
+        setPanelState(false);
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            setPanelState(false);
+        }
     });
 });
