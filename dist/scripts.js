@@ -424,10 +424,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const themeLabel = document.getElementById('theme-toggle-label');
     const dashboardLogo = document.getElementById('dashboard-logo');
     const rootElement = document.documentElement;
-    const sidePanel = document.getElementById('side-panel');
-    const panelOverlay = document.getElementById('panel-overlay');
-    const menuToggle = document.getElementById('menu-toggle');
-    const menuClose = document.getElementById('menu-close');
+    // Menu elements are handled by assets/js/menu.js component
     function updateThemeToggleUI(theme) {
         themeToggle?.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
         themeToggle?.setAttribute('data-theme', theme);
@@ -458,29 +455,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const isDark = rootElement.classList.contains('dark');
         applyTheme(isDark ? 'light' : 'dark');
     });
-    function setPanelState(isOpen) {
-        if (!sidePanel || !panelOverlay || !menuToggle) {
-            return;
-        }
-        sidePanel.classList.toggle('-translate-x-full', !isOpen);
-        panelOverlay.classList.toggle('opacity-0', !isOpen);
-        panelOverlay.classList.toggle('opacity-100', isOpen);
-        panelOverlay.classList.toggle('pointer-events-none', !isOpen);
-        menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    }
-    menuToggle?.addEventListener('click', function () {
-        const isCurrentlyOpen = sidePanel ? !sidePanel.classList.contains('-translate-x-full') : false;
-        setPanelState(!isCurrentlyOpen);
-    });
-    menuClose?.addEventListener('click', function () {
-        setPanelState(false);
-    });
-    panelOverlay?.addEventListener('click', function () {
-        setPanelState(false);
-    });
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-            setPanelState(false);
-        }
-    });
+    // Menu functionality is now handled by assets/js/menu.js component
+    // The menu component handles open/close functionality
+    // This file only handles dashboard-specific logic like rendering plans list
 });

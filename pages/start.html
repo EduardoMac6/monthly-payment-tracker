@@ -37,8 +37,67 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/shared.css">
     <link rel="stylesheet" href="../assets/css/start.css">
+    <script src="../assets/js/menu.js"></script>
 </head>
 <body class="bg-pastel-green dark:bg-night-sky min-h-screen flex items-center justify-center p-6 transition-colors duration-300 text-deep-black dark:text-pure-white relative">
+    
+    <!-- Menu Toggle Button -->
+    <button
+        id="menu-toggle"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="side-panel"
+        class="absolute top-6 left-6 inline-flex flex-col gap-1.5 rounded-full bg-pure-white/80 px-4 py-3 text-deep-black shadow-md transition hover:bg-pure-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lime-vibrant dark:bg-graphite/80 dark:text-pure-white dark:hover:bg-graphite dark:focus:ring-offset-night-sky z-30">
+        <span class="sr-only">Toggle menu</span>
+        <span class="h-0.5 w-6 rounded-full bg-current transition"></span>
+        <span class="h-0.5 w-6 rounded-full bg-current transition"></span>
+        <span class="h-0.5 w-6 rounded-full bg-current transition"></span>
+    </button>
+
+    <!-- Menu Overlay -->
+    <div
+        id="panel-overlay"
+        class="fixed inset-0 bg-deep-black/40 opacity-0 pointer-events-none transition-opacity duration-300 z-40"
+        aria-hidden="true"></div>
+
+    <!-- Side Panel Menu -->
+    <aside
+        id="side-panel"
+        class="fixed top-0 left-0 z-50 flex h-full w-72 max-w-full -translate-x-full transform flex-col gap-6 bg-pure-white p-8 shadow-2xl transition-transform duration-300 dark:bg-graphite"
+        aria-label="Primary navigation">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a
+                    href="start.html"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-soft-gray/50 text-deep-black transition hover:bg-soft-gray focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:ring-offset-2 dark:bg-charcoal-gray/70 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-offset-graphite"
+                    aria-label="Back to start">
+                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </a>
+            </div>
+            <button
+                id="menu-close"
+                type="button"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-soft-gray/60 text-deep-black transition hover:bg-soft-gray focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:ring-offset-2 dark:bg-charcoal-gray/80 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-offset-graphite">
+                <span class="sr-only">Close menu</span>
+                ✕
+            </button>
+        </div>
+        <h2 class="text-lg font-semibold text-deep-black dark:text-pure-white">Your Payment Plan</h2>
+        
+        <nav class="space-y-4 text-sm font-medium text-deep-black/80 dark:text-pure-white/80 border-t border-soft-gray/60 dark:border-charcoal-gray/60 pt-4">
+            <a href="start.html" class="block rounded-lg bg-soft-gray/50 px-4 py-3 transition hover:bg-soft-gray dark:bg-charcoal-gray/60 dark:hover:bg-charcoal-gray">
+                Create New Plan
+            </a>
+            <a href="dashboard.html" class="block rounded-lg px-4 py-3 transition hover:bg-soft-gray dark:hover:bg-charcoal-gray">
+                View Dashboard
+            </a>
+        </nav>
+    </aside>
+
     <div class="absolute top-6 right-6">
         <button
             id="theme-toggle"

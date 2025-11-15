@@ -502,10 +502,7 @@ document.addEventListener('DOMContentLoaded', function (): void {
     const dashboardLogo: HTMLImageElement | null = document.getElementById('dashboard-logo') as HTMLImageElement | null;
     const rootElement: HTMLElement = document.documentElement;
 
-    const sidePanel: HTMLElement | null = document.getElementById('side-panel');
-    const panelOverlay: HTMLElement | null = document.getElementById('panel-overlay');
-    const menuToggle: HTMLButtonElement | null = document.getElementById('menu-toggle') as HTMLButtonElement | null;
-    const menuClose: HTMLButtonElement | null = document.getElementById('menu-close') as HTMLButtonElement | null;
+    // Menu elements are handled by assets/js/menu.js component
 
     function updateThemeToggleUI(theme: ThemeChoice): void {
         themeToggle?.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
@@ -542,34 +539,8 @@ document.addEventListener('DOMContentLoaded', function (): void {
         applyTheme(isDark ? 'light' : 'dark');
     });
 
-    function setPanelState(isOpen: boolean): void {
-        if (!sidePanel || !panelOverlay || !menuToggle) {
-            return;
-        }
-        sidePanel.classList.toggle('-translate-x-full', !isOpen);
-        panelOverlay.classList.toggle('opacity-0', !isOpen);
-        panelOverlay.classList.toggle('opacity-100', isOpen);
-        panelOverlay.classList.toggle('pointer-events-none', !isOpen);
-        menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    }
-
-    menuToggle?.addEventListener('click', function(): void {
-        const isCurrentlyOpen: boolean = sidePanel ? !sidePanel.classList.contains('-translate-x-full') : false;
-        setPanelState(!isCurrentlyOpen);
-    });
-
-    menuClose?.addEventListener('click', function(): void {
-        setPanelState(false);
-    });
-
-    panelOverlay?.addEventListener('click', function(): void {
-        setPanelState(false);
-    });
-
-    document.addEventListener('keydown', function(event: KeyboardEvent): void {
-        if (event.key === 'Escape') {
-            setPanelState(false);
-        }
-    });
+    // Menu functionality is now handled by assets/js/menu.js component
+    // The menu component handles open/close functionality
+    // This file only handles dashboard-specific logic like rendering plans list
 });
 
