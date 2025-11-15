@@ -79,7 +79,16 @@
             </button>
         </div>
         <h2 class="text-lg font-semibold text-deep-black dark:text-pure-white">Your Payment Plan</h2>
-        <nav class="space-y-4 text-sm font-medium text-deep-black/80 dark:text-pure-white/80">
+        
+        <!-- Lista de Planes Guardados -->
+        <div class="space-y-2 mb-4">
+            <h3 class="text-xs font-semibold uppercase tracking-wide text-deep-black/60 dark:text-pure-white/60 mb-2">Saved Plans</h3>
+            <div id="plans-list" class="space-y-2 max-h-64 overflow-y-auto">
+                <!-- Los planes se cargarán dinámicamente aquí -->
+            </div>
+        </div>
+
+        <nav class="space-y-4 text-sm font-medium text-deep-black/80 dark:text-pure-white/80 border-t border-soft-gray/60 dark:border-charcoal-gray/60 pt-4">
             <a href="dashboard.html" class="block rounded-lg bg-soft-gray/50 px-4 py-3 transition hover:bg-soft-gray dark:bg-charcoal-gray/60 dark:hover:bg-charcoal-gray">
                 Overview
             </a>
@@ -120,7 +129,8 @@
                         data-logo-light="../assets/images/Logo_Debtlite_black.svg"
                         data-logo-dark="../assets/images/Logo_Debtlite_green_white.svg">
                 </h1>
-                <p class="text-gray-600 dark:text-pure-white/70 mt-2 transition-colors duration-300">Track your 12-month payment plan.</p>
+                <h2 id="plan-name-header" class="text-2xl font-bold text-deep-black dark:text-pure-white transition-colors duration-300">Payment Plan</h2>
+                <p id="plan-description" class="text-gray-600 dark:text-pure-white/70 mt-2 transition-colors duration-300">Track your payment plan.</p>
             </header>
 
             <!-- Totals Summary -->

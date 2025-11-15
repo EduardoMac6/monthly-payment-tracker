@@ -112,6 +112,15 @@
                         12 months
                     </button>
                 </div>
+                <div class="pt-2 border-t border-soft-gray/60 dark:border-charcoal-gray/60">
+                    <button
+                        type="button"
+                        data-months="one-time"
+                        class="month-button w-full rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
+                        One-time payment
+                    </button>
+                    <p class="mt-2 text-xs text-deep-black/60 dark:text-pure-white/60 transition-colors duration-300">Use this if you prefer to track a single, upfront payment instead of monthly installments.</p>
+                </div>
             </div>
         </section>
 
@@ -205,9 +214,37 @@
 
             if (!continueBtn.disabled) {
                 const planName = planNameInput.value.trim();
-                sessionStorage.setItem('debtLiteName', planName);
-                sessionStorage.setItem('debtLiteAmount', amountValue.toString());
-                sessionStorage.setItem('debtLiteMonths', selectedMonths);
+                const numberOfMonths = selectedMonths === 'one-time' ? 1 : parseInt(selectedMonths, 10);
+                const monthlyPayment = numberOfMonths === 1 ? amountValue : amountValue / numberOfMonths;
+
+                // Crear objeto del plan
+                const newPlan = {
+                    id: Date.now().toString(), // ID único basado en timestamp
+                    planName: planName,
+                    totalAmount: amountValue,
+                    numberOfMonths: selectedMonths === 'one-time' ? 'one-time' : numberOfMonths,
+                    monthlyPayment: monthlyPayment,
+                    createdAt: new Date().toISOString(),
+                    isActive: true
+                };
+
+                // Obtener planes existentes o crear array vacío
+                const existingPlans = JSON.parse(localStorage.getItem('debtLitePlans') || '[]');
+                
+                // Desactivar todos los planes anteriores (solo uno activo a la vez)
+                existingPlans.forEach(plan => {
+                    plan.isActive = false;
+                });
+
+                // Agregar el nuevo plan
+                existingPlans.push(newPlan);
+
+                // Guardar en localStorage
+                localStorage.setItem('debtLitePlans', JSON.stringify(existingPlans));
+
+                // También guardar el plan activo por separado para fácil acceso
+                localStorage.setItem('debtLiteActivePlanId', newPlan.id);
+
                 window.location.href = 'dashboard.html';
             }
         });

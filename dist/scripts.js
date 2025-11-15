@@ -1,17 +1,64 @@
 "use strict";
 document.addEventListener('DOMContentLoaded', function () {
-    // --- Initial Setup ---
-    const totalCost = 6390.00;
-    const monthlyPayment = 533.00;
-    const numberOfMonths = 12;
+    // --- Get Active Plan from localStorage ---
+    function getActivePlan() {
+        const plansJson = localStorage.getItem('debtLitePlans');
+        if (!plansJson) {
+            return null;
+        }
+        const plans = JSON.parse(plansJson);
+        const activePlanId = localStorage.getItem('debtLiteActivePlanId');
+        if (activePlanId) {
+            const plan = plans.find(p => p.id === activePlanId);
+            if (plan) {
+                return plan;
+            }
+        }
+        // Fallback: buscar el primer plan activo
+        const activePlan = plans.find(p => p.isActive);
+        return activePlan || (plans.length > 0 ? plans[plans.length - 1] : null);
+    }
+    // --- Get All Plans ---
+    function getAllPlans() {
+        const plansJson = localStorage.getItem('debtLitePlans');
+        return plansJson ? JSON.parse(plansJson) : [];
+    }
+    // --- Check if plan exists, redirect if not ---
+    const activePlanOrNull = getActivePlan();
+    if (!activePlanOrNull) {
+        // No hay plan activo, redirigir a start.html
+        if (confirm('No payment plan found. Would you like to create one?')) {
+            window.location.href = 'start.html';
+        }
+        return;
+    }
+    // A partir de aquí, activePlan nunca será null
+    const activePlan = activePlanOrNull;
+    // --- Initial Setup from Active Plan ---
+    const totalCost = activePlan.totalAmount;
+    const monthlyPayment = activePlan.monthlyPayment;
+    const numberOfMonths = activePlan.numberOfMonths === 'one-time' ? 1 : activePlan.numberOfMonths;
+    const isOneTimePayment = activePlan.numberOfMonths === 'one-time';
     const tableBody = document.getElementById('payment-table-body');
     const totalPaidEl = document.getElementById('total-paid');
     const remainingBalanceEl = document.getElementById('remaining-balance');
     const totalCostEl = document.getElementById('total-cost');
+    const planNameHeader = document.getElementById('plan-name-header');
+    const planDescription = document.getElementById('plan-description');
     // Validate that the required elements exist
     if (!tableBody || !totalPaidEl || !remainingBalanceEl || !totalCostEl) {
         console.error('Required DOM elements were not found');
         return;
+    }
+    // Update header with plan name
+    if (planNameHeader) {
+        planNameHeader.textContent = activePlan.planName;
+    }
+    if (planDescription) {
+        const monthsText = isOneTimePayment
+            ? 'One-time payment'
+            : `${numberOfMonths}-month payment plan`;
+        planDescription.textContent = `Track your ${monthsText.toLowerCase()}.`;
     }
     // --- Currency Formatter ---
     const currencyFormatter = new Intl.NumberFormat('es-MX', {
@@ -21,31 +68,17 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Generate the Table ---
     function generateTable() {
         let tableHTML = '';
-        for (let i = 1; i <= numberOfMonths; i++) {
-            // Adjust the final payment so the total matches exactly
-            const payment = (i === numberOfMonths)
-                ? (totalCost - (monthlyPayment * (numberOfMonths - 1)))
-                : monthlyPayment;
-            // Special classes for the last row (rounded bottom corners)
-            const isLastRow = i === numberOfMonths;
-            const rowClasses = isLastRow
-                ? 'border-b-0 hover:bg-soft-gray/40 transition-colors dark:hover:bg-charcoal-gray/60'
-                : 'border-b border-gray-200 hover:bg-soft-gray/40 transition-colors dark:border-charcoal-gray/50 dark:hover:bg-charcoal-gray/60';
-            const firstCellClasses = isLastRow
-                ? 'py-4 px-4 md:px-6 text-left whitespace-nowrap rounded-bl-3xl text-deep-black dark:text-pure-white'
-                : 'py-4 px-4 md:px-6 text-left whitespace-nowrap text-deep-black dark:text-pure-white';
-            const lastCellClasses = isLastRow
-                ? 'py-4 px-4 md:px-6 text-center rounded-br-3xl'
-                : 'py-4 px-4 md:px-6 text-center';
+        if (isOneTimePayment) {
+            // One-time payment: solo una fila
             tableHTML += `
-                <tr class="${rowClasses}">
-                    <td class="${firstCellClasses}">
-                        <span class="font-medium text-deep-black dark:text-pure-white">Month ${i}</span>
+                <tr class="border-b-0 hover:bg-soft-gray/40 transition-colors dark:hover:bg-charcoal-gray/60">
+                    <td class="py-4 px-4 md:px-6 text-left whitespace-nowrap rounded-bl-3xl text-deep-black dark:text-pure-white">
+                        <span class="font-medium text-deep-black dark:text-pure-white">One-time Payment</span>
                     </td>
-                    <td class="py-4 px-4 md:px-6 text-center font-mono text-deep-black dark:text-pure-white font-semibold">${currencyFormatter.format(payment)}</td>
-                    <td class="${lastCellClasses}">
+                    <td class="py-4 px-4 md:px-6 text-center font-mono text-deep-black dark:text-pure-white font-semibold">${currencyFormatter.format(totalCost)}</td>
+                    <td class="py-4 px-4 md:px-6 text-center rounded-br-3xl">
                         <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full justify-center text-deep-black dark:text-pure-white">
-                            <input type="checkbox" class="payment-toggle sr-only peer" data-amount="${payment}" aria-label="Mark month ${i} as paid" role="switch">
+                            <input type="checkbox" class="payment-toggle sr-only peer" data-amount="${totalCost}" data-month-index="0" aria-label="Mark payment as paid" role="switch">
                             <span class="toggle-track relative inline-flex h-8 w-14 flex-shrink-0 items-center rounded-full bg-gray-300 transition-all duration-300 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-lime-vibrant dark:bg-charcoal-gray peer-focus-visible:ring-offset-pure-white dark:peer-focus-visible:ring-offset-graphite">
                                 <span class="toggle-thumb absolute left-1 top-1 h-6 w-6 rounded-full bg-pure-white shadow-md transition-transform duration-300 ease-out transform dark:bg-pure-white"></span>
                             </span>
@@ -54,6 +87,43 @@ document.addEventListener('DOMContentLoaded', function () {
                     </td>
                 </tr>
             `;
+        }
+        else {
+            // Monthly payments
+            for (let i = 1; i <= numberOfMonths; i++) {
+                // Adjust the final payment so the total matches exactly
+                const payment = (i === numberOfMonths)
+                    ? (totalCost - (monthlyPayment * (numberOfMonths - 1)))
+                    : monthlyPayment;
+                // Special classes for the last row (rounded bottom corners)
+                const isLastRow = i === numberOfMonths;
+                const rowClasses = isLastRow
+                    ? 'border-b-0 hover:bg-soft-gray/40 transition-colors dark:hover:bg-charcoal-gray/60'
+                    : 'border-b border-gray-200 hover:bg-soft-gray/40 transition-colors dark:border-charcoal-gray/50 dark:hover:bg-charcoal-gray/60';
+                const firstCellClasses = isLastRow
+                    ? 'py-4 px-4 md:px-6 text-left whitespace-nowrap rounded-bl-3xl text-deep-black dark:text-pure-white'
+                    : 'py-4 px-4 md:px-6 text-left whitespace-nowrap text-deep-black dark:text-pure-white';
+                const lastCellClasses = isLastRow
+                    ? 'py-4 px-4 md:px-6 text-center rounded-br-3xl'
+                    : 'py-4 px-4 md:px-6 text-center';
+                tableHTML += `
+                <tr class="${rowClasses}">
+                    <td class="${firstCellClasses}">
+                        <span class="font-medium text-deep-black dark:text-pure-white">Month ${i}</span>
+                    </td>
+                    <td class="py-4 px-4 md:px-6 text-center font-mono text-deep-black dark:text-pure-white font-semibold">${currencyFormatter.format(payment)}</td>
+                    <td class="${lastCellClasses}">
+                        <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full justify-center text-deep-black dark:text-pure-white">
+                            <input type="checkbox" class="payment-toggle sr-only peer" data-amount="${payment}" data-month-index="${i - 1}" aria-label="Mark month ${i} as paid" role="switch">
+                            <span class="toggle-track relative inline-flex h-8 w-14 flex-shrink-0 items-center rounded-full bg-gray-300 transition-all duration-300 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-lime-vibrant dark:bg-charcoal-gray peer-focus-visible:ring-offset-pure-white dark:peer-focus-visible:ring-offset-graphite">
+                                <span class="toggle-thumb absolute left-1 top-1 h-6 w-6 rounded-full bg-pure-white shadow-md transition-transform duration-300 ease-out transform dark:bg-pure-white"></span>
+                            </span>
+                            <span class="status-label text-sm font-semibold text-gray-500 dark:text-gray-300 transition-colors duration-300">Pending</span>
+                        </label>
+                    </td>
+                </tr>
+            `;
+            }
         }
         tableBody.innerHTML = tableHTML;
     }
@@ -107,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
             remaining
         };
     }
-    // --- Save Payment Status to localStorage ---
+    // --- Save Payment Status to localStorage (by plan ID) ---
     function savePaymentStatus(totals) {
         const snapshot = totals ?? updateTotals();
         const paymentToggles = document.querySelectorAll('.payment-toggle');
@@ -115,12 +185,13 @@ document.addEventListener('DOMContentLoaded', function () {
         paymentToggles.forEach((toggle) => {
             statusArray.push(toggle.checked ? 'paid' : 'pending');
         });
-        localStorage.setItem('paymentStatus', JSON.stringify(statusArray));
-        localStorage.setItem('paymentTotals', JSON.stringify(snapshot));
+        // Guardar usando el ID del plan como clave
+        localStorage.setItem(`paymentStatus_${activePlan.id}`, JSON.stringify(statusArray));
+        localStorage.setItem(`paymentTotals_${activePlan.id}`, JSON.stringify(snapshot));
     }
-    // --- Load Payment Status from localStorage ---
+    // --- Load Payment Status from localStorage (by plan ID) ---
     function loadPaymentStatus() {
-        const savedStatus = localStorage.getItem('paymentStatus');
+        const savedStatus = localStorage.getItem(`paymentStatus_${activePlan.id}`);
         const statusArray = savedStatus ? JSON.parse(savedStatus) : [];
         const paymentToggles = document.querySelectorAll('.payment-toggle');
         paymentToggles.forEach((toggle, idx) => {
@@ -131,26 +202,190 @@ document.addEventListener('DOMContentLoaded', function () {
             updateToggleVisual(toggle);
         });
     }
+    // --- Render Plans List in Sidebar ---
+    function renderPlansList() {
+        const plansList = document.getElementById('plans-list');
+        if (!plansList) {
+            return;
+        }
+        const allPlans = getAllPlans();
+        if (allPlans.length === 0) {
+            plansList.innerHTML = '<p class="text-xs text-deep-black/60 dark:text-pure-white/60 italic">No plans saved yet</p>';
+            return;
+        }
+        // Ordenar planes: activo primero, luego por fecha (más reciente primero)
+        const sortedPlans = [...allPlans].sort((a, b) => {
+            if (a.isActive && !b.isActive)
+                return -1;
+            if (!a.isActive && b.isActive)
+                return 1;
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+        let plansHTML = '';
+        sortedPlans.forEach((plan) => {
+            const isActive = plan.id === activePlan.id;
+            const monthsText = plan.numberOfMonths === 'one-time'
+                ? 'One-time'
+                : `${plan.numberOfMonths} months`;
+            const formattedAmount = currencyFormatter.format(plan.totalAmount);
+            plansHTML += `
+                <div class="relative group">
+                    <button
+                        type="button"
+                        data-plan-id="${plan.id}"
+                        class="plan-item w-full text-left rounded-lg px-4 py-3 pr-10 transition-all duration-200 ${isActive
+                ? 'bg-lime-vibrant text-deep-black shadow-md'
+                : 'bg-soft-gray/40 text-deep-black hover:bg-soft-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray'}"
+                        ${isActive ? 'aria-current="true"' : ''}>
+                        <div class="font-semibold text-sm mb-1 truncate">${plan.planName}</div>
+                        <div class="text-xs opacity-75">${monthsText} • ${formattedAmount}</div>
+                        ${isActive ? '<div class="text-xs mt-1 font-medium">Active</div>' : ''}
+                    </button>
+                    <button
+                        type="button"
+                        data-delete-plan-id="${plan.id}"
+                        class="delete-plan-btn absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-red-500/10 hover:bg-red-500/30 text-red-600 dark:text-red-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-graphite"
+                        aria-label="Delete plan ${plan.planName}"
+                        title="Delete plan">
+                        <span class="text-base font-bold leading-none">×</span>
+                    </button>
+                </div>
+            `;
+        });
+        plansList.innerHTML = plansHTML;
+        // Agregar event listeners a los botones de planes (para cambiar de plan)
+        const planButtons = plansList.querySelectorAll('button[data-plan-id]');
+        planButtons.forEach((button) => {
+            button.addEventListener('click', function (event) {
+                // Prevenir que se active si se hizo clic en el botón de eliminar
+                const target = event.target;
+                if (target instanceof HTMLElement && target.closest('.delete-plan-btn')) {
+                    return;
+                }
+                const planId = button.dataset.planId;
+                if (planId && planId !== activePlan.id) {
+                    switchToPlan(planId);
+                }
+            });
+        });
+        // Agregar event listeners a los botones de eliminar
+        const deleteButtons = plansList.querySelectorAll('button[data-delete-plan-id]');
+        deleteButtons.forEach((button) => {
+            button.addEventListener('click', function (event) {
+                event.stopPropagation(); // Prevenir que se active el plan
+                const planId = button.dataset.deletePlanId;
+                if (planId) {
+                    deletePlan(planId);
+                }
+            });
+        });
+    }
+    // --- Delete a Plan ---
+    function deletePlan(planId) {
+        const allPlans = getAllPlans();
+        const planToDelete = allPlans.find(p => p.id === planId);
+        if (!planToDelete) {
+            return;
+        }
+        // Mostrar confirmación
+        const confirmMessage = `¿Estás seguro de que quieres eliminar el plan "${planToDelete.planName}"?\n\nEsta acción no se puede deshacer y se perderán todos los registros de pago asociados.`;
+        if (!confirm(confirmMessage)) {
+            return;
+        }
+        const isDeletingActivePlan = planId === activePlan.id;
+        const remainingPlans = allPlans.filter(p => p.id !== planId);
+        // Eliminar datos de pagos asociados al plan
+        localStorage.removeItem(`paymentStatus_${planId}`);
+        localStorage.removeItem(`paymentTotals_${planId}`);
+        // Si se está eliminando el plan activo
+        if (isDeletingActivePlan) {
+            if (remainingPlans.length > 0) {
+                // Activar el primer plan disponible (o el más reciente)
+                const nextPlan = remainingPlans.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+                nextPlan.isActive = true;
+                localStorage.setItem('debtLiteActivePlanId', nextPlan.id);
+            }
+            else {
+                // No hay más planes, limpiar el ID activo
+                localStorage.removeItem('debtLiteActivePlanId');
+            }
+        }
+        // Guardar planes actualizados
+        localStorage.setItem('debtLitePlans', JSON.stringify(remainingPlans));
+        // Si se eliminó el plan activo y no hay más planes, redirigir
+        if (isDeletingActivePlan && remainingPlans.length === 0) {
+            alert('Plan eliminado. Serás redirigido para crear un nuevo plan.');
+            window.location.href = 'start.html';
+        }
+        else {
+            // Recargar para actualizar la vista
+            location.reload();
+        }
+    }
+    // --- Switch to a Different Plan ---
+    function switchToPlan(planId) {
+        const allPlans = getAllPlans();
+        const targetPlan = allPlans.find(p => p.id === planId);
+        if (!targetPlan) {
+            return;
+        }
+        // Desactivar todos los planes
+        allPlans.forEach((plan) => {
+            plan.isActive = false;
+        });
+        // Activar el plan seleccionado
+        targetPlan.isActive = true;
+        // Guardar cambios
+        localStorage.setItem('debtLitePlans', JSON.stringify(allPlans));
+        localStorage.setItem('debtLiteActivePlanId', planId);
+        // Recargar la página para aplicar el nuevo plan
+        location.reload();
+    }
     // --- Initialization and Event Listeners ---
     generateTable();
     loadPaymentStatus(); // Load saved status
+    renderPlansList(); // Render plans in sidebar
     const initialTotals = updateTotals(); // Calculate initial totals
     savePaymentStatus(initialTotals); // Persist snapshot
     // Update totals when a toggle changes and persist automatically
     tableBody.addEventListener('change', function (event) {
         const target = event.target;
         if (target instanceof HTMLInputElement && target.classList.contains('payment-toggle')) {
+            const monthIndex = parseInt(target.dataset.monthIndex || '0', 10);
+            const isChecked = target.checked;
+            // Obtener todos los checkboxes de pago
+            const allToggles = document.querySelectorAll('.payment-toggle');
+            if (isChecked) {
+                // Si se marca un mes, marcar automáticamente todos los meses anteriores
+                allToggles.forEach((toggle) => {
+                    const toggleIndex = parseInt(toggle.dataset.monthIndex || '0', 10);
+                    if (toggleIndex <= monthIndex && !toggle.checked) {
+                        toggle.checked = true;
+                        updateToggleVisual(toggle);
+                    }
+                });
+            }
+            else {
+                // Si se desmarca un mes, desmarcar automáticamente todos los meses posteriores
+                allToggles.forEach((toggle) => {
+                    const toggleIndex = parseInt(toggle.dataset.monthIndex || '0', 10);
+                    if (toggleIndex >= monthIndex && toggle.checked) {
+                        toggle.checked = false;
+                        updateToggleVisual(toggle);
+                    }
+                });
+            }
             const updatedTotals = updateTotals();
             savePaymentStatus(updatedTotals);
         }
     });
-    // Clear Records button
+    // Clear Records button (only clears payment status for current plan)
     const clearBtn = document.getElementById('clear-btn');
     if (clearBtn) {
         clearBtn.addEventListener('click', function () {
-            if (confirm('Are you sure you want to clear the payment records?')) {
-                localStorage.removeItem('paymentStatus');
-                localStorage.removeItem('paymentTotals');
+            if (confirm('Are you sure you want to clear the payment records for this plan?')) {
+                localStorage.removeItem(`paymentStatus_${activePlan.id}`);
+                localStorage.removeItem(`paymentTotals_${activePlan.id}`);
                 location.reload();
             }
         });
