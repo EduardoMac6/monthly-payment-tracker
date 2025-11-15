@@ -48,8 +48,24 @@
             data-theme="light">
             <span class="theme-toggle-label" id="theme-toggle-label">Light</span>
             <span class="theme-toggle-track" aria-hidden="true">
-                <span class="theme-toggle-icon sun">☀️</span>
-                <span class="theme-toggle-icon moon">🌙</span>
+                <span class="theme-toggle-icon sun">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </span>
+                <span class="theme-toggle-icon moon">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </span>
                 <span class="theme-toggle-thumb"></span>
             </span>
         </button>
@@ -77,6 +93,18 @@
                     class="w-full rounded-2xl border border-soft-gray bg-pure-white px-4 py-3 text-lg text-deep-black placeholder:text-deep-black/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-transparent transition-colors duration-300 dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:placeholder:text-pure-white/60 dark:focus:ring-pure-white"
                     aria-describedby="plan-helper">
                 <p id="plan-helper" class="text-xs text-deep-black/60 dark:text-pure-white/60 transition-colors duration-300">Give your debt a clear name so you can find it easily later.</p>
+            </div>
+
+            <div class="space-y-3">
+                <h2 class="text-sm font-medium text-deep-black dark:text-pure-white transition-colors duration-300">Who owns this debt?</h2>
+                <div class="grid grid-cols-2 gap-3" role="group" aria-label="Debt ownership options">
+                    <button type="button" data-owner="self" class="owner-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
+                        My Debt
+                    </button>
+                    <button type="button" data-owner="other" class="owner-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
+                        Receivables
+                    </button>
+                </div>
             </div>
 
             <div class="space-y-2">
@@ -178,20 +206,46 @@
         const planNameInput = document.getElementById('plan-name');
         const amountInput = document.getElementById('amount-input');
         const monthButtons = Array.from(document.querySelectorAll('.month-button'));
+        const ownerButtons = Array.from(document.querySelectorAll('.owner-button'));
         const continueBtn = document.getElementById('continue-btn');
 
         let selectedMonths = null;
+        let selectedOwner = null;
 
         const updateContinueState = () => {
             const hasName = planNameInput.value.trim().length > 0;
             const amountValue = parseFloat(amountInput.value);
             const hasValidAmount = !Number.isNaN(amountValue) && amountValue > 0;
             const hasMonths = Boolean(selectedMonths);
-            continueBtn.disabled = !(hasName && hasValidAmount && hasMonths);
+            const hasOwner = Boolean(selectedOwner);
+            continueBtn.disabled = !(hasName && hasValidAmount && hasMonths && hasOwner);
         };
 
         planNameInput.addEventListener('input', updateContinueState);
         amountInput.addEventListener('input', updateContinueState);
+
+        ownerButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                selectedOwner = button.dataset.owner;
+
+                ownerButtons.forEach((btn) => {
+                    const isActive = btn === button;
+                    if (isActive) {
+                        // Activar: remover clases inactivas y agregar activas
+                        btn.classList.remove('bg-soft-gray/40', 'dark:bg-charcoal-gray/50', 'dark:text-pure-white');
+                        btn.classList.add('bg-lime-vibrant', 'text-deep-black');
+                        btn.setAttribute('aria-pressed', 'true');
+                    } else {
+                        // Desactivar: remover clases activas y restaurar inactivas
+                        btn.classList.remove('bg-lime-vibrant', 'text-deep-black');
+                        btn.classList.add('bg-soft-gray/40', 'dark:bg-charcoal-gray/50', 'dark:text-pure-white');
+                        btn.setAttribute('aria-pressed', 'false');
+                    }
+                });
+
+                updateContinueState();
+            });
+        });
 
         monthButtons.forEach((button) => {
             button.addEventListener('click', () => {
@@ -199,10 +253,17 @@
 
                 monthButtons.forEach((btn) => {
                     const isActive = btn === button;
-                    btn.classList.toggle('bg-lime-vibrant', isActive);
-                    btn.classList.toggle('text-deep-black', isActive);
-                    btn.classList.toggle('bg-soft-gray/40', !isActive);
-                    btn.setAttribute('aria-pressed', isActive.toString());
+                    if (isActive) {
+                        // Activar: remover clases inactivas y agregar activas
+                        btn.classList.remove('bg-soft-gray/40', 'dark:bg-charcoal-gray/50', 'dark:text-pure-white');
+                        btn.classList.add('bg-lime-vibrant', 'text-deep-black');
+                        btn.setAttribute('aria-pressed', 'true');
+                    } else {
+                        // Desactivar: remover clases activas y restaurar inactivas
+                        btn.classList.remove('bg-lime-vibrant', 'text-deep-black');
+                        btn.classList.add('bg-soft-gray/40', 'dark:bg-charcoal-gray/50', 'dark:text-pure-white');
+                        btn.setAttribute('aria-pressed', 'false');
+                    }
                 });
 
                 updateContinueState();
@@ -224,6 +285,7 @@
                     totalAmount: amountValue,
                     numberOfMonths: selectedMonths === 'one-time' ? 'one-time' : numberOfMonths,
                     monthlyPayment: monthlyPayment,
+                    debtOwner: selectedOwner, // 'self' o 'other'
                     createdAt: new Date().toISOString(),
                     isActive: true
                 };

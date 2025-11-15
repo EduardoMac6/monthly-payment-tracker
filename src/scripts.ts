@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function (): void {
         totalAmount: number;
         numberOfMonths: number | 'one-time';
         monthlyPayment: number;
+        debtOwner?: 'self' | 'other'; // Opcional para compatibilidad con planes antiguos
         createdAt: string;
         isActive: boolean;
     };
@@ -257,22 +258,28 @@ document.addEventListener('DOMContentLoaded', function (): void {
             return;
         }
 
-        // Ordenar planes: activo primero, luego por fecha (más reciente primero)
-        const sortedPlans: Plan[] = [...allPlans].sort((a, b) => {
-            if (a.isActive && !b.isActive) return -1;
-            if (!a.isActive && b.isActive) return 1;
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
+        // Separar planes por propietario
+        const myDebts: Plan[] = allPlans.filter((plan: Plan) => plan.debtOwner === 'self' || !plan.debtOwner); // Incluir planes antiguos sin debtOwner como "self"
+        const otherDebts: Plan[] = allPlans.filter((plan: Plan) => plan.debtOwner === 'other');
 
-        let plansHTML: string = '';
-        sortedPlans.forEach((plan: Plan): void => {
+        // Función para ordenar planes: activo primero, luego por fecha (más reciente primero)
+        const sortPlans = (plans: Plan[]): Plan[] => {
+            return [...plans].sort((a, b) => {
+                if (a.isActive && !b.isActive) return -1;
+                if (!a.isActive && b.isActive) return 1;
+                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            });
+        };
+
+        // Función para renderizar un plan
+        const renderPlan = (plan: Plan): string => {
             const isActive: boolean = plan.id === activePlan.id;
             const monthsText: string = plan.numberOfMonths === 'one-time' 
                 ? 'One-time' 
                 : `${plan.numberOfMonths} months`;
             const formattedAmount: string = currencyFormatter.format(plan.totalAmount);
             
-            plansHTML += `
+            return `
                 <div class="relative group">
                     <button
                         type="button"
@@ -297,7 +304,35 @@ document.addEventListener('DOMContentLoaded', function (): void {
                     </button>
                 </div>
             `;
-        });
+        };
+
+        let plansHTML: string = '';
+
+        // Sección: My Debts
+        if (myDebts.length > 0) {
+            const sortedMyDebts: Plan[] = sortPlans(myDebts);
+            plansHTML += `
+                <div class="mb-4">
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-deep-black/60 dark:text-pure-white/60 mb-2">My Debts</h3>
+                    <div class="space-y-2">
+                        ${sortedMyDebts.map(renderPlan).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Sección: Receivables
+        if (otherDebts.length > 0) {
+            const sortedOtherDebts: Plan[] = sortPlans(otherDebts);
+            plansHTML += `
+                <div class="mb-4">
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-deep-black/60 dark:text-pure-white/60 mb-2">Receivables</h3>
+                    <div class="space-y-2">
+                        ${sortedOtherDebts.map(renderPlan).join('')}
+                    </div>
+                </div>
+            `;
+        }
 
         plansList.innerHTML = plansHTML;
 

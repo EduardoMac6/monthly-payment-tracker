@@ -213,22 +213,27 @@ document.addEventListener('DOMContentLoaded', function () {
             plansList.innerHTML = '<p class="text-xs text-deep-black/60 dark:text-pure-white/60 italic">No plans saved yet</p>';
             return;
         }
-        // Ordenar planes: activo primero, luego por fecha (más reciente primero)
-        const sortedPlans = [...allPlans].sort((a, b) => {
-            if (a.isActive && !b.isActive)
-                return -1;
-            if (!a.isActive && b.isActive)
-                return 1;
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
-        let plansHTML = '';
-        sortedPlans.forEach((plan) => {
+        // Separar planes por propietario
+        const myDebts = allPlans.filter((plan) => plan.debtOwner === 'self' || !plan.debtOwner); // Incluir planes antiguos sin debtOwner como "self"
+        const otherDebts = allPlans.filter((plan) => plan.debtOwner === 'other');
+        // Función para ordenar planes: activo primero, luego por fecha (más reciente primero)
+        const sortPlans = (plans) => {
+            return [...plans].sort((a, b) => {
+                if (a.isActive && !b.isActive)
+                    return -1;
+                if (!a.isActive && b.isActive)
+                    return 1;
+                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            });
+        };
+        // Función para renderizar un plan
+        const renderPlan = (plan) => {
             const isActive = plan.id === activePlan.id;
             const monthsText = plan.numberOfMonths === 'one-time'
                 ? 'One-time'
                 : `${plan.numberOfMonths} months`;
             const formattedAmount = currencyFormatter.format(plan.totalAmount);
-            plansHTML += `
+            return `
                 <div class="relative group">
                     <button
                         type="button"
@@ -251,7 +256,32 @@ document.addEventListener('DOMContentLoaded', function () {
                     </button>
                 </div>
             `;
-        });
+        };
+        let plansHTML = '';
+        // Sección: My Debts
+        if (myDebts.length > 0) {
+            const sortedMyDebts = sortPlans(myDebts);
+            plansHTML += `
+                <div class="mb-4">
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-deep-black/60 dark:text-pure-white/60 mb-2">My Debts</h3>
+                    <div class="space-y-2">
+                        ${sortedMyDebts.map(renderPlan).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        // Sección: Receivables
+        if (otherDebts.length > 0) {
+            const sortedOtherDebts = sortPlans(otherDebts);
+            plansHTML += `
+                <div class="mb-4">
+                    <h3 class="text-xs font-semibold uppercase tracking-wide text-deep-black/60 dark:text-pure-white/60 mb-2">Receivables</h3>
+                    <div class="space-y-2">
+                        ${sortedOtherDebts.map(renderPlan).join('')}
+                    </div>
+                </div>
+            `;
+        }
         plansList.innerHTML = plansHTML;
         // Agregar event listeners a los botones de planes (para cambiar de plan)
         const planButtons = plansList.querySelectorAll('button[data-plan-id]');
