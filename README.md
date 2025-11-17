@@ -1,29 +1,57 @@
 # DebtLite — Monthly Payment Tracker
 
-A lightweight web experience that helps users plan and monitor monthly payments from an onboarding screen through a detailed dashboard.
+A lightweight web experience that helps users plan and monitor monthly payments from a beautiful landing page through an onboarding screen to a detailed dashboard.
 
 ## 🚀 Features
 
-- Guided onboarding in `pages/start.html` to capture the total amount and repayment timeline.
-- Dashboard in `pages/dashboard.html` with a payment summary and interactive status table.
-- Payment progress persists in `localStorage`; onboarding selections are stored in `sessionStorage`.
-- Responsive UI built with Tailwind CSS and optimized for accessibility.
-- TypeScript source compiled to production-ready JavaScript.
+- **Landing Page** (`index.html`) — Modern, gradient-based homepage with sign-in interface
+- **Guided Onboarding** (`pages/start.html`) — Capture total amount and repayment timeline with an intuitive form
+- **Interactive Dashboard** (`pages/dashboard.html`) — Payment summary, interactive status table, and multiple payment plan management
+- **Multiple Payment Plans** — Create and manage multiple payment plans simultaneously
+- **Dark Mode Support** — Toggle between light and dark themes with persistent preference
+- **Payment Tracking** — Mark payments as completed with visual toggles and status indicators
+- **Data Persistence** — Payment progress persists in `localStorage`; onboarding selections stored in `sessionStorage`
+- **Responsive Design** — Mobile-first UI built with Tailwind CSS and optimized for accessibility
+- **Modular Architecture** — TypeScript source organized into components, services, types, and utilities
+- **Type Safety** — Full TypeScript implementation compiled to production-ready JavaScript
 
 ## 📂 Project structure
 
 ```
 monthly-payment-tracker/
-├── assets/                 # Static assets (logos, icons)
-│   └── images/
-├── dist/                   # Compiled JavaScript
-│   └── scripts.js
+├── assets/
+│   ├── css/                # Custom stylesheets
+│   │   ├── shared.css      # Shared styles
+│   │   └── start.css       # Onboarding page styles
+│   ├── js/                 # JavaScript utilities
+│   │   └── menu.js         # Navigation menu logic
+│   └── images/             # Logo and brand assets
+├── dist/                   # Compiled JavaScript output
+│   ├── components/         # UI components
+│   │   ├── payment-table.js
+│   │   └── plan-list.js
+│   ├── pages/              # Page-specific logic
+│   │   └── dashboard.js
+│   ├── services/           # Business logic
+│   │   ├── plans.js
+│   │   └── storage.js
+│   ├── types/              # Type definitions
+│   │   └── plan.js
+│   ├── utils/              # Utility functions
+│   │   └── formatters.js
+│   └── scripts.js          # Main compiled bundle
 ├── pages/
 │   ├── start.html          # Onboarding step
 │   └── dashboard.html      # Main payment dashboard
-├── src/
-│   └── scripts.ts          # TypeScript logic
-├── index.html              # Redirect into `pages/start.html`
+├── src/                    # TypeScript source
+│   ├── components/         # Component modules
+│   ├── pages/              # Page modules
+│   ├── services/           # Service modules
+│   ├── types/              # Type definitions
+│   ├── utils/              # Utility modules
+│   └── scripts.ts          # Main TypeScript entry
+├── index.html              # Landing page
+├── fav.ico                 # Favicon
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -42,19 +70,24 @@ monthly-payment-tracker/
    ```bash
    npm run build
    ```
-   The compiled bundle is saved to `dist/scripts.js` for the dashboard.
+   This compiles all TypeScript files from `src/` into the `dist/` directory, maintaining the modular structure.
 
-3. **Run the product flow**
-   - Open `index.html` in a browser to access the onboarding screen.
-   - Enter the amount you want to manage and choose the number of months.
-   - Click `Continue` to load the dashboard with your selections applied.
+3. **Run the application**
+   - Open `index.html` in a browser to see the landing page
+   - Click "Build my plan" or navigate to `pages/start.html` to begin onboarding
+   - Enter the total amount and number of months for your payment plan
+   - Click "Continue" to load the dashboard with your plan
+   - Use the dashboard to track payments, create multiple plans, and toggle payment status
 
-> Note: Payment configuration now happens in the UI. Editing `src/scripts.ts` is no longer necessary for setting amounts; selections from `pages/start.html` are passed via `sessionStorage`.
+> **Note:** Payment configuration happens entirely in the UI. All user selections from `pages/start.html` are passed via `sessionStorage`, and payment progress is saved in `localStorage`.
 
 ## 🔁 Development workflow
 
-- `npm run build` — Compile once.
-- `npm run watch` — Rebuild automatically when `src/scripts.ts` changes.
+- `npm run build` — Compile TypeScript once
+- `npm run watch` — Watch mode: automatically rebuild when any file in `src/` changes
+- `npm run dev` — Alias for `watch` mode
+
+The TypeScript compiler maintains the directory structure from `src/` to `dist/`, so you can organize your code into modules, components, services, and utilities.
 
 ## 🌐 Quick deploy (GitHub Pages)
 
@@ -65,9 +98,19 @@ monthly-payment-tracker/
 
 ## 🧱 Tech stack
 
-- TypeScript
-- HTML5 + Tailwind CSS (via CDN)
-- localStorage / sessionStorage
+- **TypeScript** — Type-safe development with strict mode enabled
+- **HTML5** — Semantic markup
+- **Tailwind CSS** — Utility-first CSS framework (via CDN)
+- **localStorage / sessionStorage** — Client-side data persistence
+- **Inter Font** — Modern typography via Google Fonts
+
+## 🎨 Design features
+
+- Custom color palette with dark mode support
+- Gradient backgrounds and modern UI elements
+- Responsive navigation with slide-out menu
+- Accessible form controls and interactive elements
+- Smooth transitions and animations
 
 ## 📄 License
 
