@@ -50,6 +50,10 @@ monthly-payment-tracker/
 │   ├── types/              # Type definitions
 │   ├── utils/              # Utility modules
 │   └── scripts.ts          # Main TypeScript entry
+├── docs/                   # Documentation and planning
+│   ├── PLAN_MEJORAS.md     # Detailed improvement plan
+│   ├── BACKEND_GUIDE.md    # Backend implementation guide
+│   └── RESUMEN_EJECUTIVO.md # Executive summary
 ├── index.html              # Landing page
 ├── fav.ico                 # Favicon
 ├── package.json
@@ -111,6 +115,14 @@ The TypeScript compiler maintains the directory structure from `src/` to `dist/`
 - Responsive navigation with slide-out menu
 - Accessible form controls and interactive elements
 - Smooth transitions and animations
+
+## 📚 Documentation
+
+Additional documentation and planning materials are available in the [`docs/`](./docs/) directory:
+
+- **[PLAN_MEJORAS.md](./docs/PLAN_MEJORAS.md)** - Comprehensive improvement plan with detailed phases
+- **[BACKEND_GUIDE.md](./docs/BACKEND_GUIDE.md)** - Step-by-step guide for implementing backend (beginner-friendly)
+- **[RESUMEN_EJECUTIVO.md](./docs/RESUMEN_EJECUTIVO.md)** - Executive summary with priorities and timeline
 
 ## 📄 License
 
