@@ -94,43 +94,54 @@
             <section id="sign-in" class="relative">
                 <div class="absolute -top-16 -right-10 hidden h-48 w-48 rounded-full bg-gradient-to-br from-purple-400/70 via-pink-400/40 to-transparent blur-3xl md:block"></div>
                 <div class="relative space-y-6">
-                    <div class="rounded-[2rem] bg-gradient-to-br from-purple-200/90 via-pink-200/70 to-blue-200/60 p-6 text-deep-black shadow-2xl backdrop-blur-md">
-                        <div class="mb-6 flex items-center justify-between text-sm text-deep-black/70">
-                            <img src="assets/images/Logo_Debtlite_black.svg" alt="DebtLite logo" class="h-8 w-auto">
+                    <div class="relative flex flex-col p-6 text-pure-white shadow-2xl backdrop-blur-md" style="border-radius: 26.529px; background: linear-gradient(244deg, rgba(255, 130, 253, 0.20) -7.21%, rgba(164, 234, 1, 0.20) 120.76%), rgba(255, 255, 255, 0.20); width: 523.94px; height: 313.04px;">
+                        <!-- Logo en la parte superior izquierda -->
+                        <div>
+                            <img src="assets/images/Logo_Debtlite_green_white.svg" alt="DebtLite logo" class="h-8 w-auto">
                         </div>
-                        <div class="space-y-4">
-                            <div class="space-y-2">
-                                <label for="card-name" class="text-xs font-semibold uppercase tracking-[0.3em] text-deep-black/70">Full name</label>
+                        
+                        <!-- Icono de chip de tarjeta alineado a la derecha, en el espacio intermedio -->
+                        <div class="flex justify-end" style="margin-top: 73px; margin-bottom: auto;">
+                            <img src="assets/images/line.svg" alt="Credit card chip" class="h-auto w-auto">
+                        </div>
+                        
+                        <!-- Username y password en la parte inferior -->
+                        <div class="mt-auto space-y-3">
+                            <div class="space-y-1">
+                                <div id="username-display" class="cursor-pointer text-2xl font-semibold text-pure-white transition hover:text-lime-vibrant">User name</div>
                                 <input
                                     id="card-name"
                                     type="text"
-                                    placeholder="Alex Rivera"
-                                    class="w-full rounded-xl border border-transparent bg-pure-white/70 px-4 py-2 text-sm font-semibold text-deep-black placeholder:text-deep-black/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant">
+                                    placeholder="User name"
+                                    class="hidden w-full rounded-xl border border-transparent bg-pure-white/10 px-4 py-2 text-lg font-semibold text-pure-white placeholder:text-pure-white/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant">
                             </div>
-                            <div class="space-y-2">
-                                <label for="card-password" class="text-xs font-semibold uppercase tracking-[0.3em] text-deep-black/70">Password</label>
+                            <div class="space-y-1">
+                                <!-- <div class="text-sm text-pure-white/60">input password</div> -->
                                 <div class="relative">
                                     <input
                                         id="card-password"
                                         type="password"
-                                        value="••••••••"
-                                        class="w-full rounded-xl border border-transparent bg-pure-white/70 px-4 py-2 pr-14 text-sm font-semibold text-deep-black focus:outline-none focus:ring-2 focus:ring-lime-vibrant">
+                                        placeholder="••••••••"
+                                        class="w-full rounded-xl border border-transparent bg-pure-white/0 px-4 py-2 pr-14 text-sm font-semibold text-pure-white placeholder:text-pure-white/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant">
                                     <button
                                         type="button"
                                         id="card-toggle-password"
-                                        class="absolute inset-y-1 right-1 flex items-center rounded-full bg-soft-gray/80 px-3 text-[10px] font-semibold uppercase tracking-[0.3em] text-deep-black transition hover:bg-soft-gray focus:outline-none focus:ring-2 focus:ring-lime-vibrant">
-                                        Show
+                                        class="absolute inset-y-1 right-1 flex items-center justify-center rounded-full bg-pure-white/10 p-2 text-pure-white/80 transition hover:bg-pure-white/20 focus:outline-none focus:ring-2 focus:ring-lime-vibrant">
+                                        <svg id="eye-icon" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <form action="pages/start.html" method="get" class="space-y-5 p-8 backdrop-blur-md text-deep-black" autocomplete="on" novalidate>
+                    <form id="login-form" class="space-y-5" autocomplete="on" novalidate>
+                        <div id="error-message" class="hidden rounded-xl bg-red-500/20 px-4 py-2 text-xs font-semibold text-red-300"></div>
                         <button
-                            href="pages/start.html"
-                            type="button"
-                            class="w-full rounded-2xl bg-pure-white py-3 text-sm font-semibold text-deep-black transition hover:bg-deep-white/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-deep-black">
+                            type="submit"
+                            class="w-full rounded-2xl bg-pure-white py-3 text-sm font-semibold text-deep-black transition hover:bg-pure-white/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pure-white">
                             Sign in
                         </button>
                     </form>
@@ -138,5 +149,94 @@
             </section>
         </main>
     </div>
+
+    <script>
+        // Credenciales válidas
+        const VALID_USERNAME = 'admin';
+        const VALID_PASSWORD = '12345';
+
+        // Referencias a los elementos del formulario
+        const loginForm = document.getElementById('login-form');
+        const nameInput = document.getElementById('card-name');
+        const passwordInput = document.getElementById('card-password');
+        const errorMessage = document.getElementById('error-message');
+        const togglePasswordBtn = document.getElementById('card-toggle-password');
+        const usernameDisplay = document.getElementById('username-display');
+
+        // Función para mostrar errores
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        // Función para ocultar errores
+        function hideError() {
+            errorMessage.classList.add('hidden');
+        }
+
+        // Manejar el toggle de mostrar/ocultar contraseña
+        if (togglePasswordBtn) {
+            const eyeIcon = document.getElementById('eye-icon');
+            
+            togglePasswordBtn.addEventListener('click', function() {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    // Cambiar a icono de ojo cerrado (ocultar contraseña)
+                    eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>`;
+                } else {
+                    passwordInput.type = 'password';
+                    // Cambiar a icono de ojo abierto (mostrar contraseña)
+                    eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
+                }
+            });
+        }
+
+        // Manejar el envío del formulario
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            hideError();
+
+            const username = nameInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            // Validar credenciales
+            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+                // Credenciales correctas, redirigir a start.html
+                window.location.href = 'pages/start.html';
+            } else {
+                // Credenciales incorrectas, mostrar error
+                showError('Usuario o contraseña incorrectos. Intenta con admin / 12345');
+            }
+        });
+
+        // Actualizar el display del nombre de usuario cuando se escribe
+        nameInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            usernameDisplay.textContent = value || 'User name';
+            hideError();
+        });
+
+        // Actualizar el display cuando el campo pierde el foco
+        nameInput.addEventListener('blur', function() {
+            const value = this.value.trim();
+            if (value) {
+                usernameDisplay.textContent = value;
+                usernameDisplay.classList.remove('hidden');
+                nameInput.classList.add('hidden');
+            }
+        });
+
+        // Hacer el campo de nombre visible cuando se hace clic en el display
+        usernameDisplay.addEventListener('click', function() {
+            usernameDisplay.classList.add('hidden');
+            nameInput.classList.remove('hidden');
+            nameInput.focus();
+            nameInput.select();
+        });
+
+        // Limpiar mensaje de error cuando el usuario empiece a escribir
+        passwordInput.addEventListener('input', hideError);
+    </script>
 </body>
 </html>
