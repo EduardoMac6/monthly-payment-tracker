@@ -76,6 +76,23 @@ document.addEventListener('DOMContentLoaded', function (): void {
         currency: 'MXN'
     });
 
+    // --- Get Paid Months Count for a Plan ---
+    function getPaidMonthsCount(planId: string): number {
+        const savedStatus: string | null = localStorage.getItem(`paymentStatus_${planId}`);
+        if (!savedStatus) {
+            return 0;
+        }
+        
+        try {
+            const statusArray: string[] = JSON.parse(savedStatus);
+            return statusArray.filter((status: string): boolean => 
+                status === 'paid' || status === 'pagado'
+            ).length;
+        } catch {
+            return 0;
+        }
+    }
+
     // --- Calculate Payment Status for a Plan ---
     function getPlanPaymentStatus(planId: string): { totalPaid: number; remaining: number } {
         const savedStatus: string | null = localStorage.getItem(`paymentStatus_${planId}`);
@@ -179,13 +196,21 @@ document.addEventListener('DOMContentLoaded', function (): void {
     function renderOverview(): void {
         const stats = calculateOverviewStats();
         
+        // Actualizar descripción del header con número de planes
+        const overviewPlansNumber: HTMLElement | null = document.getElementById('overview-plans-number');
+        const overviewPlansPlural: HTMLElement | null = document.getElementById('overview-plans-plural');
+        if (overviewPlansNumber) {
+            overviewPlansNumber.textContent = stats.totalPlans.toString();
+        }
+        if (overviewPlansPlural) {
+            overviewPlansPlural.textContent = stats.totalPlans === 1 ? '' : 's';
+        }
+        
         // Actualizar estadísticas generales
-        const overviewTotalPlans: HTMLElement | null = document.getElementById('overview-total-plans');
         const overviewTotalDebt: HTMLElement | null = document.getElementById('overview-total-debt');
         const overviewTotalPaid: HTMLElement | null = document.getElementById('overview-total-paid');
         const overviewRemaining: HTMLElement | null = document.getElementById('overview-remaining');
         
-        if (overviewTotalPlans) overviewTotalPlans.textContent = stats.totalPlans.toString();
         if (overviewTotalDebt) overviewTotalDebt.textContent = currencyFormatter.format(stats.totalDebt);
         if (overviewTotalPaid) overviewTotalPaid.textContent = currencyFormatter.format(stats.totalPaid);
         if (overviewRemaining) overviewRemaining.textContent = currencyFormatter.format(stats.remaining);
@@ -213,9 +238,16 @@ document.addEventListener('DOMContentLoaded', function (): void {
         if (overviewPlansList) {
             const plansHTML: string = allPlans.map((plan: Plan): string => {
                 const planStatus = getPlanPaymentStatus(plan.id);
-                const monthsText: string = plan.numberOfMonths === 'one-time' 
-                    ? 'One-time' 
-                    : `${plan.numberOfMonths} months`;
+                const paidMonths: number = getPaidMonthsCount(plan.id);
+                const totalMonths: number = plan.numberOfMonths === 'one-time' ? 1 : plan.numberOfMonths;
+                
+                let monthsText: string;
+                if (plan.numberOfMonths === 'one-time') {
+                    monthsText = paidMonths > 0 ? 'Paid' : 'One-time';
+                } else {
+                    monthsText = `${paidMonths} / ${totalMonths} months`;
+                }
+                
                 const ownerText: string = plan.debtOwner === 'other' ? 'Receivable' : 'My Debt';
                 const progressPercent: number = plan.totalAmount > 0 
                     ? (planStatus.totalPaid / plan.totalAmount) * 100 
@@ -518,9 +550,16 @@ document.addEventListener('DOMContentLoaded', function (): void {
         // Función para renderizar un plan
         const renderPlan = (plan: Plan): string => {
             const isActive: boolean = activePlan !== null && plan.id === activePlan.id;
-            const monthsText: string = plan.numberOfMonths === 'one-time' 
-                ? 'One-time' 
-                : `${plan.numberOfMonths} months`;
+            const paidMonths: number = getPaidMonthsCount(plan.id);
+            const totalMonths: number = plan.numberOfMonths === 'one-time' ? 1 : plan.numberOfMonths;
+            
+            let monthsText: string;
+            if (plan.numberOfMonths === 'one-time') {
+                monthsText = paidMonths > 0 ? 'Paid' : 'One-time';
+            } else {
+                monthsText = `${paidMonths} / ${totalMonths} months`;
+            }
+            
             const formattedAmount: string = currencyFormatter.format(plan.totalAmount);
             
             return `

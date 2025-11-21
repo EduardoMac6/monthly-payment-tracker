@@ -55,6 +55,20 @@ document.addEventListener('DOMContentLoaded', function () {
         style: 'currency',
         currency: 'MXN'
     });
+    // --- Get Paid Months Count for a Plan ---
+    function getPaidMonthsCount(planId) {
+        const savedStatus = localStorage.getItem(`paymentStatus_${planId}`);
+        if (!savedStatus) {
+            return 0;
+        }
+        try {
+            const statusArray = JSON.parse(savedStatus);
+            return statusArray.filter((status) => status === 'paid' || status === 'pagado').length;
+        }
+        catch {
+            return 0;
+        }
+    }
     // --- Calculate Payment Status for a Plan ---
     function getPlanPaymentStatus(planId) {
         const savedStatus = localStorage.getItem(`paymentStatus_${planId}`);
@@ -143,13 +157,19 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Render Overview View ---
     function renderOverview() {
         const stats = calculateOverviewStats();
+        // Actualizar descripción del header con número de planes
+        const overviewPlansNumber = document.getElementById('overview-plans-number');
+        const overviewPlansPlural = document.getElementById('overview-plans-plural');
+        if (overviewPlansNumber) {
+            overviewPlansNumber.textContent = stats.totalPlans.toString();
+        }
+        if (overviewPlansPlural) {
+            overviewPlansPlural.textContent = stats.totalPlans === 1 ? '' : 's';
+        }
         // Actualizar estadísticas generales
-        const overviewTotalPlans = document.getElementById('overview-total-plans');
         const overviewTotalDebt = document.getElementById('overview-total-debt');
         const overviewTotalPaid = document.getElementById('overview-total-paid');
         const overviewRemaining = document.getElementById('overview-remaining');
-        if (overviewTotalPlans)
-            overviewTotalPlans.textContent = stats.totalPlans.toString();
         if (overviewTotalDebt)
             overviewTotalDebt.textContent = currencyFormatter.format(stats.totalDebt);
         if (overviewTotalPaid)
@@ -181,9 +201,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (overviewPlansList) {
             const plansHTML = allPlans.map((plan) => {
                 const planStatus = getPlanPaymentStatus(plan.id);
-                const monthsText = plan.numberOfMonths === 'one-time'
-                    ? 'One-time'
-                    : `${plan.numberOfMonths} months`;
+                const paidMonths = getPaidMonthsCount(plan.id);
+                const totalMonths = plan.numberOfMonths === 'one-time' ? 1 : plan.numberOfMonths;
+                let monthsText;
+                if (plan.numberOfMonths === 'one-time') {
+                    monthsText = paidMonths > 0 ? 'Paid' : 'One-time';
+                }
+                else {
+                    monthsText = `${paidMonths} / ${totalMonths} months`;
+                }
                 const ownerText = plan.debtOwner === 'other' ? 'Receivable' : 'My Debt';
                 const progressPercent = plan.totalAmount > 0
                     ? (planStatus.totalPaid / plan.totalAmount) * 100
@@ -455,9 +481,15 @@ document.addEventListener('DOMContentLoaded', function () {
         // Función para renderizar un plan
         const renderPlan = (plan) => {
             const isActive = activePlan !== null && plan.id === activePlan.id;
-            const monthsText = plan.numberOfMonths === 'one-time'
-                ? 'One-time'
-                : `${plan.numberOfMonths} months`;
+            const paidMonths = getPaidMonthsCount(plan.id);
+            const totalMonths = plan.numberOfMonths === 'one-time' ? 1 : plan.numberOfMonths;
+            let monthsText;
+            if (plan.numberOfMonths === 'one-time') {
+                monthsText = paidMonths > 0 ? 'Paid' : 'One-time';
+            }
+            else {
+                monthsText = `${paidMonths} / ${totalMonths} months`;
+            }
             const formattedAmount = currencyFormatter.format(plan.totalAmount);
             return `
                 <div class="relative group">
