@@ -39,48 +39,36 @@ document.addEventListener('DOMContentLoaded', function (): void {
         return plansJson ? JSON.parse(plansJson) : [];
     }
 
-    // --- Check if plan exists, redirect if not ---
-    const activePlanOrNull: Plan | null = getActivePlan();
-    if (!activePlanOrNull) {
-        // No hay plan activo, redirigir a start.html
+    // --- Check if plans exist, redirect if not ---
+    const allPlans: Plan[] = getAllPlans();
+    if (allPlans.length === 0) {
+        // No hay planes, redirigir a start.html
         if (confirm('No payment plan found. Would you like to create one?')) {
             window.location.href = 'start.html';
         }
         return;
     }
 
-    // A partir de aquí, activePlan nunca será null
-    const activePlan: Plan = activePlanOrNull;
+    // Obtener plan activo (puede ser null si no hay uno activo)
+    const activePlanOrNull: Plan | null = getActivePlan();
+    let activePlan: Plan | null = activePlanOrNull;
 
-    // --- Initial Setup from Active Plan ---
-    const totalCost: number = activePlan.totalAmount;
-    const monthlyPayment: number = activePlan.monthlyPayment;
-    const numberOfMonths: number = activePlan.numberOfMonths === 'one-time' ? 1 : activePlan.numberOfMonths;
-    const isOneTimePayment: boolean = activePlan.numberOfMonths === 'one-time';
-
+    // --- DOM Elements ---
+    const overviewView: HTMLElement | null = document.getElementById('overview-view');
+    const planDetailView: HTMLElement | null = document.getElementById('plan-detail-view');
     const tableBody: HTMLElement | null = document.getElementById('payment-table-body');
     const totalPaidEl: HTMLElement | null = document.getElementById('total-paid');
     const remainingBalanceEl: HTMLElement | null = document.getElementById('remaining-balance');
     const totalCostEl: HTMLElement | null = document.getElementById('total-cost');
     const planNameHeader: HTMLElement | null = document.getElementById('plan-name-header');
     const planDescription: HTMLElement | null = document.getElementById('plan-description');
+    const backToOverviewBtn: HTMLElement | null = document.getElementById('back-to-overview');
 
-    // Validate that the required elements exist
-    if (!tableBody || !totalPaidEl || !remainingBalanceEl || !totalCostEl) {
-        console.error('Required DOM elements were not found');
-        return;
-    }
-
-    // Update header with plan name
-    if (planNameHeader) {
-        planNameHeader.textContent = activePlan.planName;
-    }
-    if (planDescription) {
-        const monthsText: string = isOneTimePayment 
-            ? 'One-time payment' 
-            : `${numberOfMonths}-month payment plan`;
-        planDescription.textContent = `Track your ${monthsText.toLowerCase()}.`;
-    }
+    // Variables para el plan activo (se inicializan cuando se muestra un plan específico)
+    let totalCost: number = 0;
+    let monthlyPayment: number = 0;
+    let numberOfMonths: number = 0;
+    let isOneTimePayment: boolean = false;
 
     // --- Currency Formatter ---
     const currencyFormatter: Intl.NumberFormat = new Intl.NumberFormat('es-MX', {
@@ -88,8 +76,247 @@ document.addEventListener('DOMContentLoaded', function (): void {
         currency: 'MXN'
     });
 
+    // --- Calculate Payment Status for a Plan ---
+    function getPlanPaymentStatus(planId: string): { totalPaid: number; remaining: number } {
+        const savedStatus: string | null = localStorage.getItem(`paymentStatus_${planId}`);
+        const savedTotals: string | null = localStorage.getItem(`paymentTotals_${planId}`);
+        
+        if (savedTotals) {
+            try {
+                return JSON.parse(savedTotals);
+            } catch {
+                // Si hay error, calcular desde el status
+            }
+        }
+        
+        if (savedStatus) {
+            try {
+                const statusArray: string[] = JSON.parse(savedStatus);
+                const plan: Plan | undefined = allPlans.find(p => p.id === planId);
+                if (!plan) {
+                    return { totalPaid: 0, remaining: 0 };
+                }
+                
+                const planTotalCost: number = plan.totalAmount;
+                const planMonths: number = plan.numberOfMonths === 'one-time' ? 1 : plan.numberOfMonths;
+                const planMonthlyPayment: number = plan.monthlyPayment;
+                
+                let paid: number = 0;
+                statusArray.forEach((status: string, idx: number): void => {
+                    if (status === 'paid' || status === 'pagado') {
+                        if (plan.numberOfMonths === 'one-time') {
+                            paid += planTotalCost;
+                        } else {
+                            const payment: number = (idx === planMonths - 1) 
+                                ? (planTotalCost - (planMonthlyPayment * (planMonths - 1))) 
+                                : planMonthlyPayment;
+                            paid += payment;
+                        }
+                    }
+                });
+                
+                return {
+                    totalPaid: paid,
+                    remaining: planTotalCost - paid
+                };
+            } catch {
+                return { totalPaid: 0, remaining: 0 };
+            }
+        }
+        
+        return { totalPaid: 0, remaining: 0 };
+    }
+
+    // --- Calculate Overview Statistics ---
+    function calculateOverviewStats(): {
+        totalPlans: number;
+        totalDebt: number;
+        totalPaid: number;
+        remaining: number;
+        myDebts: { total: number; paid: number; remaining: number };
+        receivables: { total: number; received: number; pending: number };
+    } {
+        let totalDebt: number = 0;
+        let totalPaid: number = 0;
+        let myDebtsTotal: number = 0;
+        let myDebtsPaid: number = 0;
+        let receivablesTotal: number = 0;
+        let receivablesReceived: number = 0;
+
+        allPlans.forEach((plan: Plan): void => {
+            const status = getPlanPaymentStatus(plan.id);
+            totalDebt += plan.totalAmount;
+            totalPaid += status.totalPaid;
+
+            if (plan.debtOwner === 'self' || !plan.debtOwner) {
+                myDebtsTotal += plan.totalAmount;
+                myDebtsPaid += status.totalPaid;
+            } else if (plan.debtOwner === 'other') {
+                receivablesTotal += plan.totalAmount;
+                receivablesReceived += status.totalPaid;
+            }
+        });
+
+        return {
+            totalPlans: allPlans.length,
+            totalDebt,
+            totalPaid,
+            remaining: totalDebt - totalPaid,
+            myDebts: {
+                total: myDebtsTotal,
+                paid: myDebtsPaid,
+                remaining: myDebtsTotal - myDebtsPaid
+            },
+            receivables: {
+                total: receivablesTotal,
+                received: receivablesReceived,
+                pending: receivablesTotal - receivablesReceived
+            }
+        };
+    }
+
+    // --- Render Overview View ---
+    function renderOverview(): void {
+        const stats = calculateOverviewStats();
+        
+        // Actualizar estadísticas generales
+        const overviewTotalPlans: HTMLElement | null = document.getElementById('overview-total-plans');
+        const overviewTotalDebt: HTMLElement | null = document.getElementById('overview-total-debt');
+        const overviewTotalPaid: HTMLElement | null = document.getElementById('overview-total-paid');
+        const overviewRemaining: HTMLElement | null = document.getElementById('overview-remaining');
+        
+        if (overviewTotalPlans) overviewTotalPlans.textContent = stats.totalPlans.toString();
+        if (overviewTotalDebt) overviewTotalDebt.textContent = currencyFormatter.format(stats.totalDebt);
+        if (overviewTotalPaid) overviewTotalPaid.textContent = currencyFormatter.format(stats.totalPaid);
+        if (overviewRemaining) overviewRemaining.textContent = currencyFormatter.format(stats.remaining);
+
+        // Actualizar sección "My Debts"
+        const myDebtsTotal: HTMLElement | null = document.getElementById('my-debts-total');
+        const myDebtsPaid: HTMLElement | null = document.getElementById('my-debts-paid');
+        const myDebtsRemaining: HTMLElement | null = document.getElementById('my-debts-remaining');
+        
+        if (myDebtsTotal) myDebtsTotal.textContent = currencyFormatter.format(stats.myDebts.total);
+        if (myDebtsPaid) myDebtsPaid.textContent = currencyFormatter.format(stats.myDebts.paid);
+        if (myDebtsRemaining) myDebtsRemaining.textContent = currencyFormatter.format(stats.myDebts.remaining);
+
+        // Actualizar sección "Receivables"
+        const receivablesTotal: HTMLElement | null = document.getElementById('receivables-total');
+        const receivablesReceived: HTMLElement | null = document.getElementById('receivables-received');
+        const receivablesPending: HTMLElement | null = document.getElementById('receivables-pending');
+        
+        if (receivablesTotal) receivablesTotal.textContent = currencyFormatter.format(stats.receivables.total);
+        if (receivablesReceived) receivablesReceived.textContent = currencyFormatter.format(stats.receivables.received);
+        if (receivablesPending) receivablesPending.textContent = currencyFormatter.format(stats.receivables.pending);
+
+        // Renderizar lista de planes en la vista general
+        const overviewPlansList: HTMLElement | null = document.getElementById('overview-plans-list');
+        if (overviewPlansList) {
+            const plansHTML: string = allPlans.map((plan: Plan): string => {
+                const planStatus = getPlanPaymentStatus(plan.id);
+                const monthsText: string = plan.numberOfMonths === 'one-time' 
+                    ? 'One-time' 
+                    : `${plan.numberOfMonths} months`;
+                const ownerText: string = plan.debtOwner === 'other' ? 'Receivable' : 'My Debt';
+                const progressPercent: number = plan.totalAmount > 0 
+                    ? (planStatus.totalPaid / plan.totalAmount) * 100 
+                    : 0;
+
+                return `
+                    <div class="bg-soft-gray/40 dark:bg-charcoal-gray/50 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 cursor-pointer" data-view-plan-id="${plan.id}">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h4 class="font-semibold text-deep-black dark:text-pure-white">${plan.planName}</h4>
+                                <p class="text-xs text-gray-600 dark:text-pure-white/70 mt-1">${monthsText} • ${ownerText}</p>
+                            </div>
+                            <span class="text-lg font-bold text-deep-black dark:text-pure-white">${currencyFormatter.format(plan.totalAmount)}</span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-600 dark:text-pure-white/70">Paid: ${currencyFormatter.format(planStatus.totalPaid)}</span>
+                                <span class="text-gray-600 dark:text-pure-white/70">${Math.round(progressPercent)}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-charcoal-gray rounded-full h-2">
+                                <div class="bg-lime-vibrant h-2 rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            overviewPlansList.innerHTML = plansHTML;
+
+            // Agregar event listeners para ver plan específico
+            overviewPlansList.querySelectorAll('[data-view-plan-id]').forEach((element: Element): void => {
+                element.addEventListener('click', function(): void {
+                    const planId: string | undefined = element.getAttribute('data-view-plan-id') || undefined;
+                    if (planId) {
+                        showPlanDetail(planId);
+                    }
+                });
+            });
+        }
+    }
+
+    // --- Show Plan Detail View ---
+    function showPlanDetail(planId: string): void {
+        const plan: Plan | undefined = allPlans.find(p => p.id === planId);
+        if (!plan) {
+            return;
+        }
+
+        // Actualizar plan activo
+        activePlan = plan;
+        totalCost = plan.totalAmount;
+        monthlyPayment = plan.monthlyPayment;
+        numberOfMonths = plan.numberOfMonths === 'one-time' ? 1 : plan.numberOfMonths;
+        isOneTimePayment = plan.numberOfMonths === 'one-time';
+
+        // Actualizar header
+        if (planNameHeader) {
+            planNameHeader.textContent = plan.planName;
+        }
+        if (planDescription) {
+            const monthsText: string = isOneTimePayment 
+                ? 'One-time payment' 
+                : `${numberOfMonths}-month payment plan`;
+            planDescription.textContent = `Track your ${monthsText.toLowerCase()}.`;
+        }
+
+        // Generar tabla y cargar estado
+        generateTable();
+        loadPaymentStatus();
+        const initialTotals: TotalsSnapshot = updateTotals();
+        savePaymentStatus(initialTotals);
+
+        // Cambiar vistas
+        if (overviewView) overviewView.classList.add('hidden');
+        if (planDetailView) planDetailView.classList.remove('hidden');
+
+        // Actualizar logo en vista de detalle
+        const planDetailLogo: HTMLImageElement | null = document.getElementById('plan-detail-logo') as HTMLImageElement | null;
+        if (planDetailLogo) {
+            const isDark: boolean = document.documentElement.classList.contains('dark');
+            const logoSrc: string | undefined = isDark 
+                ? planDetailLogo.dataset.logoDark 
+                : planDetailLogo.dataset.logoLight;
+            if (logoSrc) {
+                planDetailLogo.setAttribute('src', logoSrc);
+            }
+        }
+    }
+
+    // --- Show Overview View ---
+    function showOverview(): void {
+        if (overviewView) overviewView.classList.remove('hidden');
+        if (planDetailView) planDetailView.classList.add('hidden');
+        renderOverview();
+    }
+
     // --- Generate the Table ---
     function generateTable(): void {
+        if (!tableBody || !activePlan) {
+            return;
+        }
         let tableHTML: string = '';
         
         if (isOneTimePayment) {
@@ -190,6 +417,10 @@ document.addEventListener('DOMContentLoaded', function (): void {
     };
 
     function updateTotals(): TotalsSnapshot {
+        if (!activePlan || !totalPaidEl || !remainingBalanceEl || !totalCostEl) {
+            return { totalPaid: 0, remaining: 0 };
+        }
+
         let currentTotalPaid: number = 0;
         const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
 
@@ -207,9 +438,9 @@ document.addEventListener('DOMContentLoaded', function (): void {
         const remaining: number = totalCost - currentTotalPaid;
 
         // Update DOM elements with formatted values
-        totalPaidEl!.textContent = currencyFormatter.format(currentTotalPaid);
-        remainingBalanceEl!.textContent = currencyFormatter.format(remaining);
-        totalCostEl!.textContent = currencyFormatter.format(totalCost);
+        totalPaidEl.textContent = currencyFormatter.format(currentTotalPaid);
+        remainingBalanceEl.textContent = currencyFormatter.format(remaining);
+        totalCostEl.textContent = currencyFormatter.format(totalCost);
 
         return {
             totalPaid: currentTotalPaid,
@@ -219,6 +450,9 @@ document.addEventListener('DOMContentLoaded', function (): void {
 
     // --- Save Payment Status to localStorage (by plan ID) ---
     function savePaymentStatus(totals?: TotalsSnapshot): void {
+        if (!activePlan) {
+            return;
+        }
         const snapshot: TotalsSnapshot = totals ?? updateTotals();
         const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
         const statusArray: string[] = [];
@@ -226,12 +460,22 @@ document.addEventListener('DOMContentLoaded', function (): void {
             statusArray.push(toggle.checked ? 'paid' : 'pending');
         });
         // Guardar usando el ID del plan como clave
-        localStorage.setItem(`paymentStatus_${activePlan.id}`, JSON.stringify(statusArray));
-        localStorage.setItem(`paymentTotals_${activePlan.id}`, JSON.stringify(snapshot));
+        if (activePlan) {
+            localStorage.setItem(`paymentStatus_${activePlan.id}`, JSON.stringify(statusArray));
+            localStorage.setItem(`paymentTotals_${activePlan.id}`, JSON.stringify(snapshot));
+        }
+        
+        // Actualizar vista general si está visible
+        if (overviewView && !overviewView.classList.contains('hidden')) {
+            renderOverview();
+        }
     }
 
     // --- Load Payment Status from localStorage (by plan ID) ---
     function loadPaymentStatus(): void {
+        if (!activePlan) {
+            return;
+        }
         const savedStatus: string | null = localStorage.getItem(`paymentStatus_${activePlan.id}`);
         const statusArray: string[] = savedStatus ? JSON.parse(savedStatus) : [];
         const paymentToggles: NodeListOf<HTMLInputElement> = document.querySelectorAll<HTMLInputElement>('.payment-toggle');
@@ -273,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function (): void {
 
         // Función para renderizar un plan
         const renderPlan = (plan: Plan): string => {
-            const isActive: boolean = plan.id === activePlan.id;
+            const isActive: boolean = activePlan !== null && plan.id === activePlan.id;
             const monthsText: string = plan.numberOfMonths === 'one-time' 
                 ? 'One-time' 
                 : `${plan.numberOfMonths} months`;
@@ -347,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function (): void {
                 }
                 
                 const planId: string | undefined = button.dataset.planId;
-                if (planId && planId !== activePlan.id) {
+                if (planId) {
                     switchToPlan(planId);
                 }
             });
@@ -381,7 +625,7 @@ document.addEventListener('DOMContentLoaded', function (): void {
             return;
         }
 
-        const isDeletingActivePlan: boolean = planId === activePlan.id;
+        const isDeletingActivePlan: boolean = activePlan !== null && planId === activePlan.id;
         const remainingPlans: Plan[] = allPlans.filter(p => p.id !== planId);
 
         // Eliminar datos de pagos asociados al plan
@@ -418,7 +662,6 @@ document.addEventListener('DOMContentLoaded', function (): void {
 
     // --- Switch to a Different Plan ---
     function switchToPlan(planId: string): void {
-        const allPlans: Plan[] = getAllPlans();
         const targetPlan: Plan | undefined = allPlans.find(p => p.id === planId);
         
         if (!targetPlan) {
@@ -437,15 +680,20 @@ document.addEventListener('DOMContentLoaded', function (): void {
         localStorage.setItem('debtLitePlans', JSON.stringify(allPlans));
         localStorage.setItem('debtLiteActivePlanId', planId);
 
-        // Recargar la página para aplicar el nuevo plan
-        location.reload();
+        // Mostrar vista de detalle del plan
+        showPlanDetail(planId);
     }
     // --- Initialization and Event Listeners ---
-    generateTable();
-    loadPaymentStatus(); // Load saved status
+    // Mostrar vista general por defecto
+    showOverview();
     renderPlansList(); // Render plans in sidebar
-    const initialTotals: TotalsSnapshot = updateTotals(); // Calculate initial totals
-    savePaymentStatus(initialTotals); // Persist snapshot
+
+    // Botón para volver a la vista general
+    if (backToOverviewBtn) {
+        backToOverviewBtn.addEventListener('click', function(): void {
+            showOverview();
+        });
+    }
 
     // Update totals when a toggle changes and persist automatically
     tableBody!.addEventListener('change', function(event: Event): void {
@@ -486,10 +734,18 @@ document.addEventListener('DOMContentLoaded', function (): void {
     const clearBtn: HTMLElement | null = document.getElementById('clear-btn');
     if (clearBtn) {
         clearBtn.addEventListener('click', function(): void {
+            if (!activePlan) {
+                return;
+            }
             if (confirm('Are you sure you want to clear the payment records for this plan?')) {
                 localStorage.removeItem(`paymentStatus_${activePlan.id}`);
                 localStorage.removeItem(`paymentTotals_${activePlan.id}`);
-                location.reload();
+                // Recargar la vista del plan
+                showPlanDetail(activePlan.id);
+                // Actualizar vista general si está visible
+                if (overviewView && !overviewView.classList.contains('hidden')) {
+                    renderOverview();
+                }
             }
         });
     }
@@ -513,14 +769,25 @@ document.addEventListener('DOMContentLoaded', function (): void {
     }
 
     function updateLogo(theme: ThemeChoice): void {
-        if (!dashboardLogo) {
-            return;
+        // Actualizar logo de vista general
+        if (dashboardLogo) {
+            const lightSrc: string | undefined = dashboardLogo.dataset.logoLight;
+            const darkSrc: string | undefined = dashboardLogo.dataset.logoDark;
+            const nextSrc: string | undefined = theme === 'dark' ? darkSrc : lightSrc;
+            if (nextSrc) {
+                dashboardLogo.setAttribute('src', nextSrc);
+            }
         }
-        const lightSrc: string | undefined = dashboardLogo.dataset.logoLight;
-        const darkSrc: string | undefined = dashboardLogo.dataset.logoDark;
-        const nextSrc: string | undefined = theme === 'dark' ? darkSrc : lightSrc;
-        if (nextSrc) {
-            dashboardLogo.setAttribute('src', nextSrc);
+        
+        // Actualizar logo de vista de detalle
+        const planDetailLogo: HTMLImageElement | null = document.getElementById('plan-detail-logo') as HTMLImageElement | null;
+        if (planDetailLogo) {
+            const lightSrc: string | undefined = planDetailLogo.dataset.logoLight;
+            const darkSrc: string | undefined = planDetailLogo.dataset.logoDark;
+            const nextSrc: string | undefined = theme === 'dark' ? darkSrc : lightSrc;
+            if (nextSrc) {
+                planDetailLogo.setAttribute('src', nextSrc);
+            }
         }
     }
 
