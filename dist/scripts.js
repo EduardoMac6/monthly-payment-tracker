@@ -55,6 +55,20 @@ document.addEventListener('DOMContentLoaded', function () {
         style: 'currency',
         currency: 'MXN'
     });
+    // --- Get Paid Months Count for a Plan ---
+    function getPaidMonthsCount(planId) {
+        const savedStatus = localStorage.getItem(`paymentStatus_${planId}`);
+        if (!savedStatus) {
+            return 0;
+        }
+        try {
+            const statusArray = JSON.parse(savedStatus);
+            return statusArray.filter((status) => status === 'paid' || status === 'pagado').length;
+        }
+        catch {
+            return 0;
+        }
+    }
     // --- Calculate Payment Status for a Plan ---
     function getPlanPaymentStatus(planId) {
         const savedStatus = localStorage.getItem(`paymentStatus_${planId}`);
@@ -143,13 +157,19 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- Render Overview View ---
     function renderOverview() {
         const stats = calculateOverviewStats();
+        // Actualizar descripción del header con número de planes
+        const overviewPlansNumber = document.getElementById('overview-plans-number');
+        const overviewPlansPlural = document.getElementById('overview-plans-plural');
+        if (overviewPlansNumber) {
+            overviewPlansNumber.textContent = stats.totalPlans.toString();
+        }
+        if (overviewPlansPlural) {
+            overviewPlansPlural.textContent = stats.totalPlans === 1 ? '' : 's';
+        }
         // Actualizar estadísticas generales
-        const overviewTotalPlans = document.getElementById('overview-total-plans');
         const overviewTotalDebt = document.getElementById('overview-total-debt');
         const overviewTotalPaid = document.getElementById('overview-total-paid');
         const overviewRemaining = document.getElementById('overview-remaining');
-        if (overviewTotalPlans)
-            overviewTotalPlans.textContent = stats.totalPlans.toString();
         if (overviewTotalDebt)
             overviewTotalDebt.textContent = currencyFormatter.format(stats.totalDebt);
         if (overviewTotalPaid)
@@ -181,9 +201,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (overviewPlansList) {
             const plansHTML = allPlans.map((plan) => {
                 const planStatus = getPlanPaymentStatus(plan.id);
-                const monthsText = plan.numberOfMonths === 'one-time'
-                    ? 'One-time'
-                    : `${plan.numberOfMonths} months`;
+                const paidMonths = getPaidMonthsCount(plan.id);
+                const totalMonths = plan.numberOfMonths === 'one-time' ? 1 : plan.numberOfMonths;
+                let monthsText;
+                if (plan.numberOfMonths === 'one-time') {
+                    monthsText = paidMonths > 0 ? 'Paid' : 'One-time';
+                }
+                else {
+                    monthsText = `${paidMonths} / ${totalMonths} months`;
+                }
                 const ownerText = plan.debtOwner === 'other' ? 'Receivable' : 'My Debt';
                 const progressPercent = plan.totalAmount > 0
                     ? (planStatus.totalPaid / plan.totalAmount) * 100
@@ -455,9 +481,15 @@ document.addEventListener('DOMContentLoaded', function () {
         // Función para renderizar un plan
         const renderPlan = (plan) => {
             const isActive = activePlan !== null && plan.id === activePlan.id;
-            const monthsText = plan.numberOfMonths === 'one-time'
-                ? 'One-time'
-                : `${plan.numberOfMonths} months`;
+            const paidMonths = getPaidMonthsCount(plan.id);
+            const totalMonths = plan.numberOfMonths === 'one-time' ? 1 : plan.numberOfMonths;
+            let monthsText;
+            if (plan.numberOfMonths === 'one-time') {
+                monthsText = paidMonths > 0 ? 'Paid' : 'One-time';
+            }
+            else {
+                monthsText = `${paidMonths} / ${totalMonths} months`;
+            }
             const formattedAmount = currencyFormatter.format(plan.totalAmount);
             return `
                 <div class="relative group">
@@ -475,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <button
                         type="button"
                         data-delete-plan-id="${plan.id}"
-                        class="delete-plan-btn absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-red-500/10 hover:bg-red-500/30 text-red-600 dark:text-red-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-graphite"
+                        class="delete-plan-btn absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-pure-white/80 hover:bg-pure-white text-deep-black dark:bg-charcoal-gray/80 dark:hover:bg-charcoal-gray dark:text-pure-white opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-60 focus:opacity-50 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:ring-offset-2 dark:focus:ring-offset-graphite shadow-sm"
                         aria-label="Delete plan ${plan.planName}"
                         title="Delete plan">
                         <span class="text-base font-bold leading-none">×</span>
