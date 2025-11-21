@@ -507,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <button
                         type="button"
                         data-delete-plan-id="${plan.id}"
-                        class="delete-plan-btn absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-red-500/10 hover:bg-red-500/30 text-red-600 dark:text-red-400 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-graphite"
+                        class="delete-plan-btn absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-pure-white/80 hover:bg-pure-white text-deep-black dark:bg-charcoal-gray/80 dark:hover:bg-charcoal-gray dark:text-pure-white opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-60 focus:opacity-50 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:ring-offset-2 dark:focus:ring-offset-graphite shadow-sm"
                         aria-label="Delete plan ${plan.planName}"
                         title="Delete plan">
                         <span class="text-base font-bold leading-none">×</span>
