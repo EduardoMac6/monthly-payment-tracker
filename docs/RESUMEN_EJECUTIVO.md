@@ -5,6 +5,26 @@ Transformar DebtLite en un proyecto profesional, escalable y preparado para crec
 
 ---
 
+## ✅ Estado Actual - Funcionalidades Implementadas
+
+### Funcionalidades Recientes
+- ✅ **Dashboard Overview** - Vista general con estadísticas agregadas de todos los planes
+- ✅ **Progreso de Meses Pagados** - Visualización "X / Y months" en vista general y sidebar
+- ✅ **Navegación Mejorada** - Sistema de navegación entre vista general y detalle de planes
+- ✅ **Categorización de Planes** - Separación entre "My Debts" y "Receivables"
+- ✅ **Estadísticas en Tiempo Real** - Actualización automática cuando cambian los pagos
+- ✅ **Mejoras de UI/UX** - Diseño mejorado con mejor visibilidad y distribución
+
+### Fortalezas Existentes
+- ✅ Funcionalidad completa y operativa
+- ✅ UI/UX moderna con Tailwind CSS
+- ✅ Dark mode implementado
+- ✅ TypeScript configurado
+- ✅ Múltiples planes de pago
+- ✅ Persistencia en localStorage
+
+---
+
 ## ⚡ Quick Start - Prioridades Inmediatas
 
 ### 🔴 CRÍTICO (Hacer PRIMERO - 1-2 semanas)
@@ -44,10 +64,12 @@ Transformar DebtLite en un proyecto profesional, escalable y preparado para crec
 ## 🗓️ Timeline Sugerido
 
 ### Semana 1-2: Fundación
-- ✅ Refactorizar a módulos
-- ✅ Abstraer storage
-- ✅ Validación básica
-- ✅ Manejo de errores
+- ⚠️ Refactorizar a módulos (PENDIENTE - código monolítico aumentó a 853 líneas)
+- ⚠️ Abstraer storage (PENDIENTE)
+- ⚠️ Validación básica (PENDIENTE)
+- ⚠️ Manejo de errores (PENDIENTE)
+
+**Nota:** Se han agregado nuevas funcionalidades (dashboard overview) que mejoran la UX pero aumentan la necesidad de refactorización.
 
 ### Semana 3-4: Calidad
 - ✅ Testing de servicios críticos
@@ -126,11 +148,17 @@ Ver `BACKEND_GUIDE.md` para tutorial paso a paso.
 
 ## 📞 Siguiente Paso
 
+### Para Refactorización Modular (PRIORIDAD ALTA)
+1. **Lee** `PLAN_REFACTORIZACION.md` - Plan detallado paso a paso
+2. **Empieza** con Fase 1 (Preparación y Tipos)
+3. **Sigue** el orden recomendado de migración
+4. **Haz commits** pequeños después de cada módulo
+5. **Prueba** cada cambio antes de continuar
+
+### Para Otras Mejoras
 1. **Lee** `PLAN_MEJORAS.md` completo para detalles
-2. **Empieza** con Fase 1.1 (Separación de Responsabilidades)
-3. **Haz commits** pequeños y frecuentes
-4. **Prueba** cada cambio antes de continuar
-5. **Consulta** `BACKEND_GUIDE.md` cuando estés listo para backend
+2. **Consulta** `BACKEND_GUIDE.md` cuando estés listo para backend
+3. **Revisa** `CHANGELOG.md` para ver funcionalidades recientes
 
 ---
 
