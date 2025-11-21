@@ -6,10 +6,12 @@ A lightweight web experience that helps users plan and monitor monthly payments 
 
 - **Landing Page** (`index.html`) — Modern, gradient-based homepage with sign-in interface
 - **Guided Onboarding** (`pages/start.html`) — Capture total amount and repayment timeline with an intuitive form
-- **Interactive Dashboard** (`pages/dashboard.html`) — Payment summary, interactive status table, and multiple payment plan management
+- **Interactive Dashboard** (`pages/dashboard.html`) — Overview view with aggregated statistics, payment summary, interactive status table, and multiple payment plan management
+- **Dashboard Overview** — Financial overview showing total plans, total debt, total paid, and remaining balance with breakdown by categories (My Debts and Receivables)
 - **Multiple Payment Plans** — Create and manage multiple payment plans simultaneously
 - **Dark Mode Support** — Toggle between light and dark themes with persistent preference
 - **Payment Tracking** — Mark payments as completed with visual toggles and status indicators
+- **Real-time Statistics** — Overview automatically updates when payment status changes across all plans
 - **Data Persistence** — Payment progress persists in `localStorage`; onboarding selections stored in `sessionStorage`
 - **Responsive Design** — Mobile-first UI built with Tailwind CSS and optimized for accessibility
 - **Modular Architecture** — TypeScript source organized into components, services, types, and utilities
@@ -81,6 +83,8 @@ monthly-payment-tracker/
    - Click "Build my plan" or navigate to `pages/start.html` to begin onboarding
    - Enter the total amount and number of months for your payment plan
    - Click "Continue" to load the dashboard with your plan
+   - The dashboard shows an overview with aggregated statistics of all your payment plans
+   - Click on any plan card in the overview or sidebar to view detailed payment tracking
    - Use the dashboard to track payments, create multiple plans, and toggle payment status
 
 > **Note:** Payment configuration happens entirely in the UI. All user selections from `pages/start.html` are passed via `sessionStorage`, and payment progress is saved in `localStorage`.
