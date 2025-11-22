@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "serve": "node test-server.js",
+    "start": "npm run build && node test-server.js"
   },
   "keywords": ["payment", "tracker", "typescript"],
   "author": "",

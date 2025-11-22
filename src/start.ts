@@ -1,21 +1,21 @@
 /**
- * Main entry point for the application
- * This file initializes the dashboard page when DOM is ready
+ * Start page entry point
+ * Initializes the start/onboarding page
  */
 
-import { DashboardPage } from './pages/dashboard/dashboard.page.js';
+import { StartPage } from './pages/start/start.page.js';
 import { ToastService } from './components/toast/toast.component.js';
 
-// Make ToastService available globally for onclick handlers and error handling
+// Make ToastService available globally
 (window as any).ToastService = ToastService;
 
-// Theme management (can be extracted to a separate component later)
-    type ThemeChoice = 'light' | 'dark';
+// Theme management
+type ThemeChoice = 'light' | 'dark';
 
 function initTheme(): void {
     const themeToggle = document.getElementById('theme-toggle') as HTMLButtonElement | null;
     const themeLabel = document.getElementById('theme-toggle-label');
-    const dashboardLogo = document.getElementById('dashboard-logo') as HTMLImageElement | null;
+    const brandLogo = document.getElementById('brand-logo') as HTMLImageElement | null;
     const rootElement = document.documentElement;
 
     if (!themeToggle) {
@@ -33,25 +33,12 @@ function initTheme(): void {
     }
 
     function updateLogo(theme: ThemeChoice): void {
-        // Update overview logo
-        if (dashboardLogo) {
-            const lightSrc = dashboardLogo.dataset.logoLight;
-            const darkSrc = dashboardLogo.dataset.logoDark;
-            const nextSrc = theme === 'dark' ? darkSrc : lightSrc;
-            if (nextSrc) {
-                dashboardLogo.setAttribute('src', nextSrc);
-            }
-        }
-        
-        // Update plan detail logo
-        const planDetailLogo = document.getElementById('plan-detail-logo') as HTMLImageElement | null;
-        if (planDetailLogo) {
-            const lightSrc = planDetailLogo.dataset.logoLight;
-            const darkSrc = planDetailLogo.dataset.logoDark;
-            const nextSrc = theme === 'dark' ? darkSrc : lightSrc;
-            if (nextSrc) {
-                planDetailLogo.setAttribute('src', nextSrc);
-            }
+        if (!brandLogo) return;
+        const lightSrc = brandLogo.dataset.logoLight;
+        const darkSrc = brandLogo.dataset.logoDark;
+        const nextSrc = theme === 'dark' ? darkSrc : lightSrc;
+        if (nextSrc) {
+            brandLogo.setAttribute('src', nextSrc);
         }
     }
 
@@ -87,11 +74,13 @@ function initTheme(): void {
 }
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     // Initialize theme
     initTheme();
 
-    // Initialize dashboard page
-    const dashboardPage = new DashboardPage();
-    await dashboardPage.init();
+    // Initialize start page
+    const startPage = new StartPage();
+    startPage.init();
 });
+
+
