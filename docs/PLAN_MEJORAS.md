@@ -15,14 +15,20 @@ Transformar DebtLite en un proyecto profesional, escalable y preparado para crec
 - ✅ TypeScript configurado
 - ✅ Múltiples planes de pago
 - ✅ Persistencia en localStorage
+- ✅ **Dashboard Overview** - Vista general con estadísticas agregadas de todos los planes
+- ✅ **Navegación mejorada** - Vista general y vista de detalle de plan específico
+- ✅ **Progreso de meses pagados** - Muestra "X / Y months" en vista general y sidebar
+- ✅ **Categorización de planes** - Separación entre "My Debts" y "Receivables"
+- ✅ **Estadísticas en tiempo real** - Actualización automática cuando cambian los pagos
 
 ### ⚠️ Áreas de Mejora Identificadas
 
 #### 1. **Arquitectura de Código**
-- ❌ Todo el código está en un solo archivo (`src/scripts.ts` - 546 líneas)
+- ❌ Todo el código está en un solo archivo (`src/scripts.ts` - 853 líneas) ⚠️ **AUMENTÓ por nuevas funcionalidades**
 - ❌ Existe código modular en `dist/` pero NO se está utilizando
 - ❌ Mezcla de responsabilidades (UI, lógica de negocio, datos)
 - ❌ No hay separación clara de concerns
+- ⚠️ **Nota:** Se han agregado nuevas funcionalidades (dashboard overview) que aumentan la complejidad del archivo monolítico
 
 #### 2. **Calidad de Código**
 - ❌ No hay tests unitarios ni de integración
