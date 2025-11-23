@@ -1,19 +1,73 @@
 {
-  "name": "monthly-payment-tracker",
-  "version": "1.0.0",
-  "description": "Control de pagos mensuales",
-  "main": "dist/scripts.js",
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
-    "dev": "tsc --watch"
-  },
-  "keywords": ["payment", "tracker", "typescript"],
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "typescript": "^5.3.3"
-  }
+    "name": "monthly-payment-tracker",
+    "version": "1.0.0",
+    "description": "Control de pagos mensuales",
+    "main": "dist/scripts.js",
+    "scripts": {
+        "build": "tsc",
+        "build:dev": "cross-env NODE_ENV=development vite build",
+        "build:prod": "cross-env NODE_ENV=production vite build",
+        "build:legacy": "tsc && node scripts/inject-env.js development",
+        "watch": "tsc --watch",
+        "dev": "vite",
+        "dev:tsc": "tsc --watch",
+        "serve": "node test-server.js",
+        "start": "npm run build && node test-server.js",
+        "start:dev": "npm run build:dev && node test-server.js",
+        "start:prod": "npm run build:prod && node test-server.js",
+        "preview": "vite preview",
+        "test": "vitest",
+        "test:run": "vitest run",
+        "test:ui": "vitest --ui",
+        "test:coverage": "vitest run --coverage",
+        "test:watch": "vitest --watch",
+        "lint": "eslint src/**/*.ts",
+        "lint:fix": "eslint src/**/*.ts --fix",
+        "format": "prettier --write \"src/**/*.{ts,json}\"",
+        "format:check": "prettier --check \"src/**/*.{ts,json}\"",
+        "docs": "typedoc",
+        "docs:build": "typedoc && echo Documentation generated in docs/api/",
+        "prepare": "husky"
+    },
+    "lint-staged": {
+        "src/**/*.ts": [
+            "eslint --fix",
+            "prettier --write"
+        ],
+        "*.{json,md}": [
+            "prettier --write"
+        ]
+    },
+    "keywords": [
+        "payment",
+        "tracker",
+        "typescript"
+    ],
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "@testing-library/dom": "^10.4.1",
+        "@testing-library/user-event": "^14.6.1",
+        "@types/node": "^24.10.1",
+        "@typescript-eslint/eslint-plugin": "^8.47.0",
+        "@typescript-eslint/parser": "^8.47.0",
+        "@vitejs/plugin-legacy": "^6.1.1",
+        "@vitest/coverage-v8": "^4.0.13",
+        "@vitest/ui": "^4.0.13",
+        "cross-env": "^10.1.0",
+        "eslint": "^9.39.1",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.4",
+        "happy-dom": "^20.0.10",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.7",
+        "prettier": "^3.6.2",
+        "terser": "^5.44.1",
+        "typedoc": "^0.28.14",
+        "typescript": "^5.3.3",
+        "typescript-eslint": "^8.47.0",
+        "vite": "^6.4.1",
+        "vite-plugin-css-injected-by-js": "^3.5.2",
+        "vitest": "^4.0.13"
+    }
 }
-
-

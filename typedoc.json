@@ -1,0 +1,12 @@
+{
+    "entryPoints": ["src/index.ts"],
+    "out": "docs/api",
+    "theme": "default",
+    "includeVersion": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "excludeInternal": true,
+    "readme": "README.md",
+    "name": "DebtLite API Documentation",
+    "exclude": ["**/*.test.ts", "**/*.spec.ts", "node_modules", "dist"]
+}
