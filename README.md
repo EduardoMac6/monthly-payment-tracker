@@ -1,6 +1,6 @@
 # DebtLite — Monthly Payment Tracker
 
-[![CI](https://github.com/USERNAME/monthly-payment-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/monthly-payment-tracker/actions/workflows/ci.yml)
+[![CI](https://github.com/EduardoMac6/monthly-payment-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/EduardoMac6/monthly-payment-tracker/actions/workflows/ci.yml)
 
 A lightweight web experience that helps users plan and monitor monthly payments from a beautiful landing page through an onboarding screen to a detailed dashboard.
 
