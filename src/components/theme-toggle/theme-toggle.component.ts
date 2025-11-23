@@ -1,6 +1,14 @@
 /**
  * Theme Toggle Component
- * Manages dark/light theme switching and persistence
+ *
+ * Manages dark/light theme switching with persistence in localStorage.
+ * Updates the UI theme, logo, and toggle button state.
+ *
+ * @example
+ * ```typescript
+ * const themeToggle = new ThemeToggleComponent();
+ * themeToggle.init(); // Initialize and load saved theme
+ * ```
  */
 
 export type ThemeChoice = 'light' | 'dark';
@@ -20,7 +28,11 @@ export class ThemeToggleComponent {
 
     /**
      * Initialize theme toggle component
-     * Loads saved theme preference and sets up event listeners
+     *
+     * Loads saved theme preference from localStorage, applies it to the document,
+     * and sets up event listeners for theme switching.
+     *
+     * @returns void
      */
     public init(): void {
         if (!this.themeToggle) {

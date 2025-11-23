@@ -1,6 +1,7 @@
 import type { Plan, PaymentStatus, TotalsSnapshot } from '../../types/index.js';
 import type { IStorageService } from './storage.interface.js';
 import { StorageError, ErrorHandler } from '../../utils/errors.js';
+import { sanitizeStoredData, validateDataSize } from '../../utils/sanitizer.js';
 
 /**
  * LocalStorage service implementation
@@ -23,7 +24,21 @@ export class LocalStorageService implements IStorageService {
             if (!plansJson) {
                 return [];
             }
-            return JSON.parse(plansJson) as Plan[];
+            const plans = JSON.parse(plansJson) as Plan[];
+
+            // Sanitize loaded data
+            const sanitizedPlans = sanitizeStoredData<Plan[]>(plans, 'array');
+            if (!sanitizedPlans) {
+                throw new Error('Invalid plans data format');
+            }
+
+            // Sanitize each plan's name
+            return sanitizedPlans.map((plan) => ({
+                ...plan,
+                planName: plan.planName
+                    ? sanitizeStoredData<string>(plan.planName, 'string') || plan.planName
+                    : plan.planName,
+            }));
         } catch (error) {
             const err = error instanceof Error ? error : new Error('Unknown error');
             ErrorHandler.logError(err, 'LocalStorageService.getPlans');
@@ -70,6 +85,15 @@ export class LocalStorageService implements IStorageService {
      */
     async savePlans(plans: Plan[]): Promise<void> {
         try {
+            // Validate data size before saving (max 5MB)
+            if (!validateDataSize(plans, 5120)) {
+                throw new StorageError(
+                    'Data size exceeds limit',
+                    'Los datos son demasiado grandes. Por favor, elimina algunos planes.',
+                    new Error('Data size validation failed')
+                );
+            }
+
             localStorage.setItem(LocalStorageService.PLANS_KEY, JSON.stringify(plans));
         } catch (error) {
             const err = error instanceof Error ? error : new Error('Unknown error');

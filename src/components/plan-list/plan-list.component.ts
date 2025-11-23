@@ -1,6 +1,7 @@
 import type { Plan } from '../../types/index.js';
 import { formatCurrency, formatMonthsText } from '../../utils/formatters.js';
 import { PaymentsService } from '../../services/payments/payments.service.js';
+import { escapeHtml } from '../../utils/sanitizer.js';
 
 /**
  * Plan List Component
@@ -126,7 +127,7 @@ export class PlanListComponent {
                             : 'bg-soft-gray/40 text-deep-black hover:bg-soft-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray'
                     }"
                     ${isActive ? 'aria-current="true"' : ''}>
-                    <div class="font-semibold text-sm mb-1 truncate">${plan.planName}</div>
+                    <div class="font-semibold text-sm mb-1 truncate">${escapeHtml(plan.planName)}</div>
                     <div class="text-xs opacity-75">${monthsText} • ${formattedAmount}</div>
                     ${isActive ? '<div class="text-xs mt-1 font-medium">Active</div>' : ''}
                 </button>
@@ -134,7 +135,7 @@ export class PlanListComponent {
                     type="button"
                     data-delete-plan-id="${plan.id}"
                     class="delete-plan-btn absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-pure-white/80 hover:bg-pure-white text-deep-black dark:bg-charcoal-gray/80 dark:hover:bg-charcoal-gray dark:text-pure-white opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-60 focus:opacity-50 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:ring-offset-2 dark:focus:ring-offset-graphite shadow-sm"
-                    aria-label="Delete plan ${plan.planName}"
+                    aria-label="Delete plan ${escapeHtml(plan.planName)}"
                     title="Delete plan">
                     <span class="text-base font-bold leading-none">×</span>
                 </button>

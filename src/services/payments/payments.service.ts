@@ -3,8 +3,23 @@ import { StorageFactory } from '../storage/storage.factory.js';
 import type { IStorageService } from '../storage/storage.interface.js';
 
 /**
- * Payments service
- * Handles business logic for payment tracking
+ * Payments Service
+ *
+ * Handles all business logic related to payment tracking including:
+ * - Tracking payment status for each month
+ * - Calculating totals (paid and remaining)
+ * - Managing payment records
+ * - Caching payment totals for performance
+ *
+ * @example
+ * ```typescript
+ * // Get payment status for a plan
+ * const status = await PaymentsService.getPlanPaymentStatus(planId, allPlans);
+ * console.log(`Paid: ${status.totalPaid}, Remaining: ${status.remaining}`);
+ *
+ * // Save payment status
+ * await PaymentsService.savePaymentStatus(planId, ['paid', 'unpaid', 'paid']);
+ * ```
  */
 export class PaymentsService {
     private static storage: IStorageService = StorageFactory.create();

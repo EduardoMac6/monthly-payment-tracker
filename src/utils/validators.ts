@@ -13,7 +13,25 @@ export type ValidationResult = {
 };
 
 /**
- * Plan validator utility
+ * Plan Validator
+ *
+ * Provides validation functions for payment plan data.
+ * All validators use environment variables for maximum values.
+ *
+ * @example
+ * ```typescript
+ * // Validate plan name
+ * const result = PlanValidator.validatePlanName('My Plan');
+ * if (!result.isValid) {
+ *   console.error(result.error);
+ * }
+ *
+ * // Validate complete plan
+ * const validation = PlanValidator.validatePlan('Plan', 1000, 12);
+ * if (validation.isValid) {
+ *   // Proceed with plan creation
+ * }
+ * ```
  */
 export class PlanValidator {
     /**

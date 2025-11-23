@@ -16,6 +16,10 @@ A lightweight web experience that helps users plan and monitor monthly payments 
 - **Responsive Design** — Mobile-first UI built with Tailwind CSS and optimized for accessibility
 - **Modular Architecture** — TypeScript source organized into components, services, types, and utilities
 - **Type Safety** — Full TypeScript implementation compiled to production-ready JavaScript
+- **Security** — Input sanitization and XSS protection
+- **Testing** — 133 unit tests with 96% code coverage
+- **Code Quality** — ESLint, Prettier, and pre-commit hooks
+- **Optimized Builds** — Vite with code splitting, minification, and tree-shaking
 
 ## 📂 Project structure
 
@@ -72,14 +76,25 @@ monthly-payment-tracker/
    npm install
    ```
 
-2. **Build TypeScript**
+2. **Build the project**
    ```bash
-   npm run build
+   # Development build (with environment variables)
+   npm run build:dev
+   
+   # Production build (optimized)
+   npm run build:prod
    ```
-   This compiles all TypeScript files from `src/` into the `dist/` directory, maintaining the modular structure.
+   This compiles TypeScript and generates optimized bundles with Vite.
 
 3. **Run the application**
-   - Open `index.html` in a browser to see the landing page
+   ```bash
+   # Development server (with HMR)
+   npm run dev
+   
+   # Or use the simple HTTP server
+   npm run serve
+   ```
+   - Open `http://localhost:3000/index.html` to see the landing page
    - Click "Build my plan" or navigate to `pages/start.html` to begin onboarding
    - Enter the total amount and number of months for your payment plan
    - Click "Continue" to load the dashboard with your plan
@@ -91,11 +106,30 @@ monthly-payment-tracker/
 
 ## 🔁 Development workflow
 
-- `npm run build` — Compile TypeScript once
-- `npm run watch` — Watch mode: automatically rebuild when any file in `src/` changes
-- `npm run dev` — Alias for `watch` mode
+### Build Commands
+- `npm run build` — Legacy TypeScript build
+- `npm run build:dev` — Development build with Vite (includes env vars)
+- `npm run build:prod` — Production build optimized with Vite
+- `npm run watch` — Watch mode: automatically rebuild when files change
+- `npm run dev` — Vite dev server with Hot Module Replacement (HMR)
 
-The TypeScript compiler maintains the directory structure from `src/` to `dist/`, so you can organize your code into modules, components, services, and utilities.
+### Testing
+- `npm run test` — Run tests in watch mode
+- `npm run test:run` — Run all tests once
+- `npm run test:ui` — Open Vitest UI in browser
+- `npm run test:coverage` — Generate coverage report
+
+### Code Quality
+- `npm run lint` — Check code for linting errors
+- `npm run lint:fix` — Automatically fix linting errors
+- `npm run format` — Format code with Prettier
+- `npm run format:check` — Check code formatting
+
+### Documentation
+- `npm run docs` — Generate API documentation with TypeDoc
+- `npm run docs:build` — Generate docs and show confirmation
+
+The project uses Vite for optimized builds, maintaining the modular structure from `src/` to `dist/`.
 
 ## 🌐 Quick deploy (GitHub Pages)
 
@@ -106,11 +140,26 @@ The TypeScript compiler maintains the directory structure from `src/` to `dist/`
 
 ## 🧱 Tech stack
 
+### Core Technologies
 - **TypeScript** — Type-safe development with strict mode enabled
 - **HTML5** — Semantic markup
 - **Tailwind CSS** — Utility-first CSS framework (via CDN)
 - **localStorage / sessionStorage** — Client-side data persistence
 - **Inter Font** — Modern typography via Google Fonts
+
+### Build & Development Tools
+- **Vite** — Fast build tool with HMR and optimized production builds
+- **Vitest** — Fast unit test framework with 96% code coverage
+- **ESLint** — Code linting with TypeScript support
+- **Prettier** — Code formatting for consistency
+- **Husky** — Git hooks for pre-commit validation
+- **TypeDoc** — API documentation generation
+
+### Testing & Quality
+- **@testing-library/dom** — DOM testing utilities
+- **@testing-library/user-event** — User interaction simulation
+- **happy-dom** — Fast DOM implementation for testing
+- **@vitest/coverage-v8** — Code coverage reporting
 
 ## 🎨 Design features
 
@@ -122,11 +171,26 @@ The TypeScript compiler maintains the directory structure from `src/` to `dist/`
 
 ## 📚 Documentation
 
+### API Documentation
+- **[API Documentation](./docs/api/)** - Auto-generated API documentation (TypeDoc)
+  - Run `npm run docs` to regenerate
+  - Open `docs/api/index.html` in your browser
+
+### Project Documentation
 Additional documentation and planning materials are available in the [`docs/`](./docs/) directory:
 
 - **[PLAN_MEJORAS.md](./docs/PLAN_MEJORAS.md)** - Comprehensive improvement plan with detailed phases
-- **[BACKEND_GUIDE.md](./docs/BACKEND_GUIDE.md)** - Step-by-step guide for implementing backend (beginner-friendly)
+- **[PLAN_REFACTORIZACION.md](./docs/PLAN_REFACTORIZACION.md)** - Detailed refactoring plan
 - **[RESUMEN_EJECUTIVO.md](./docs/RESUMEN_EJECUTIVO.md)** - Executive summary with priorities and timeline
+- **[TESTING_GUIDE.md](./docs/TESTING_GUIDE.md)** - Complete guide to running and understanding tests
+- **[ENV_VARIABLES.md](./docs/ENV_VARIABLES.md)** - Environment variables configuration guide
+- **[COMO_PROBAR_TODO.md](./docs/COMO_PROBAR_TODO.md)** - How to test and verify all features
+
+### Code Quality
+- **133 unit tests** with 96% code coverage
+- **ESLint** configured with TypeScript rules
+- **Prettier** for consistent code formatting
+- **Pre-commit hooks** with Husky and lint-staged
 
 ## 📄 License
 

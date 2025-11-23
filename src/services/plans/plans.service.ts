@@ -4,10 +4,33 @@ import type { IStorageService } from '../storage/storage.interface.js';
 import { PlanValidator } from '../../utils/validators.js';
 import { ValidationError } from '../../utils/errors.js';
 import { getMaxPlans } from '../../config/env.config.js';
+import { sanitizePlanName } from '../../utils/sanitizer.js';
 
 /**
- * Plans service
- * Handles business logic for payment plans
+ * Plans Service
+ *
+ * Handles all business logic related to payment plans including:
+ * - Creating, reading, updating, and deleting plans
+ * - Managing active plan state
+ * - Validating plan data
+ * - Sanitizing user inputs
+ *
+ * @example
+ * ```typescript
+ * // Create a new plan
+ * const plan = await PlansService.createPlan({
+ *   planName: 'Laptop Payment',
+ *   totalAmount: 50000,
+ *   numberOfMonths: 12,
+ *   debtOwner: 'self'
+ * });
+ *
+ * // Get all plans
+ * const allPlans = await PlansService.getAllPlans();
+ *
+ * // Switch to a different plan
+ * await PlansService.switchToPlan(plan.id);
+ * ```
  */
 export class PlansService {
     private static storage: IStorageService = StorageFactory.create();
@@ -39,9 +62,29 @@ export class PlansService {
     }
 
     /**
-     * Create a new plan
+     * Create a new payment plan
+     *
+     * Validates, sanitizes, and creates a new payment plan. The new plan
+     * will automatically become the active plan, and all other plans will
+     * be deactivated.
+     *
      * @param planData - Plan data to create
-     * @returns Promise that resolves to created plan
+     * @param planData.planName - Name of the plan (will be sanitized)
+     * @param planData.totalAmount - Total amount to pay
+     * @param planData.numberOfMonths - Number of months or 'one-time'
+     * @param planData.debtOwner - 'self' for my debts, 'other' for receivables
+     * @returns Promise that resolves to the created plan
+     * @throws {ValidationError} If plan data is invalid or max plans limit reached
+     *
+     * @example
+     * ```typescript
+     * const plan = await PlansService.createPlan({
+     *   planName: 'Car Loan',
+     *   totalAmount: 300000,
+     *   numberOfMonths: 36,
+     *   debtOwner: 'self'
+     * });
+     * ```
      */
     static async createPlan(planData: {
         planName: string;
@@ -66,10 +109,13 @@ export class PlansService {
         const monthlyPayment =
             numberOfMonths === 1 ? planData.totalAmount : planData.totalAmount / numberOfMonths;
 
+        // Sanitize plan name
+        const sanitizedName = sanitizePlanName(planData.planName);
+
         // Create plan object
         const newPlan: Plan = {
             id: Date.now().toString(),
-            planName: planData.planName.trim(),
+            planName: sanitizedName,
             totalAmount: planData.totalAmount,
             numberOfMonths: planData.numberOfMonths,
             monthlyPayment: monthlyPayment,

@@ -7,6 +7,7 @@ import { PlanListComponent } from '../../components/plan-list/plan-list.componen
 import { ToastService } from '../../components/toast/toast.component.js';
 import { formatCurrency, formatMonthsText, formatOwnerText } from '../../utils/formatters.js';
 import { ErrorHandler } from '../../utils/errors.js';
+import { escapeHtml } from '../../utils/sanitizer.js';
 
 /**
  * Dashboard Page
@@ -253,7 +254,7 @@ export class DashboardPage {
                 <div class="bg-soft-gray/40 dark:bg-charcoal-gray/50 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 cursor-pointer" data-view-plan-id="${plan.id}">
                     <div class="flex justify-between items-start mb-2">
                         <div>
-                            <h4 class="font-semibold text-deep-black dark:text-pure-white">${plan.planName}</h4>
+                            <h4 class="font-semibold text-deep-black dark:text-pure-white">${escapeHtml(plan.planName)}</h4>
                             <p class="text-xs text-gray-600 dark:text-pure-white/70 mt-1">${monthsText} • ${ownerText}</p>
                         </div>
                         <span class="text-lg font-bold text-deep-black dark:text-pure-white">${formatCurrency(plan.totalAmount)}</span>

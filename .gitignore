@@ -37,6 +37,9 @@ yarn-error.log*
 coverage/
 .nyc_output/
 
+# Documentation (generated)
+docs/api/
+
 # Temporary files
 *.tmp
 *.temp
