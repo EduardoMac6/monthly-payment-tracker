@@ -5,8 +5,8 @@
     "main": "dist/scripts.js",
     "scripts": {
         "build": "tsc",
-        "build:dev": "cross-env NODE_ENV=development vite build",
-        "build:prod": "cross-env NODE_ENV=production vite build",
+        "build:dev": "cross-env NODE_ENV=development vite build && node scripts/copy-static.js",
+        "build:prod": "cross-env NODE_ENV=production vite build && node scripts/copy-static.js",
         "build:legacy": "tsc && node scripts/inject-env.js development",
         "watch": "tsc --watch",
         "dev": "vite",
