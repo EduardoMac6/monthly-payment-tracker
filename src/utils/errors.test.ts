@@ -84,7 +84,9 @@ describe('ErrorHandler', () => {
             const error = new Error('Generic error');
             ErrorHandler.handle(error, 'Test context');
 
-            expect(mockToastService.error).toHaveBeenCalledWith('An unexpected error occurred. Please try again.');
+            expect(mockToastService.error).toHaveBeenCalledWith(
+                'An unexpected error occurred. Please try again.'
+            );
         });
 
         it('should handle error without context', () => {
@@ -105,7 +107,7 @@ describe('ErrorHandler', () => {
             // Mock window without ToastService but with alert
             const originalWindow = (global as any).window;
             const alertMock = vi.fn();
-            
+
             // Set up window with alert
             (global as any).window = {
                 alert: alertMock,
@@ -158,4 +160,3 @@ describe('ErrorHandler', () => {
         });
     });
 });
-

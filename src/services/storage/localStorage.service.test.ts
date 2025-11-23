@@ -156,7 +156,10 @@ describe('LocalStorageService', () => {
         it('should delete payment data when deleting plan', async () => {
             localStorage.setItem('debtLitePlans', JSON.stringify(mockPlans));
             localStorage.setItem('paymentStatus_1', JSON.stringify(['paid']));
-            localStorage.setItem('paymentTotals_1', JSON.stringify({ totalPaid: 1000, remaining: 11000 }));
+            localStorage.setItem(
+                'paymentTotals_1',
+                JSON.stringify({ totalPaid: 1000, remaining: 11000 })
+            );
 
             await service.deletePlan('1');
 
@@ -203,7 +206,7 @@ describe('LocalStorageService', () => {
         });
 
         it('should return last plan if no active plan found', async () => {
-            const inactivePlans = mockPlans.map(p => ({ ...p, isActive: false }));
+            const inactivePlans = mockPlans.map((p) => ({ ...p, isActive: false }));
             localStorage.setItem('debtLitePlans', JSON.stringify(inactivePlans));
 
             const activePlan = await service.getActivePlan();
@@ -307,7 +310,10 @@ describe('LocalStorageService', () => {
     describe('deletePaymentData', () => {
         it('should delete payment status and totals', async () => {
             localStorage.setItem('paymentStatus_1', JSON.stringify(['paid']));
-            localStorage.setItem('paymentTotals_1', JSON.stringify({ totalPaid: 1000, remaining: 11000 }));
+            localStorage.setItem(
+                'paymentTotals_1',
+                JSON.stringify({ totalPaid: 1000, remaining: 11000 })
+            );
 
             await service.deletePaymentData('1');
 
@@ -326,4 +332,3 @@ describe('LocalStorageService', () => {
         });
     });
 });
-

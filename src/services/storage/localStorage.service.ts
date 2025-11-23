@@ -27,7 +27,7 @@ export class LocalStorageService implements IStorageService {
         } catch (error) {
             const err = error instanceof Error ? error : new Error('Unknown error');
             ErrorHandler.logError(err, 'LocalStorageService.getPlans');
-            
+
             // Check for JSON parse errors
             if (err.message.includes('JSON')) {
                 throw new StorageError(
@@ -36,7 +36,7 @@ export class LocalStorageService implements IStorageService {
                     err
                 );
             }
-            
+
             throw new StorageError(
                 'Failed to retrieve plans from storage',
                 'No se pudieron cargar tus planes de pago. Por favor, recarga la página.',
@@ -52,14 +52,14 @@ export class LocalStorageService implements IStorageService {
      */
     async savePlan(plan: Plan): Promise<void> {
         const plans = await this.getPlans();
-        const existingIndex = plans.findIndex(p => p.id === plan.id);
-        
+        const existingIndex = plans.findIndex((p) => p.id === plan.id);
+
         if (existingIndex >= 0) {
             plans[existingIndex] = plan;
         } else {
             plans.push(plan);
         }
-        
+
         await this.savePlans(plans);
     }
 
@@ -73,7 +73,7 @@ export class LocalStorageService implements IStorageService {
             localStorage.setItem(LocalStorageService.PLANS_KEY, JSON.stringify(plans));
         } catch (error) {
             const err = error instanceof Error ? error : new Error('Unknown error');
-            
+
             // Check if it's a quota exceeded error
             if (error instanceof DOMException && error.name === 'QuotaExceededError') {
                 throw new StorageError(
@@ -82,7 +82,7 @@ export class LocalStorageService implements IStorageService {
                     error
                 );
             }
-            
+
             ErrorHandler.logError(err, 'LocalStorageService.savePlans');
             throw new StorageError(
                 'Failed to save plans to storage',
@@ -99,12 +99,12 @@ export class LocalStorageService implements IStorageService {
      */
     async deletePlan(planId: string): Promise<void> {
         const plans = await this.getPlans();
-        const remainingPlans = plans.filter(p => p.id !== planId);
-        
+        const remainingPlans = plans.filter((p) => p.id !== planId);
+
         if (remainingPlans.length === plans.length) {
             throw new Error(`Plan with ID ${planId} not found`);
         }
-        
+
         await this.savePlans(remainingPlans);
         await this.deletePaymentData(planId);
     }
@@ -135,14 +135,14 @@ export class LocalStorageService implements IStorageService {
         const activePlanId = await this.getActivePlanId();
 
         if (activePlanId) {
-            const plan = plans.find(p => p.id === activePlanId);
+            const plan = plans.find((p) => p.id === activePlanId);
             if (plan) {
                 return plan;
             }
         }
 
         // Fallback: buscar el primer plan activo
-        const activePlan = plans.find(p => p.isActive);
+        const activePlan = plans.find((p) => p.isActive);
         return activePlan || (plans.length > 0 ? plans[plans.length - 1] : null);
     }
 
@@ -153,7 +153,9 @@ export class LocalStorageService implements IStorageService {
      */
     async getPaymentStatus(planId: string): Promise<PaymentStatus[]> {
         try {
-            const savedStatus = localStorage.getItem(`${LocalStorageService.PAYMENT_STATUS_PREFIX}${planId}`);
+            const savedStatus = localStorage.getItem(
+                `${LocalStorageService.PAYMENT_STATUS_PREFIX}${planId}`
+            );
             if (!savedStatus) {
                 return [];
             }
@@ -161,12 +163,12 @@ export class LocalStorageService implements IStorageService {
         } catch (error) {
             const err = error instanceof Error ? error : new Error('Unknown error');
             ErrorHandler.logError(err, 'LocalStorageService.getPaymentStatus');
-            
+
             // If JSON parse error, return empty array (data might be corrupted)
             if (err.message.includes('JSON')) {
                 console.warn('Corrupted payment status data, returning empty array');
             }
-            
+
             return [];
         }
     }
@@ -185,7 +187,7 @@ export class LocalStorageService implements IStorageService {
             );
         } catch (error) {
             const err = error instanceof Error ? error : new Error('Unknown error');
-            
+
             // Check if it's a quota exceeded error
             if (error instanceof DOMException && error.name === 'QuotaExceededError') {
                 throw new StorageError(
@@ -194,7 +196,7 @@ export class LocalStorageService implements IStorageService {
                     error
                 );
             }
-            
+
             ErrorHandler.logError(err, 'LocalStorageService.savePaymentStatus');
             throw new StorageError(
                 'Failed to save payment status',
@@ -211,7 +213,9 @@ export class LocalStorageService implements IStorageService {
      */
     async getPaymentTotals(planId: string): Promise<TotalsSnapshot | null> {
         try {
-            const savedTotals = localStorage.getItem(`${LocalStorageService.PAYMENT_TOTALS_PREFIX}${planId}`);
+            const savedTotals = localStorage.getItem(
+                `${LocalStorageService.PAYMENT_TOTALS_PREFIX}${planId}`
+            );
             if (!savedTotals) {
                 return null;
             }
@@ -219,12 +223,12 @@ export class LocalStorageService implements IStorageService {
         } catch (error) {
             const err = error instanceof Error ? error : new Error('Unknown error');
             ErrorHandler.logError(err, 'LocalStorageService.getPaymentTotals');
-            
+
             // If JSON parse error, return null (data might be corrupted)
             if (err.message.includes('JSON')) {
                 console.warn('Corrupted payment totals data, returning null');
             }
-            
+
             return null;
         }
     }
@@ -243,7 +247,7 @@ export class LocalStorageService implements IStorageService {
             );
         } catch (error) {
             const err = error instanceof Error ? error : new Error('Unknown error');
-            
+
             // Check if it's a quota exceeded error
             if (error instanceof DOMException && error.name === 'QuotaExceededError') {
                 throw new StorageError(
@@ -252,7 +256,7 @@ export class LocalStorageService implements IStorageService {
                     error
                 );
             }
-            
+
             ErrorHandler.logError(err, 'LocalStorageService.savePaymentTotals');
             throw new StorageError(
                 'Failed to save payment totals',

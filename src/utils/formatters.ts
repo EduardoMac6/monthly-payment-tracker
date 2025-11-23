@@ -6,7 +6,7 @@ import type { Plan } from '../types/index.js';
  */
 export const currencyFormatter: Intl.NumberFormat = new Intl.NumberFormat('es-MX', {
     style: 'currency',
-    currency: 'MXN'
+    currency: 'MXN',
 });
 
 /**
@@ -40,4 +40,3 @@ export function formatMonthsText(plan: Plan, paidMonths: number): string {
 export function formatOwnerText(plan: Plan): string {
     return plan.debtOwner === 'other' ? 'Receivable' : 'My Debt';
 }
-

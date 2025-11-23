@@ -25,21 +25,21 @@ export class PlanValidator {
         if (!name || name.trim().length === 0) {
             return {
                 isValid: false,
-                error: 'Plan name is required'
+                error: 'Plan name is required',
             };
         }
 
         if (name.trim().length < 2) {
             return {
                 isValid: false,
-                error: 'Plan name must be at least 2 characters long'
+                error: 'Plan name must be at least 2 characters long',
             };
         }
 
         if (name.length > 100) {
             return {
                 isValid: false,
-                error: 'Plan name must be less than 100 characters'
+                error: 'Plan name must be less than 100 characters',
             };
         }
 
@@ -55,14 +55,14 @@ export class PlanValidator {
         if (isNaN(amount)) {
             return {
                 isValid: false,
-                error: 'Amount must be a valid number'
+                error: 'Amount must be a valid number',
             };
         }
 
         if (amount <= 0) {
             return {
                 isValid: false,
-                error: 'Amount must be greater than 0'
+                error: 'Amount must be greater than 0',
             };
         }
 
@@ -70,7 +70,7 @@ export class PlanValidator {
         if (amount > maxAmount) {
             return {
                 isValid: false,
-                error: `Amount is too large (maximum: ${formatCurrency(maxAmount)})`
+                error: `Amount is too large (maximum: ${formatCurrency(maxAmount)})`,
             };
         }
 
@@ -90,14 +90,14 @@ export class PlanValidator {
         if (typeof months !== 'number') {
             return {
                 isValid: false,
-                error: 'Number of months must be a number or "one-time"'
+                error: 'Number of months must be a number or "one-time"',
             };
         }
 
         if (months < 1) {
             return {
                 isValid: false,
-                error: 'Number of months must be at least 1'
+                error: 'Number of months must be at least 1',
             };
         }
 
@@ -105,7 +105,7 @@ export class PlanValidator {
         if (months > maxMonths) {
             return {
                 isValid: false,
-                error: `Number of months cannot exceed ${maxMonths} (${Math.floor(maxMonths / 12)} years)`
+                error: `Number of months cannot exceed ${maxMonths} (${Math.floor(maxMonths / 12)} years)`,
             };
         }
 
@@ -143,8 +143,7 @@ export class PlanValidator {
 
         return {
             isValid: Object.keys(errors).length === 0,
-            errors
+            errors,
         };
     }
 }
-

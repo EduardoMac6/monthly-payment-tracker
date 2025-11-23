@@ -50,13 +50,14 @@ export class PlanListComponent {
         }
 
         if (allPlans.length === 0) {
-            this.container.innerHTML = '<p class="text-xs text-deep-black/60 dark:text-pure-white/60 italic">No plans saved yet</p>';
+            this.container.innerHTML =
+                '<p class="text-xs text-deep-black/60 dark:text-pure-white/60 italic">No plans saved yet</p>';
             return;
         }
 
         // Separate plans by owner
-        const myDebts = allPlans.filter(plan => plan.debtOwner === 'self' || !plan.debtOwner);
-        const otherDebts = allPlans.filter(plan => plan.debtOwner === 'other');
+        const myDebts = allPlans.filter((plan) => plan.debtOwner === 'self' || !plan.debtOwner);
+        const otherDebts = allPlans.filter((plan) => plan.debtOwner === 'other');
 
         // Sort plans: active first, then by date (most recent first)
         const sortPlans = (plans: Plan[]): Plan[] => {
@@ -73,7 +74,7 @@ export class PlanListComponent {
         if (myDebts.length > 0) {
             const sortedMyDebts = sortPlans(myDebts);
             const myDebtsHTML = await Promise.all(
-                sortedMyDebts.map(plan => this.renderPlan(plan))
+                sortedMyDebts.map((plan) => this.renderPlan(plan))
             );
             plansHTML += `
                 <div class="mb-4">
@@ -89,7 +90,7 @@ export class PlanListComponent {
         if (otherDebts.length > 0) {
             const sortedOtherDebts = sortPlans(otherDebts);
             const otherDebtsHTML = await Promise.all(
-                sortedOtherDebts.map(plan => this.renderPlan(plan))
+                sortedOtherDebts.map((plan) => this.renderPlan(plan))
             );
             plansHTML += `
                 <div class="mb-4">
@@ -150,8 +151,9 @@ export class PlanListComponent {
         }
 
         // Plan click handlers
-        const planButtons = this.container.querySelectorAll<HTMLButtonElement>('button[data-plan-id]');
-        planButtons.forEach(button => {
+        const planButtons =
+            this.container.querySelectorAll<HTMLButtonElement>('button[data-plan-id]');
+        planButtons.forEach((button) => {
             button.addEventListener('click', (event) => {
                 // Prevent activation if delete button was clicked
                 const target = event.target;
@@ -167,8 +169,10 @@ export class PlanListComponent {
         });
 
         // Delete button handlers
-        const deleteButtons = this.container.querySelectorAll<HTMLButtonElement>('button[data-delete-plan-id]');
-        deleteButtons.forEach(button => {
+        const deleteButtons = this.container.querySelectorAll<HTMLButtonElement>(
+            'button[data-delete-plan-id]'
+        );
+        deleteButtons.forEach((button) => {
             button.addEventListener('click', (event) => {
                 event.stopPropagation(); // Prevent plan activation
                 const planId = button.dataset.deletePlanId;
@@ -179,4 +183,3 @@ export class PlanListComponent {
         });
     }
 }
-

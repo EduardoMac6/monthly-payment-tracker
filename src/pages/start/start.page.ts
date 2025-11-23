@@ -83,7 +83,8 @@ export class StartPage {
         this.monthButtons.forEach((button) => {
             button.addEventListener('click', () => {
                 const monthsValue = button.dataset.months;
-                this.selectedMonths = monthsValue === 'one-time' ? 'one-time' : parseInt(monthsValue || '0', 10);
+                this.selectedMonths =
+                    monthsValue === 'one-time' ? 'one-time' : parseInt(monthsValue || '0', 10);
                 this.updateMonthButtons();
                 this.updateContinueState();
             });
@@ -103,12 +104,12 @@ export class StartPage {
     private updateOwnerButtons(): void {
         this.ownerButtons.forEach((btn) => {
             const isActive = btn.dataset.owner === this.selectedOwner;
-            
+
             // Remove all state classes and inline styles
             btn.classList.remove('bg-lime-vibrant', 'bg-soft-gray/40', 'dark:bg-charcoal-gray/50');
             btn.style.backgroundColor = '';
             btn.style.color = '';
-            
+
             if (isActive) {
                 // Active state: lime-vibrant background (#A4EA01) with deep-black text
                 btn.style.backgroundColor = '#A4EA01';
@@ -117,7 +118,12 @@ export class StartPage {
                 btn.setAttribute('aria-pressed', 'true');
             } else {
                 // Inactive state: use Tailwind classes
-                btn.classList.add('bg-soft-gray/40', 'dark:bg-charcoal-gray/50', 'text-deep-black', 'dark:text-pure-white');
+                btn.classList.add(
+                    'bg-soft-gray/40',
+                    'dark:bg-charcoal-gray/50',
+                    'text-deep-black',
+                    'dark:text-pure-white'
+                );
                 btn.setAttribute('aria-pressed', 'false');
             }
         });
@@ -128,14 +134,15 @@ export class StartPage {
      */
     private updateMonthButtons(): void {
         this.monthButtons.forEach((btn) => {
-            const monthsValue = this.selectedMonths === 'one-time' ? 'one-time' : this.selectedMonths?.toString();
+            const monthsValue =
+                this.selectedMonths === 'one-time' ? 'one-time' : this.selectedMonths?.toString();
             const isActive = btn.dataset.months === monthsValue;
-            
+
             // Remove all state classes and inline styles
             btn.classList.remove('bg-lime-vibrant', 'bg-soft-gray/40', 'dark:bg-charcoal-gray/50');
             btn.style.backgroundColor = '';
             btn.style.color = '';
-            
+
             if (isActive) {
                 // Active state: lime-vibrant background (#A4EA01) with deep-black text
                 btn.style.backgroundColor = '#A4EA01';
@@ -144,7 +151,12 @@ export class StartPage {
                 btn.setAttribute('aria-pressed', 'true');
             } else {
                 // Inactive state: use Tailwind classes
-                btn.classList.add('bg-soft-gray/40', 'dark:bg-charcoal-gray/50', 'text-deep-black', 'dark:text-pure-white');
+                btn.classList.add(
+                    'bg-soft-gray/40',
+                    'dark:bg-charcoal-gray/50',
+                    'text-deep-black',
+                    'dark:text-pure-white'
+                );
                 btn.setAttribute('aria-pressed', 'false');
             }
         });
@@ -162,10 +174,11 @@ export class StartPage {
         const amountResult = this.formValidator.validateAmount(this.amountInput, false);
         const monthsResult = this.formValidator.validateMonths(this.selectedMonths, false);
 
-        const isValid = nameResult.isValid && 
-                        amountResult.isValid && 
-                        monthsResult.isValid && 
-                        this.selectedOwner !== null;
+        const isValid =
+            nameResult.isValid &&
+            amountResult.isValid &&
+            monthsResult.isValid &&
+            this.selectedOwner !== null;
 
         this.continueBtn.disabled = !isValid;
     }
@@ -187,7 +200,12 @@ export class StartPage {
         const amountResult = this.formValidator.validateAmount(this.amountInput, true);
         const monthsResult = this.formValidator.validateMonths(this.selectedMonths, true);
 
-        if (!nameResult.isValid || !amountResult.isValid || !monthsResult.isValid || !this.selectedOwner) {
+        if (
+            !nameResult.isValid ||
+            !amountResult.isValid ||
+            !monthsResult.isValid ||
+            !this.selectedOwner
+        ) {
             ToastService.error('Por favor, completa todos los campos correctamente');
             return;
         }
@@ -200,12 +218,12 @@ export class StartPage {
                 planName: this.planNameInput.value.trim(),
                 totalAmount: amountValue,
                 numberOfMonths: this.selectedMonths!,
-                debtOwner: this.selectedOwner
+                debtOwner: this.selectedOwner,
             });
 
             console.log('Plan creado exitosamente:', newPlan);
             ToastService.success('Plan creado exitosamente');
-            
+
             // Redirect to dashboard after a short delay
             setTimeout(() => {
                 window.location.href = 'dashboard.html';
@@ -221,4 +239,3 @@ export class StartPage {
         }
     }
 }
-

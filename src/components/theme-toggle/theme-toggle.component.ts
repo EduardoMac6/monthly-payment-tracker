@@ -29,9 +29,9 @@ export class ThemeToggleComponent {
         }
 
         // Get stored preference or default to light
-        const storedThemePreference: ThemeChoice = 
+        const storedThemePreference: ThemeChoice =
             localStorage.getItem('debtLiteTheme') === 'dark' ? 'dark' : 'light';
-        
+
         console.log('Stored theme preference:', storedThemePreference);
         this.applyTheme(storedThemePreference);
 
@@ -41,7 +41,12 @@ export class ThemeToggleComponent {
             e.stopPropagation();
             const isCurrentlyDark = this.rootElement.classList.contains('dark');
             const newTheme = isCurrentlyDark ? 'light' : 'dark';
-            console.log('Theme toggle clicked. Current:', isCurrentlyDark ? 'dark' : 'light', '-> New:', newTheme);
+            console.log(
+                'Theme toggle clicked. Current:',
+                isCurrentlyDark ? 'dark' : 'light',
+                '-> New:',
+                newTheme
+            );
             this.applyTheme(newTheme);
         });
     }
@@ -51,10 +56,10 @@ export class ThemeToggleComponent {
      */
     private updateThemeToggleUI(theme: ThemeChoice): void {
         if (!this.themeToggle) return;
-        
+
         this.themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
         this.themeToggle.setAttribute('data-theme', theme);
-        
+
         if (this.themeLabel) {
             this.themeLabel.textContent = theme === 'dark' ? 'Dark' : 'Light';
         }
@@ -73,9 +78,11 @@ export class ThemeToggleComponent {
                 this.dashboardLogo.setAttribute('src', nextSrc);
             }
         }
-        
+
         // Update plan detail logo
-        const planDetailLogo = document.getElementById('plan-detail-logo') as HTMLImageElement | null;
+        const planDetailLogo = document.getElementById(
+            'plan-detail-logo'
+        ) as HTMLImageElement | null;
         if (planDetailLogo) {
             const lightSrc = planDetailLogo.dataset.logoLight;
             const darkSrc = planDetailLogo.dataset.logoDark;
@@ -91,21 +98,24 @@ export class ThemeToggleComponent {
      */
     private applyTheme(theme: ThemeChoice): void {
         console.log('Applying theme:', theme);
-        
+
         // Force remove first, then add to ensure it works
         this.rootElement.classList.remove('dark');
         if (theme === 'dark') {
             this.rootElement.classList.add('dark');
         }
-        
+
         // Persist theme preference
         localStorage.setItem('debtLiteTheme', theme);
-        
+
         // Update UI elements
         this.updateThemeToggleUI(theme);
         this.updateLogo(theme);
-        
-        console.log('Theme applied. Dark class present:', this.rootElement.classList.contains('dark'));
+
+        console.log(
+            'Theme applied. Dark class present:',
+            this.rootElement.classList.contains('dark')
+        );
     }
 
     /**
@@ -122,4 +132,3 @@ export class ThemeToggleComponent {
         this.applyTheme(theme);
     }
 }
-

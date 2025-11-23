@@ -12,7 +12,7 @@ export class AppError extends Error {
         this.code = code;
         this.userMessage = userMessage || message;
         this.originalError = originalError;
-        
+
         // Maintains proper stack trace for where our error was thrown (only available on V8)
         // TypeScript doesn't recognize captureStackTrace, but it exists in V8 engines
         if ((Error as any).captureStackTrace) {
@@ -56,7 +56,7 @@ export class ErrorHandler {
     static handle(error: Error, context?: string): void {
         // Log error for debugging
         console.error(`[ErrorHandler] ${context || 'Unknown context'}:`, error);
-        
+
         // Show user-friendly message
         if (error instanceof AppError) {
             ErrorHandler.showUserError(error.userMessage);
@@ -87,11 +87,10 @@ export class ErrorHandler {
      */
     static logError(error: Error, context: string): void {
         console.error(`[${context}]`, error);
-        
+
         // In production, this could send to an error tracking service
         if (error instanceof AppError && error.originalError) {
             console.error('Original error:', error.originalError);
         }
     }
 }
-

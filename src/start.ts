@@ -56,7 +56,8 @@ function initTheme(): void {
     }
 
     // Get stored preference or default to light
-    const storedThemePreference: ThemeChoice = localStorage.getItem('debtLiteTheme') === 'dark' ? 'dark' : 'light';
+    const storedThemePreference: ThemeChoice =
+        localStorage.getItem('debtLiteTheme') === 'dark' ? 'dark' : 'light';
     console.log('Stored theme preference:', storedThemePreference);
     applyTheme(storedThemePreference);
 
@@ -67,7 +68,12 @@ function initTheme(): void {
             e.stopPropagation();
             const isCurrentlyDark = rootElement.classList.contains('dark');
             const newTheme = isCurrentlyDark ? 'light' : 'dark';
-            console.log('Theme toggle clicked. Current:', isCurrentlyDark ? 'dark' : 'light', '-> New:', newTheme);
+            console.log(
+                'Theme toggle clicked. Current:',
+                isCurrentlyDark ? 'dark' : 'light',
+                '-> New:',
+                newTheme
+            );
             applyTheme(newTheme);
         });
     }
@@ -82,5 +88,3 @@ document.addEventListener('DOMContentLoaded', () => {
     const startPage = new StartPage();
     startPage.init();
 });
-
-

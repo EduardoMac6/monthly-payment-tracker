@@ -1,7 +1,7 @@
 /**
  * Environment Configuration
  * Reads environment variables from window.__ENV__ or uses defaults
- * 
+ *
  * For development: Variables can be injected via a script tag in HTML
  * For production: Variables should be set at build time or via window.__ENV__
  */
@@ -28,7 +28,7 @@ const DEFAULT_CONFIG: EnvConfig = {
     VITE_API_URL: 'http://localhost:3000/api',
     VITE_MAX_PLANS: 50,
     VITE_MAX_PLAN_AMOUNT: 1000000000,
-    VITE_MAX_PLAN_MONTHS: 120
+    VITE_MAX_PLAN_MONTHS: 120,
 };
 
 /**
@@ -88,7 +88,7 @@ export const env: EnvConfig = {
     VITE_API_URL: getEnvVar('VITE_API_URL', DEFAULT_CONFIG.VITE_API_URL),
     VITE_MAX_PLANS: getEnvVar('VITE_MAX_PLANS', DEFAULT_CONFIG.VITE_MAX_PLANS),
     VITE_MAX_PLAN_AMOUNT: getEnvVar('VITE_MAX_PLAN_AMOUNT', DEFAULT_CONFIG.VITE_MAX_PLAN_AMOUNT),
-    VITE_MAX_PLAN_MONTHS: getEnvVar('VITE_MAX_PLAN_MONTHS', DEFAULT_CONFIG.VITE_MAX_PLAN_MONTHS)
+    VITE_MAX_PLAN_MONTHS: getEnvVar('VITE_MAX_PLAN_MONTHS', DEFAULT_CONFIG.VITE_MAX_PLAN_MONTHS),
 };
 
 /**
@@ -132,4 +132,3 @@ export function getMaxPlanAmount(): number {
 export function getMaxPlanMonths(): number {
     return env.VITE_MAX_PLAN_MONTHS;
 }
-

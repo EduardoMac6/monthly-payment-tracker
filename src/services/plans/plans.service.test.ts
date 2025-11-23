@@ -24,8 +24,8 @@ vi.mock('../../config/env.config.js', () => ({
         VITE_API_URL: 'http://localhost:3000/api',
         VITE_MAX_PLANS: 50,
         VITE_MAX_PLAN_AMOUNT: 1000000000,
-        VITE_MAX_PLAN_MONTHS: 120
-    }
+        VITE_MAX_PLAN_MONTHS: 120,
+    },
 }));
 
 // Import PlansService AFTER mocks are set up
@@ -83,7 +83,7 @@ describe('PlansService', () => {
 
         // Set the mock storage in the factory
         (StorageFactory.create as any).mockReturnValue(mockStorage);
-        
+
         // Reset the PlansService storage by calling the factory again
         // This ensures the service uses our mock
         (PlansService as any).storage = mockStorage;
@@ -154,8 +154,14 @@ describe('PlansService', () => {
             // Verify that all existing plans were deactivated
             expect(mockStorage.savePlans).toHaveBeenCalled();
             const savedPlans = (mockStorage.savePlans as any).mock.calls[0][0];
-            expect(savedPlans.every((p: Plan) => p.id !== createdPlan.id || p.isActive === true)).toBe(true);
-            expect(savedPlans.filter((p: Plan) => p.id !== createdPlan.id).every((p: Plan) => !p.isActive)).toBe(true);
+            expect(
+                savedPlans.every((p: Plan) => p.id !== createdPlan.id || p.isActive === true)
+            ).toBe(true);
+            expect(
+                savedPlans
+                    .filter((p: Plan) => p.id !== createdPlan.id)
+                    .every((p: Plan) => !p.isActive)
+            ).toBe(true);
         });
 
         it('should throw ValidationError for invalid plan name', async () => {
@@ -215,7 +221,9 @@ describe('PlansService', () => {
         });
 
         it('should throw error when plan not found', async () => {
-            await expect(PlansService.updatePlan('999', { planName: 'Test' })).rejects.toThrow('not found');
+            await expect(PlansService.updatePlan('999', { planName: 'Test' })).rejects.toThrow(
+                'not found'
+            );
         });
     });
 
@@ -273,4 +281,3 @@ describe('PlansService', () => {
         });
     });
 });
-

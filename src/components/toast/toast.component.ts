@@ -27,7 +27,8 @@ export class ToastService {
         // Create container if it doesn't exist
         this.container = document.createElement('div');
         this.container.id = 'toast-container';
-        this.container.className = 'fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none';
+        this.container.className =
+            'fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none';
         document.body.appendChild(this.container);
     }
 
@@ -147,13 +148,14 @@ export class ToastService {
      * Get toast CSS classes based on type
      */
     private static getToastClasses(type: ToastType): string {
-        const baseClasses = 'pointer-events-auto rounded-lg shadow-lg p-4 transition-all duration-300 transform opacity-0 translate-x-full';
-        
+        const baseClasses =
+            'pointer-events-auto rounded-lg shadow-lg p-4 transition-all duration-300 transform opacity-0 translate-x-full';
+
         const typeClasses = {
             success: 'bg-lime-vibrant text-deep-black border border-lime-vibrant/20',
             error: 'bg-red-500 text-white border border-red-600/20 dark:bg-red-600 dark:text-white',
             info: 'bg-blue-500 text-white border border-blue-600/20 dark:bg-blue-600 dark:text-white',
-            warning: 'bg-yellow-500 text-deep-black border border-yellow-600/20 dark:bg-yellow-600'
+            warning: 'bg-yellow-500 text-deep-black border border-yellow-600/20 dark:bg-yellow-600',
         };
 
         return `${baseClasses} ${typeClasses[type]}`;
@@ -183,7 +185,7 @@ export class ToastService {
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                 </svg>
-            `
+            `,
         };
 
         return icons[type];
@@ -201,5 +203,3 @@ export class ToastService {
 
 // Make ToastService available globally for onclick handlers
 (window as any).ToastService = ToastService;
-
-

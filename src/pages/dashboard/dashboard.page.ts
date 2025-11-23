@@ -15,7 +15,7 @@ import { ErrorHandler } from '../../utils/errors.js';
 export class DashboardPage {
     private allPlans: Plan[] = [];
     private activePlan: Plan | null = null;
-    
+
     // DOM Elements
     private overviewView: HTMLElement | null;
     private planDetailView: HTMLElement | null;
@@ -171,13 +171,13 @@ export class DashboardPage {
             myDebts: {
                 total: myDebtsTotal,
                 paid: myDebtsPaid,
-                remaining: myDebtsTotal - myDebtsPaid
+                remaining: myDebtsTotal - myDebtsPaid,
             },
             receivables: {
                 total: receivablesTotal,
                 received: receivablesReceived,
-                pending: receivablesTotal - receivablesReceived
-            }
+                pending: receivablesTotal - receivablesReceived,
+            },
         };
     }
 
@@ -213,16 +213,20 @@ export class DashboardPage {
 
         if (myDebtsTotal) myDebtsTotal.textContent = formatCurrency(stats.myDebts.total);
         if (myDebtsPaid) myDebtsPaid.textContent = formatCurrency(stats.myDebts.paid);
-        if (myDebtsRemaining) myDebtsRemaining.textContent = formatCurrency(stats.myDebts.remaining);
+        if (myDebtsRemaining)
+            myDebtsRemaining.textContent = formatCurrency(stats.myDebts.remaining);
 
         // Update "Receivables" section
         const receivablesTotal = document.getElementById('receivables-total');
         const receivablesReceived = document.getElementById('receivables-received');
         const receivablesPending = document.getElementById('receivables-pending');
 
-        if (receivablesTotal) receivablesTotal.textContent = formatCurrency(stats.receivables.total);
-        if (receivablesReceived) receivablesReceived.textContent = formatCurrency(stats.receivables.received);
-        if (receivablesPending) receivablesPending.textContent = formatCurrency(stats.receivables.pending);
+        if (receivablesTotal)
+            receivablesTotal.textContent = formatCurrency(stats.receivables.total);
+        if (receivablesReceived)
+            receivablesReceived.textContent = formatCurrency(stats.receivables.received);
+        if (receivablesPending)
+            receivablesPending.textContent = formatCurrency(stats.receivables.pending);
 
         // Render plans list in overview
         await this.renderOverviewPlansList();
@@ -242,9 +246,8 @@ export class DashboardPage {
             const paidMonths = await PaymentsService.getPaidMonthsCount(plan.id);
             const monthsText = formatMonthsText(plan, paidMonths);
             const ownerText = formatOwnerText(plan);
-            const progressPercent = plan.totalAmount > 0
-                ? (planStatus.totalPaid / plan.totalAmount) * 100
-                : 0;
+            const progressPercent =
+                plan.totalAmount > 0 ? (planStatus.totalPaid / plan.totalAmount) * 100 : 0;
 
             return `
                 <div class="bg-soft-gray/40 dark:bg-charcoal-gray/50 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 cursor-pointer" data-view-plan-id="${plan.id}">
@@ -299,9 +302,10 @@ export class DashboardPage {
             this.planNameHeader.textContent = plan.planName;
         }
         if (this.planDescription) {
-            const monthsText = plan.numberOfMonths === 'one-time'
-                ? 'One-time payment'
-                : `${plan.numberOfMonths}-month payment plan`;
+            const monthsText =
+                plan.numberOfMonths === 'one-time'
+                    ? 'One-time payment'
+                    : `${plan.numberOfMonths}-month payment plan`;
             this.planDescription.textContent = `Track your ${monthsText.toLowerCase()}.`;
         }
 
@@ -330,7 +334,12 @@ export class DashboardPage {
      * Update totals display
      */
     private updateTotals(): TotalsSnapshot {
-        if (!this.activePlan || !this.totalPaidEl || !this.remainingBalanceEl || !this.totalCostEl) {
+        if (
+            !this.activePlan ||
+            !this.totalPaidEl ||
+            !this.remainingBalanceEl ||
+            !this.totalCostEl
+        ) {
             return { totalPaid: 0, remaining: 0 };
         }
 
@@ -341,7 +350,7 @@ export class DashboardPage {
         );
 
         // Update all toggles visual state
-        paymentToggles.forEach(toggle => {
+        paymentToggles.forEach((toggle) => {
             this.paymentTable.updateToggleVisual(toggle);
         });
 
@@ -363,7 +372,7 @@ export class DashboardPage {
 
         const paymentToggles = this.paymentTable.getPaymentToggles();
         const statusArray: string[] = [];
-        paymentToggles.forEach(toggle => {
+        paymentToggles.forEach((toggle) => {
             statusArray.push(toggle.checked ? 'paid' : 'pending');
         });
 
@@ -392,7 +401,7 @@ export class DashboardPage {
 
         if (isChecked) {
             // If checking a month, check all previous months
-            allToggles.forEach(toggle => {
+            allToggles.forEach((toggle) => {
                 const toggleIndex = parseInt(toggle.dataset.monthIndex || '0', 10);
                 if (toggleIndex <= monthIndex && !toggle.checked) {
                     toggle.checked = true;
@@ -401,7 +410,7 @@ export class DashboardPage {
             });
         } else {
             // If unchecking a month, uncheck all following months
-            allToggles.forEach(toggle => {
+            allToggles.forEach((toggle) => {
                 const toggleIndex = parseInt(toggle.dataset.monthIndex || '0', 10);
                 if (toggleIndex >= monthIndex && toggle.checked) {
                     toggle.checked = false;
@@ -500,7 +509,9 @@ export class DashboardPage {
      * Update plan detail logo
      */
     private updatePlanDetailLogo(): void {
-        const planDetailLogo = document.getElementById('plan-detail-logo') as HTMLImageElement | null;
+        const planDetailLogo = document.getElementById(
+            'plan-detail-logo'
+        ) as HTMLImageElement | null;
         if (planDetailLogo) {
             const isDark = document.documentElement.classList.contains('dark');
             const logoSrc = isDark

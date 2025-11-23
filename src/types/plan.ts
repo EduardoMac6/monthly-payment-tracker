@@ -57,4 +57,3 @@ export type PlanPaymentStatus = {
     totalPaid: number;
     remaining: number;
 };
-

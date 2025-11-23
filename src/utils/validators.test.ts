@@ -112,21 +112,13 @@ describe('PlanValidator', () => {
 
     describe('validatePlan', () => {
         it('should return valid for valid plan data', () => {
-            const result = PlanValidator.validatePlan(
-                'My Plan',
-                1000,
-                12
-            );
+            const result = PlanValidator.validatePlan('My Plan', 1000, 12);
             expect(result.isValid).toBe(true);
             expect(result.errors).toEqual({});
         });
 
         it('should return invalid with all errors for invalid data', () => {
-            const result = PlanValidator.validatePlan(
-                '',
-                -100,
-                0
-            );
+            const result = PlanValidator.validatePlan('', -100, 0);
             expect(result.isValid).toBe(false);
             expect(result.errors.planName).toBeDefined();
             expect(result.errors.amount).toBeDefined();
@@ -134,11 +126,7 @@ describe('PlanValidator', () => {
         });
 
         it('should return invalid with specific field errors', () => {
-            const result = PlanValidator.validatePlan(
-                'Valid Name',
-                -100,
-                12
-            );
+            const result = PlanValidator.validatePlan('Valid Name', -100, 12);
             expect(result.isValid).toBe(false);
             expect(result.errors.planName).toBeUndefined();
             expect(result.errors.amount).toBeDefined();
@@ -146,4 +134,3 @@ describe('PlanValidator', () => {
         });
     });
 });
-

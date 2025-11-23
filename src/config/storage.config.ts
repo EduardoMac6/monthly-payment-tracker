@@ -14,4 +14,3 @@ export type StorageType = 'localStorage' | 'api';
 export function getStorageType(): StorageType {
     return getEnvStorageType();
 }
-

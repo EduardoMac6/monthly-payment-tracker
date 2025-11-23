@@ -35,7 +35,7 @@ export class PlansService {
      */
     static async getPlanById(planId: string): Promise<Plan | undefined> {
         const plans = await this.getAllPlans();
-        return plans.find(p => p.id === planId);
+        return plans.find((p) => p.id === planId);
     }
 
     /**
@@ -63,9 +63,8 @@ export class PlansService {
 
         // Calculate monthly payment
         const numberOfMonths = planData.numberOfMonths === 'one-time' ? 1 : planData.numberOfMonths;
-        const monthlyPayment = numberOfMonths === 1 
-            ? planData.totalAmount 
-            : planData.totalAmount / numberOfMonths;
+        const monthlyPayment =
+            numberOfMonths === 1 ? planData.totalAmount : planData.totalAmount / numberOfMonths;
 
         // Create plan object
         const newPlan: Plan = {
@@ -76,7 +75,7 @@ export class PlansService {
             monthlyPayment: monthlyPayment,
             debtOwner: planData.debtOwner,
             createdAt: new Date().toISOString(),
-            isActive: true
+            isActive: true,
         };
 
         // Get existing plans
@@ -92,7 +91,7 @@ export class PlansService {
         }
 
         // Deactivate all existing plans (only one active at a time)
-        existingPlans.forEach(plan => {
+        existingPlans.forEach((plan) => {
             plan.isActive = false;
         });
 
@@ -100,13 +99,8 @@ export class PlansService {
         existingPlans.push(newPlan);
 
         // Save plans
-        try {
-            await this.storage.savePlans(existingPlans);
-            await this.storage.setActivePlanId(newPlan.id);
-        } catch (error) {
-            // Re-throw storage errors (they will be handled by ErrorHandler)
-            throw error;
-        }
+        await this.storage.savePlans(existingPlans);
+        await this.storage.setActivePlanId(newPlan.id);
 
         return newPlan;
     }
@@ -119,7 +113,7 @@ export class PlansService {
      */
     static async updatePlan(planId: string, updates: Partial<Plan>): Promise<Plan> {
         const plans = await this.getAllPlans();
-        const planIndex = plans.findIndex(p => p.id === planId);
+        const planIndex = plans.findIndex((p) => p.id === planId);
 
         if (planIndex === -1) {
             throw new Error(`Plan with ID ${planId} not found`);
@@ -127,7 +121,7 @@ export class PlansService {
 
         // Update plan
         const updatedPlan = { ...plans[planIndex], ...updates };
-        
+
         // Validate if name or amount changed
         if (updates.planName !== undefined || updates.totalAmount !== undefined) {
             const validation = PlanValidator.validatePlan(
@@ -155,7 +149,7 @@ export class PlansService {
      */
     static async deletePlan(planId: string): Promise<void> {
         const plans = await this.getAllPlans();
-        const remainingPlans = plans.filter(p => p.id !== planId);
+        const remainingPlans = plans.filter((p) => p.id !== planId);
 
         if (remainingPlans.length === plans.length) {
             throw new Error(`Plan with ID ${planId} not found`);
@@ -169,8 +163,8 @@ export class PlansService {
         if (activePlan && activePlan.id === planId) {
             if (remainingPlans.length > 0) {
                 // Activate the most recent plan
-                const nextPlan = remainingPlans.sort((a, b) => 
-                    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                const nextPlan = remainingPlans.sort(
+                    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
                 )[0];
                 nextPlan.isActive = true;
                 await this.storage.setActivePlanId(nextPlan.id);
@@ -191,14 +185,14 @@ export class PlansService {
      */
     static async switchToPlan(planId: string): Promise<void> {
         const plans = await this.getAllPlans();
-        const targetPlan = plans.find(p => p.id === planId);
+        const targetPlan = plans.find((p) => p.id === planId);
 
         if (!targetPlan) {
             throw new Error(`Plan with ID ${planId} not found`);
         }
 
         // Deactivate all plans
-        plans.forEach(plan => {
+        plans.forEach((plan) => {
             plan.isActive = false;
         });
 

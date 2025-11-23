@@ -3,15 +3,15 @@ import type { IStorageService } from './storage.interface';
 
 /**
  * API Storage Service (FUTURE IMPLEMENTATION)
- * 
+ *
  * This service will implement IStorageService using HTTP API calls
  * instead of localStorage. This allows for:
  * - Multi-device synchronization
  * - Cloud backup
  * - Multi-user support
- * 
+ *
  * To use this service, update storage.config.ts to return 'api' instead of 'localStorage'
- * 
+ *
  * @example
  * // In storage.config.ts:
  * export function getStorageType(): StorageType {

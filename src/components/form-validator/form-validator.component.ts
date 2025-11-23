@@ -24,11 +24,11 @@ export class FormValidator {
     validatePlanName(input: HTMLInputElement, showError: boolean = true): ValidationResult {
         const value = input.value.trim();
         const result = PlanValidator.validatePlanName(value);
-        
+
         if (showError) {
             this.showFieldError(input, result.error);
         }
-        
+
         return result;
     }
 
@@ -41,11 +41,11 @@ export class FormValidator {
     validateAmount(input: HTMLInputElement, showError: boolean = true): ValidationResult {
         const value = parseFloat(input.value);
         const result = PlanValidator.validateAmount(value);
-        
+
         if (showError) {
             this.showFieldError(input, result.error);
         }
-        
+
         return result;
     }
 
@@ -55,11 +55,14 @@ export class FormValidator {
      * @param showError - Whether to show error message
      * @returns Validation result
      */
-    validateMonths(months: number | 'one-time' | null, showError: boolean = true): ValidationResult {
+    validateMonths(
+        months: number | 'one-time' | null,
+        showError: boolean = true
+    ): ValidationResult {
         if (months === null) {
             const result: ValidationResult = {
                 isValid: false,
-                error: 'Please select a payment period'
+                error: 'Please select a payment period',
             };
             if (showError && this.errorContainer) {
                 this.showContainerError(result.error);
@@ -68,11 +71,11 @@ export class FormValidator {
         }
 
         const result = PlanValidator.validateMonths(months);
-        
+
         if (showError && !result.isValid && this.errorContainer) {
             this.showContainerError(result.error || 'Invalid payment period');
         }
-        
+
         return result;
     }
 
@@ -99,13 +102,13 @@ export class FormValidator {
         // Create error message element
         const errorId = `${input.id}-error`;
         let errorElement = document.getElementById(errorId);
-        
+
         if (!errorElement) {
             errorElement = document.createElement('p');
             errorElement.id = errorId;
             errorElement.className = 'mt-1 text-xs text-red-600 dark:text-red-400';
             errorElement.setAttribute('role', 'alert');
-            
+
             // Insert after input or its parent
             const parent = input.parentElement;
             if (parent) {
@@ -142,7 +145,8 @@ export class FormValidator {
             return;
         }
 
-        this.errorContainer.className = 'mt-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800';
+        this.errorContainer.className =
+            'mt-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800';
         this.errorContainer.innerHTML = `
             <p class="text-sm text-red-600 dark:text-red-400" role="alert">
                 ${this.escapeHtml(errorMessage)}
@@ -170,4 +174,3 @@ export class FormValidator {
         return div.innerHTML;
     }
 }
-

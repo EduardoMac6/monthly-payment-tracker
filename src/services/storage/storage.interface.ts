@@ -95,4 +95,3 @@ export interface IStorageService {
      */
     clearActivePlanId(): Promise<void>;
 }
-

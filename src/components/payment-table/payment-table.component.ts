@@ -53,9 +53,10 @@ export class PaymentTableComponent {
             const totalMonths = typeof numberOfMonths === 'number' ? numberOfMonths : 1;
             for (let i = 1; i <= totalMonths; i++) {
                 // Adjust the final payment so the total matches exactly
-                const payment = (i === totalMonths)
-                    ? (totalCost - (monthlyPayment * (totalMonths - 1)))
-                    : monthlyPayment;
+                const payment =
+                    i === totalMonths
+                        ? totalCost - monthlyPayment * (totalMonths - 1)
+                        : monthlyPayment;
 
                 const isLastRow = i === totalMonths;
                 tableHTML += this.renderMonthlyPaymentRow(i, payment, isLastRow);
@@ -86,7 +87,11 @@ export class PaymentTableComponent {
     /**
      * Render monthly payment row
      */
-    private renderMonthlyPaymentRow(monthNumber: number, payment: number, isLastRow: boolean): string {
+    private renderMonthlyPaymentRow(
+        monthNumber: number,
+        payment: number,
+        isLastRow: boolean
+    ): string {
         const rowClasses = isLastRow
             ? 'border-b-0 hover:bg-soft-gray/40 transition-colors dark:hover:bg-charcoal-gray/60'
             : 'border-b border-gray-200 hover:bg-soft-gray/40 transition-colors dark:border-charcoal-gray/50 dark:hover:bg-charcoal-gray/60';
@@ -134,11 +139,11 @@ export class PaymentTableComponent {
         }
 
         const toggles = this.tableBody.querySelectorAll<HTMLInputElement>('.payment-toggle');
-        toggles.forEach(toggle => {
+        toggles.forEach((toggle) => {
             toggle.addEventListener('change', () => {
                 const monthIndex = parseInt(toggle.dataset.monthIndex || '0', 10);
                 const isChecked = toggle.checked;
-                
+
                 if (this.onToggleChange) {
                     this.onToggleChange(monthIndex, isChecked);
                 }
@@ -209,4 +214,3 @@ export class PaymentTableComponent {
         return this.tableBody.querySelectorAll<HTMLInputElement>('.payment-toggle');
     }
 }
-

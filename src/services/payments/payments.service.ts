@@ -16,9 +16,7 @@ export class PaymentsService {
      */
     static async getPaidMonthsCount(planId: string): Promise<number> {
         const statusArray = await this.storage.getPaymentStatus(planId);
-        return statusArray.filter(status => 
-            status === 'paid' || status === 'pagado'
-        ).length;
+        return statusArray.filter((status) => status === 'paid' || status === 'pagado').length;
     }
 
     /**
@@ -27,7 +25,10 @@ export class PaymentsService {
      * @param allPlans - Array of all plans (for finding the plan)
      * @returns Promise that resolves to payment status with total paid and remaining
      */
-    static async getPlanPaymentStatus(planId: string, allPlans: Plan[]): Promise<PlanPaymentStatus> {
+    static async getPlanPaymentStatus(
+        planId: string,
+        allPlans: Plan[]
+    ): Promise<PlanPaymentStatus> {
         // Try to get cached totals first
         const savedTotals = await this.storage.getPaymentTotals(planId);
         if (savedTotals) {
@@ -40,7 +41,7 @@ export class PaymentsService {
             return { totalPaid: 0, remaining: 0 };
         }
 
-        const plan = allPlans.find(p => p.id === planId);
+        const plan = allPlans.find((p) => p.id === planId);
         if (!plan) {
             return { totalPaid: 0, remaining: 0 };
         }
@@ -57,9 +58,10 @@ export class PaymentsService {
                 } else {
                     // Calculate payment amount for this month
                     // Last month gets the remainder
-                    const payment = (idx === planMonths - 1)
-                        ? (planTotalCost - (planMonthlyPayment * (planMonths - 1)))
-                        : planMonthlyPayment;
+                    const payment =
+                        idx === planMonths - 1
+                            ? planTotalCost - planMonthlyPayment * (planMonths - 1)
+                            : planMonthlyPayment;
                     paid += payment;
                 }
             }
@@ -67,7 +69,7 @@ export class PaymentsService {
 
         return {
             totalPaid: paid,
-            remaining: planTotalCost - paid
+            remaining: planTotalCost - paid,
         };
     }
 
@@ -119,7 +121,7 @@ export class PaymentsService {
     ): TotalsSnapshot {
         let currentTotalPaid = 0;
 
-        paymentToggles.forEach(toggle => {
+        paymentToggles.forEach((toggle) => {
             if (toggle.checked) {
                 const amount = toggle.dataset.amount;
                 if (amount) {
@@ -130,7 +132,7 @@ export class PaymentsService {
 
         return {
             totalPaid: currentTotalPaid,
-            remaining: totalCost - currentTotalPaid
+            remaining: totalCost - currentTotalPaid,
         };
     }
 }
