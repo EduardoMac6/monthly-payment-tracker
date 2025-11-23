@@ -1,5 +1,7 @@
 # DebtLite — Monthly Payment Tracker
 
+[![CI](https://github.com/USERNAME/monthly-payment-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/monthly-payment-tracker/actions/workflows/ci.yml)
+
 A lightweight web experience that helps users plan and monitor monthly payments from a beautiful landing page through an onboarding screen to a detailed dashboard.
 
 ## 🚀 Features
@@ -185,12 +187,14 @@ Additional documentation and planning materials are available in the [`docs/`](.
 - **[TESTING_GUIDE.md](./docs/TESTING_GUIDE.md)** - Complete guide to running and understanding tests
 - **[ENV_VARIABLES.md](./docs/ENV_VARIABLES.md)** - Environment variables configuration guide
 - **[COMO_PROBAR_TODO.md](./docs/COMO_PROBAR_TODO.md)** - How to test and verify all features
+- **[CI_CD_GUIDE.md](./docs/CI_CD_GUIDE.md)** - Complete guide to CI/CD configuration and usage
 
 ### Code Quality
 - **133 unit tests** with 96% code coverage
 - **ESLint** configured with TypeScript rules
 - **Prettier** for consistent code formatting
 - **Pre-commit hooks** with Husky and lint-staged
+- **CI/CD** with GitHub Actions (automated testing, linting, and deployment)
 
 ## 📄 License
 

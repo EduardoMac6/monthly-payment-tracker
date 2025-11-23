@@ -41,7 +41,7 @@ Transformar DebtLite en un proyecto profesional, escalable y preparado para crec
 4. ✅ **Documentación de código** → Facilita mantenimiento (TypeDoc configurado)
 
 ### 🟢 OPCIONAL (Puede ESPERAR)
-1. **CI/CD** → Automatización
+1. ✅ **CI/CD** → Automatización (GitHub Actions configurado)
 2. **Tests de integración** → Cobertura completa
 3. **Preparación backend** → Diseño inicial
 
@@ -135,9 +135,10 @@ Ver `BACKEND_GUIDE.md` para tutorial paso a paso.
 - [ ] Tests básicos funcionando
 
 ### Fase 3: Optimización (Semana 3)
-- [ ] Build optimizado
-- [ ] Linting configurado
-- [ ] Variables de entorno
+- [x] Build optimizado
+- [x] Linting configurado
+- [x] Variables de entorno
+- [x] CI/CD configurado
 
 ### Fase 4: Documentación (Semana 4)
 - [x] Código documentado (JSDoc + TypeDoc)
