@@ -73,10 +73,11 @@ export class ErrorHandler {
         // Use toast notification if available, otherwise fallback to alert
         if (typeof window !== 'undefined' && (window as any).ToastService) {
             (window as any).ToastService.error(message);
-        } else {
+        } else if (typeof window !== 'undefined' && window.alert) {
             // Fallback to alert if ToastService is not loaded
-            alert(message);
+            window.alert(message);
         }
+        // If neither is available (testing environment), do nothing
     }
 
     /**

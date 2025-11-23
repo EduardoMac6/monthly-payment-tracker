@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Environment Variables</title>
+</head>
+<body>
+    <h1>Environment Variables Test</h1>
+    <div id="results"></div>
+    
+    <!-- Load environment config -->
+    <script src="dist/env-config.js"></script>
+    <script>
+        // Test that variables are loaded
+        const resultsDiv = document.getElementById('results');
+        const env = window.__ENV__ || {};
+        
+        const tests = [
+            { name: 'VITE_APP_NAME', expected: 'DebtLite (Dev)', actual: env.VITE_APP_NAME },
+            { name: 'VITE_STORAGE_TYPE', expected: 'localStorage', actual: env.VITE_STORAGE_TYPE },
+            { name: 'VITE_MAX_PLANS', expected: '50', actual: env.VITE_MAX_PLANS },
+            { name: 'VITE_MAX_PLAN_AMOUNT', expected: '1000000000', actual: env.VITE_MAX_PLAN_AMOUNT },
+            { name: 'VITE_MAX_PLAN_MONTHS', expected: '120', actual: env.VITE_MAX_PLAN_MONTHS }
+        ];
+        
+        let html = '<h2>Test Results:</h2><ul>';
+        tests.forEach(test => {
+            const passed = test.actual === test.expected;
+            html += `<li style="color: ${passed ? 'green' : 'red'}">
+                ${test.name}: ${passed ? '✅ PASS' : '❌ FAIL'}
+                <br>Expected: ${test.expected}, Got: ${test.actual || 'undefined'}
+            </li>`;
+        });
+        html += '</ul>';
+        
+        html += '<h2>All Variables:</h2><pre>' + JSON.stringify(env, null, 2) + '</pre>';
+        
+        resultsDiv.innerHTML = html;
+    </script>
+</body>
+</html>
+

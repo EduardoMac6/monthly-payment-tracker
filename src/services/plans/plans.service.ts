@@ -3,6 +3,7 @@ import { StorageFactory } from '../storage/storage.factory.js';
 import type { IStorageService } from '../storage/storage.interface.js';
 import { PlanValidator } from '../../utils/validators.js';
 import { ValidationError } from '../../utils/errors.js';
+import { getMaxPlans } from '../../config/env.config.js';
 
 /**
  * Plans service
@@ -80,6 +81,15 @@ export class PlansService {
 
         // Get existing plans
         const existingPlans = await this.getAllPlans();
+
+        // Check maximum number of plans limit
+        const maxPlans = getMaxPlans();
+        if (existingPlans.length >= maxPlans) {
+            throw new ValidationError(
+                'plan',
+                `Maximum number of plans (${maxPlans}) reached. Please delete a plan before creating a new one.`
+            );
+        }
 
         // Deactivate all existing plans (only one active at a time)
         existingPlans.forEach(plan => {

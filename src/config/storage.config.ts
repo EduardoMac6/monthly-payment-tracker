@@ -3,15 +3,15 @@
  * Determines which storage service to use
  */
 
+import { getEnvStorageType } from './env.config.js';
+
 export type StorageType = 'localStorage' | 'api';
 
 /**
  * Get storage type from environment or default to localStorage
- * In the future, this can read from environment variables
+ * Reads from environment configuration
  */
 export function getStorageType(): StorageType {
-    // For now, always use localStorage
-    // In the future: return (process.env.VITE_STORAGE_TYPE as StorageType) || 'localStorage';
-    return 'localStorage';
+    return getEnvStorageType();
 }
 

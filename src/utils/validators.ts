@@ -1,6 +1,9 @@
 // ValidationError is imported but not used directly in this file
 // It's used by the classes that call these validators
 
+import { getMaxPlanAmount, getMaxPlanMonths } from '../config/env.config.js';
+import { formatCurrency } from './formatters.js';
+
 /**
  * Validation result type
  */
@@ -63,10 +66,11 @@ export class PlanValidator {
             };
         }
 
-        if (amount > 1000000000) {
+        const maxAmount = getMaxPlanAmount();
+        if (amount > maxAmount) {
             return {
                 isValid: false,
-                error: 'Amount is too large (maximum: 1,000,000,000)'
+                error: `Amount is too large (maximum: ${formatCurrency(maxAmount)})`
             };
         }
 
@@ -97,10 +101,11 @@ export class PlanValidator {
             };
         }
 
-        if (months > 120) {
+        const maxMonths = getMaxPlanMonths();
+        if (months > maxMonths) {
             return {
                 isValid: false,
-                error: 'Number of months cannot exceed 120 (10 years)'
+                error: `Number of months cannot exceed ${maxMonths} (${Math.floor(maxMonths / 12)} years)`
             };
         }
 

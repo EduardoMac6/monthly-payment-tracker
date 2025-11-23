@@ -5,17 +5,35 @@
   "main": "dist/scripts.js",
   "scripts": {
     "build": "tsc",
+    "build:dev": "tsc && node scripts/inject-env.js development",
+    "build:prod": "tsc && node scripts/inject-env.js production",
     "watch": "tsc --watch",
     "dev": "tsc --watch",
     "serve": "node test-server.js",
-    "start": "npm run build && node test-server.js"
+    "start": "npm run build && node test-server.js",
+    "start:dev": "npm run build:dev && node test-server.js",
+    "start:prod": "npm run build:prod && node test-server.js",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --watch"
   },
-  "keywords": ["payment", "tracker", "typescript"],
+  "keywords": [
+    "payment",
+    "tracker",
+    "typescript"
+  ],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.3.3"
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.10.1",
+    "@vitest/coverage-v8": "^4.0.13",
+    "@vitest/ui": "^4.0.13",
+    "happy-dom": "^20.0.10",
+    "typescript": "^5.3.3",
+    "vitest": "^4.0.13"
   }
 }
-
-
