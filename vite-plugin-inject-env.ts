@@ -23,7 +23,18 @@ export function injectEnvPlugin(mode: 'development' | 'production'): Plugin {
                 VITE_MAX_PLAN_MONTHS: '120',
             };
 
-            // Read .env file if it exists
+            // Read from process.env first (Vercel/CI/CD injects variables here)
+            // Check for VITE_ prefixed variables in process.env
+            Object.keys(process.env).forEach((key) => {
+                if (key.startsWith('VITE_')) {
+                    const value = process.env[key];
+                    if (value !== undefined) {
+                        envVars[key] = value;
+                    }
+                }
+            });
+
+            // Read .env file if it exists (for local development)
             if (existsSync(envFile)) {
                 const envContent = readFileSync(envFile, 'utf-8');
 
@@ -34,16 +45,19 @@ export function injectEnvPlugin(mode: 'development' | 'production'): Plugin {
                         const [key, ...valueParts] = line.split('=');
                         if (key && valueParts.length > 0) {
                             const value = valueParts.join('=').trim();
-                            envVars[key.trim()] = value;
+                            // Only use .env file values if not already set from process.env
+                            if (!envVars[key.trim()]) {
+                                envVars[key.trim()] = value;
+                            }
                         }
                     }
                 });
-            } else {
+            } else if (Object.keys(envVars).length === 0) {
+                // Only warn if no variables from process.env AND no .env file
                 console.warn(`⚠️  Environment file ${envFile} not found. Using defaults.`);
-                Object.assign(envVars, defaults);
             }
 
-            // Merge with defaults (env file values override defaults)
+            // Merge with defaults (process.env > .env file > defaults)
             const finalEnvVars = { ...defaults, ...envVars };
 
             // Generate env-config.js content
