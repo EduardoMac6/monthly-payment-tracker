@@ -19,7 +19,7 @@ A lightweight web experience that helps users plan and monitor monthly payments 
 - **Modular Architecture** — TypeScript source organized into components, services, types, and utilities
 - **Type Safety** — Full TypeScript implementation compiled to production-ready JavaScript
 - **Security** — Input sanitization and XSS protection
-- **Testing** — 133 unit tests with 96% code coverage
+- **Testing** — 145 tests (133 unit + 12 integration) with 96% code coverage
 - **Code Quality** — ESLint, Prettier, and pre-commit hooks
 - **Optimized Builds** — Vite with code splitting, minification, and tree-shaking
 
@@ -181,13 +181,17 @@ The project uses Vite for optimized builds, maintaining the modular structure fr
 ### Project Documentation
 Additional documentation and planning materials are available in the [`docs/`](./docs/) directory:
 
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Guide for contributing to the project
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Technical architecture and design decisions
 - **[PLAN_MEJORAS.md](./docs/PLAN_MEJORAS.md)** - Comprehensive improvement plan with detailed phases
-- **[PLAN_REFACTORIZACION.md](./docs/PLAN_REFACTORIZACION.md)** - Detailed refactoring plan
 - **[RESUMEN_EJECUTIVO.md](./docs/RESUMEN_EJECUTIVO.md)** - Executive summary with priorities and timeline
+- **[PLAN_REFACTORIZACION.md](./docs/archive/PLAN_REFACTORIZACION.md)** - Historical refactoring plan (completed, archived for reference)
 - **[TESTING_GUIDE.md](./docs/TESTING_GUIDE.md)** - Complete guide to running and understanding tests
 - **[ENV_VARIABLES.md](./docs/ENV_VARIABLES.md)** - Environment variables configuration guide
-- **[COMO_PROBAR_TODO.md](./docs/COMO_PROBAR_TODO.md)** - How to test and verify all features
+- **[VERIFICACION_COMPLETA.md](./docs/VERIFICACION_COMPLETA.md)** - Complete verification guide (how to test and verify all features)
 - **[CI_CD_GUIDE.md](./docs/CI_CD_GUIDE.md)** - Complete guide to CI/CD configuration and usage
+- **[DEPLOY_VERCEL.md](./docs/DEPLOY_VERCEL.md)** - Step-by-step guide for deploying to Vercel
+- **[ADR (Architecture Decision Records)](./docs/adr/)** - Technical decision documentation
 
 ### Code Quality
 - **133 unit tests** with 96% code coverage

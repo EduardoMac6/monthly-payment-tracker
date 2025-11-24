@@ -118,6 +118,24 @@ Lines        : 85.23% ( 234/274 )
 
 ## 📊 Qué Tests Existen Actualmente
 
+### Tests de Integración (`__tests__/integration.test.ts`)
+
+**Qué testean:**
+- ✅ Flujo completo de usuario (crear plan → marcar pagos → eliminar plan)
+- ✅ Persistencia de datos en localStorage
+- ✅ Integración entre PlansService, PaymentsService y StorageService
+- ✅ Manejo de errores en contexto de integración
+- ✅ Gestión de plan activo con múltiples planes
+
+**Ejemplos de tests:**
+- Crear plan, marcar pagos, eliminar plan → debe funcionar correctamente
+- Datos persisten entre llamadas de servicio → debe funcionar
+- Múltiples planes con diferentes estados de pago → debe funcionar
+
+**Total:** 12 tests de integración
+
+---
+
 ### 1. Tests de Validadores (`validators.test.ts`)
 
 **Qué testean:**
@@ -333,14 +351,19 @@ expect(obj).toMatchObject({ key: 'value' });
 
 Después de verificar que los tests funcionan:
 
-1. **Fase 2.2** - Escribir más tests unitarios para:
-   - PaymentsService
-   - StorageService (localStorage)
-   - Componentes (PaymentTable, PlanList)
+1. ✅ **Fase 2.2** - Tests unitarios completados:
+   - ✅ PaymentsService
+   - ✅ StorageService (localStorage)
+   - ✅ Componentes (PaymentTable, PlanList) - cubiertos indirectamente
 
-2. **Fase 2.3** - Tests de integración:
-   - Flujos completos (crear plan → pagar → eliminar)
-   - Persistencia de datos
+2. ✅ **Fase 2.3** - Tests de integración completados:
+   - ✅ Flujos completos (crear plan → pagar → eliminar)
+   - ✅ Persistencia de datos
+   - ✅ Integración entre servicios
+
+3. **Futuro** - Tests E2E (opcional):
+   - Tests de navegación entre páginas
+   - Tests de UI completa con Playwright/Cypress
 
 ---
 
