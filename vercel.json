@@ -1,6 +1,6 @@
 {
     "version": 2,
-    "buildCommand": "NODE_ENV=production npx vite build",
+    "buildCommand": "npm run build:prod",
     "outputDirectory": "dist",
     "devCommand": "npm run dev",
     "installCommand": "npm install",
