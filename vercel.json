@@ -5,28 +5,14 @@
     "devCommand": "npm run dev",
     "installCommand": "npm install",
     "framework": null,
-    "cleanUrls": false,
-    "trailingSlash": false,
     "rewrites": [
         {
             "source": "/pages/(.*)",
             "destination": "/pages/$1"
         },
         {
-            "source": "/assets/(.*)",
-            "destination": "/assets/$1"
-        },
-        {
-            "source": "/js/(.*)",
-            "destination": "/js/$1"
-        },
-        {
-            "source": "/fav.ico",
-            "destination": "/fav.ico"
-        },
-        {
-            "source": "/env-config.js",
-            "destination": "/env-config.js"
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ],
     "headers": [
