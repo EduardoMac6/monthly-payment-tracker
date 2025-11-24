@@ -37,17 +37,32 @@ jobs:
           else
             echo "has_secrets=true" >> $GITHUB_OUTPUT
           fi
+          if [ -n "$VERCEL_PROJECT_ID" ]; then
+            echo "has_project_id=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_project_id=false" >> $GITHUB_OUTPUT
+          fi
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       
-      - name: Deploy to Vercel
-        if: steps.check-secrets.outputs.has_secrets == 'true'
+      - name: Deploy to Vercel (with project ID)
+        if: steps.check-secrets.outputs.has_secrets == 'true' && steps.check-secrets.outputs.has_project_id == 'true'
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      
+      - name: Deploy to Vercel (auto-detect, no org/project ID)
+        if: steps.check-secrets.outputs.has_secrets == 'true' && steps.check-secrets.outputs.has_project_id == 'false'
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-args: '--prod'
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
