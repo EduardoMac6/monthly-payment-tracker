@@ -40,11 +40,11 @@ git push -u origin main
 
 ### Paso 3: Configurar Variables de Entorno (Opcional)
 
-Si quieres usar variables de entorno diferentes en producción:
+El proyecto puede funcionar sin variables de entorno (usa valores por defecto), pero puedes configurarlas para personalizar:
 
 1. En la configuración del proyecto en Vercel
 2. Ve a **Settings** → **Environment Variables**
-3. Agrega las variables:
+3. Agrega las variables (prefijo `VITE_` es importante):
    ```
    VITE_APP_NAME=DebtLite
    VITE_STORAGE_TYPE=localStorage
@@ -53,6 +53,8 @@ Si quieres usar variables de entorno diferentes en producción:
    VITE_MAX_PLAN_AMOUNT=1000000000
    VITE_MAX_PLAN_MONTHS=120
    ```
+
+**Nota:** El plugin de Vite lee automáticamente estas variables de `process.env` durante el build, así que se inyectarán correctamente en `dist/env-config.js`.
 
 ### Paso 4: Desplegar
 
@@ -102,8 +104,11 @@ El archivo `vercel.json` ya está configurado con:
 
 - ✅ Build command: `npm run build:prod`
 - ✅ Output directory: `dist`
-- ✅ Rewrites para routing (SPA)
+- ✅ Rewrites para routing (SPA) con soporte para assets y páginas
 - ✅ Headers de cache para assets
+- ✅ Base path configurado como `/` (rutas absolutas)
+
+**Importante:** El proyecto usa `base: '/'` en `vite.config.ts` para generar rutas absolutas que funcionan correctamente en Vercel.
 
 ### Estructura de Archivos en Vercel
 
@@ -134,9 +139,13 @@ dist/
 
 ### Error: "404 en rutas"
 
-**Causa**: Vercel no está redirigiendo correctamente
+**Causa**: Vercel no está redirigiendo correctamente o rutas relativas incorrectas
 
-**Solución**: El `vercel.json` ya incluye rewrites. Si persiste, verifica que el archivo esté en la raíz.
+**Solución**: 
+1. Verifica que `vercel.json` esté en la raíz del proyecto
+2. Verifica que `vite.config.ts` tenga `base: '/'` (no `base: './'`)
+3. El `vercel.json` incluye rewrites específicos para `/assets/`, `/js/`, y `/pages/` antes del catch-all
+4. Rebuild el proyecto: `npm run build:prod`
 
 ### Error: "Module not found"
 
