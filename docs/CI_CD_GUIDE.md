@@ -79,15 +79,20 @@ Se ejecuta en:
 
 Para Vercel (recomendado):
 1. Ve a [Vercel Dashboard](https://vercel.com/dashboard)
-2. Obtén tu `VERCEL_TOKEN`
-3. Obtén `VERCEL_ORG_ID` y `VERCEL_PROJECT_ID`
-4. Agrega estos como secrets en GitHub:
-   - Settings → Secrets and variables → Actions
+2. Obtén tu `VERCEL_TOKEN` (Settings → Tokens)
+3. Obtén `VERCEL_ORG_ID` (Settings → General → Team ID)
+4. Obtén `VERCEL_PROJECT_ID` (Settings → General → Project ID) - **Opcional pero recomendado**
+5. Agrega estos como secrets en GitHub:
+   - Settings → Secrets and variables → Actions → New repository secret
    - Agrega: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+
+**Nota:** El workflow funciona de dos formas:
+- **Con `VERCEL_PROJECT_ID`:** Usa los tres secrets para deploy directo
+- **Sin `VERCEL_PROJECT_ID`:** Solo usa `VERCEL_TOKEN` y `VERCEL_ORG_ID`, Vercel detecta el proyecto automáticamente
 
 Para GitHub Pages (fallback):
 - No requiere configuración adicional
-- Se activa automáticamente si Vercel no está configurado
+- Se activa automáticamente si los secrets de Vercel no están configurados
 
 ---
 
@@ -227,14 +232,19 @@ npm run build:prod
 **Problema:** El deployment no se ejecuta
 
 **Posibles causas:**
-1. **Vercel no configurado:** Agrega los secrets necesarios
+1. **Vercel no configurado:** Agrega los secrets necesarios (`VERCEL_TOKEN` y `VERCEL_ORG_ID` mínimo)
 2. **CI falló:** CD solo se ejecuta si CI pasa
 3. **No es push a main:** CD solo se ejecuta en `main`
+4. **Error en verificación de secrets:** Revisa los logs del step "Check Vercel secrets"
 
 **Solución:**
-- Verifica que CI pasó
+- Verifica que CI pasó (pestaña "Actions" en GitHub)
 - Verifica que estás en la rama `main`
-- Verifica los secrets de Vercel (si usas Vercel)
+- Verifica los secrets de Vercel:
+  - Mínimo requerido: `VERCEL_TOKEN` y `VERCEL_ORG_ID`
+  - Opcional pero recomendado: `VERCEL_PROJECT_ID`
+- Revisa los logs del workflow para ver qué step falló
+- Si el error es "You specified VERCEL_ORG_ID but forgot VERCEL_PROJECT_ID", agrega `VERCEL_PROJECT_ID` o el workflow usará auto-detección
 
 ---
 
@@ -316,13 +326,34 @@ Puedes agregar notificaciones (Slack, Discord, email) cuando:
 
 - [ ] Workflows creados (`.github/workflows/ci.yml` y `cd.yml`)
 - [ ] Badge agregado al README (actualizar USERNAME)
-- [ ] Secrets de Vercel configurados (si usas Vercel)
-- [ ] GitHub Pages habilitado (si no usas Vercel)
+- [ ] Secrets de Vercel configurados en GitHub:
+  - [ ] `VERCEL_TOKEN` (requerido)
+  - [ ] `VERCEL_ORG_ID` (requerido)
+  - [ ] `VERCEL_PROJECT_ID` (opcional pero recomendado)
+- [ ] `vercel.json` configurado correctamente en la raíz
+- [ ] `vite.config.ts` tiene `base: '/'` (no `base: './'`)
+- [ ] GitHub Pages habilitado (si no usas Vercel, como fallback)
 - [ ] Primer push a `main` ejecutó CI correctamente
 - [ ] Primer push a `main` ejecutó CD correctamente
+- [ ] Deployment visible en Vercel Dashboard
+- [ ] Aplicación accesible en `https://tu-proyecto.vercel.app`
 
 ---
 
-**Última actualización:** 2024
-**Versión:** 1.0
+## 🔄 Cambios Recientes (2024)
+
+### Mejoras en el Workflow de CD
+- ✅ Verificación mejorada de secrets (no falla si falta `VERCEL_PROJECT_ID`)
+- ✅ Soporte para auto-detección de proyecto Vercel
+- ✅ Dos estrategias de deploy (con y sin `VERCEL_PROJECT_ID`)
+
+### Mejoras en Configuración de Vercel
+- ✅ Base path corregido a `/` para rutas absolutas
+- ✅ Rewrites mejorados para assets y páginas
+- ✅ Plugin de env lee de `process.env` (variables de Vercel)
+
+---
+
+**Última actualización:** Noviembre 2024
+**Versión:** 1.1
 

@@ -136,6 +136,20 @@ Si no se proporcionan variables de entorno, el sistema usará valores por defect
 - También soporta `import.meta.env` (si usas Vite en el futuro)
 - Si ninguna está disponible, usa valores por defecto
 
+### Variables en Vercel/CI/CD
+
+**Importante:** El plugin de Vite (`vite-plugin-inject-env.ts`) lee variables de entorno en este orden de prioridad:
+
+1. **`process.env`** (variables del sistema) - Usado por Vercel y CI/CD
+2. **Archivo `.env.production`** o `.env.development` - Para desarrollo local
+3. **Valores por defecto** - Si no se encuentran las anteriores
+
+Esto significa que:
+- ✅ En Vercel, puedes configurar variables en Settings → Environment Variables
+- ✅ El plugin las detectará automáticamente durante el build
+- ✅ No necesitas crear archivo `.env.production` en el repositorio
+- ✅ Las variables de Vercel tienen prioridad sobre archivos `.env`
+
 ---
 
 ## 🛠️ Scripts Disponibles

@@ -133,12 +133,26 @@ monthly-payment-tracker/
 
 The project uses Vite for optimized builds, maintaining the modular structure from `src/` to `dist/`.
 
-## 🌐 Quick deploy (GitHub Pages)
+## 🌐 Deployment
 
-1. Run `npm run build`.
-2. Ensure `dist/` is up to date and committed.
-3. Push the repository to GitHub.
-4. Enable GitHub Pages for the main branch with the `/root` folder.
+### Vercel (Recomendado)
+
+El proyecto está configurado para desplegar automáticamente a Vercel mediante GitHub Actions:
+
+1. Configura los secrets en GitHub: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+2. Haz push a `main` - el workflow desplegará automáticamente
+3. Tu app estará disponible en `https://tu-proyecto.vercel.app`
+
+**Ver guía completa:** [DEPLOY_VERCEL.md](./docs/DEPLOY_VERCEL.md)
+
+### GitHub Pages (Alternativa)
+
+1. Run `npm run build:prod`
+2. Ensure `dist/` is up to date and committed
+3. Push the repository to GitHub
+4. Enable GitHub Pages for the main branch with the `/dist` folder
+
+**Nota:** El workflow de CD usa GitHub Pages como fallback si Vercel no está configurado.
 
 ## 🧱 Tech stack
 

@@ -38,8 +38,8 @@ function copyAssetsPlugin(): Plugin {
  * Optimized build configuration for production
  */
 export default defineConfig({
-    // Base public path
-    base: './',
+    // Base public path - Use '/' for Vercel deployment
+    base: '/',
 
     // Build configuration
     build: {

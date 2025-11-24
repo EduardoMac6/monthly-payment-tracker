@@ -11,6 +11,14 @@
             "destination": "/pages/$1"
         },
         {
+            "source": "/assets/(.*)",
+            "destination": "/assets/$1"
+        },
+        {
+            "source": "/js/(.*)",
+            "destination": "/js/$1"
+        },
+        {
             "source": "/(.*\\.(js|css|ico|svg|png|jpg|jpeg|gif|woff|woff2|ttf|eot))",
             "destination": "/$1"
         },
