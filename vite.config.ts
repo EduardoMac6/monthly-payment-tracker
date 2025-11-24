@@ -1,27 +1,62 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { copyFileSync, existsSync } from 'fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from 'fs';
 import { execSync } from 'child_process';
 import type { Plugin } from 'vite';
 import legacy from '@vitejs/plugin-legacy';
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import { injectEnvPlugin } from './vite-plugin-inject-env';
 
-// Plugin to copy static assets
+// Helper function to copy directory recursively (cross-platform)
+function copyDirSync(src: string, dest: string) {
+    if (!existsSync(src)) return;
+    
+    if (!existsSync(dest)) {
+        mkdirSync(dest, { recursive: true });
+    }
+    
+    const entries = readdirSync(src, { withFileTypes: true });
+    
+    for (const entry of entries) {
+        const srcPath = resolve(src, entry.name);
+        const destPath = resolve(dest, entry.name);
+        
+        if (entry.isDirectory()) {
+            copyDirSync(srcPath, destPath);
+        } else {
+            copyFileSync(srcPath, destPath);
+        }
+    }
+}
+
+// Plugin to copy static assets and HTML files
 function copyAssetsPlugin(): Plugin {
     return {
         name: 'copy-assets',
         writeBundle() {
             const assetsDir = resolve(__dirname, 'assets');
             const distAssetsDir = resolve(__dirname, 'dist', 'assets');
+            const pagesDir = resolve(__dirname, 'pages');
+            const distPagesDir = resolve(__dirname, 'dist', 'pages');
             
-            // Copy assets directory structure (avoid double assets/)
+            // Copy assets directory structure
             if (existsSync(assetsDir)) {
-                // Remove existing assets if any to avoid duplication
-                if (existsSync(distAssetsDir)) {
-                    execSync(`rm -rf ${distAssetsDir}`, { stdio: 'inherit' });
+                copyDirSync(assetsDir, distAssetsDir);
+            }
+            
+            // Copy pages directory with HTML files
+            if (existsSync(pagesDir)) {
+                copyDirSync(pagesDir, distPagesDir);
+            }
+            
+            // Copy index.html explicitly (Vite processes it but we ensure it's in dist)
+            const indexHtml = resolve(__dirname, 'index.html');
+            if (existsSync(indexHtml)) {
+                // Vite should have already processed and copied it, but we ensure it exists
+                const distIndexHtml = resolve(__dirname, 'dist', 'index.html');
+                if (!existsSync(distIndexHtml)) {
+                    copyFileSync(indexHtml, distIndexHtml);
                 }
-                execSync(`cp -r ${assetsDir} ${distAssetsDir}`, { stdio: 'inherit' });
             }
             
             // Copy favicon
