@@ -5,6 +5,8 @@
     "devCommand": "npm run dev",
     "installCommand": "npm install",
     "framework": null,
+    "cleanUrls": false,
+    "trailingSlash": false,
     "rewrites": [
         {
             "source": "/favicon.ico",
@@ -23,8 +25,12 @@
             "destination": "/js/$1"
         },
         {
-            "source": "/(.*\\.(js|css|ico|svg|png|jpg|jpeg|gif|woff|woff2|ttf|eot))",
-            "destination": "/$1"
+            "source": "/fav.ico",
+            "destination": "/fav.ico"
+        },
+        {
+            "source": "/env-config.js",
+            "destination": "/env-config.js"
         },
         {
             "source": "/(.*)",

@@ -102,11 +102,10 @@ export default defineConfig({
         // Code splitting
         rollupOptions: {
             input: {
-                main: resolve(__dirname, 'index.html'),
-                start: resolve(__dirname, 'pages/start.html'),
-                dashboard: resolve(__dirname, 'pages/dashboard.html'),
-                // Explicitly include scripts.ts to ensure it's built as scripts.js
+                // Only include TypeScript entry points, not HTML files
+                // HTML files will be copied by copy-static.js after build
                 scripts: resolve(__dirname, 'src/scripts.ts'),
+                start: resolve(__dirname, 'src/start.ts'),
             },
             output: {
                 // Manual chunks for better code splitting
