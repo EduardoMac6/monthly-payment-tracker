@@ -108,6 +108,8 @@ monthly-payment-tracker/
 
 ## 🔁 Development workflow
 
+> **💡 Tip:** Before pushing changes, run `npm run verify:quick` to ensure everything works correctly. See [PRE_COMMIT_CHECKLIST.md](./docs/PRE_COMMIT_CHECKLIST.md) for details.
+
 ### Build Commands
 - `npm run build` — Legacy TypeScript build
 - `npm run build:dev` — Development build with Vite (includes env vars)
@@ -126,6 +128,8 @@ monthly-payment-tracker/
 - `npm run lint:fix` — Automatically fix linting errors
 - `npm run format` — Format code with Prettier
 - `npm run format:check` — Check code formatting
+- `npm run verify` — Run complete verification (tests, types, format, lint)
+- `npm run verify:quick` — Run quick verification (tests and types only)
 
 ### Documentation
 - `npm run docs` — Generate API documentation with TypeDoc
@@ -203,6 +207,7 @@ Additional documentation and planning materials are available in the [`docs/`](.
 - **[TESTING_GUIDE.md](./docs/TESTING_GUIDE.md)** - Complete guide to running and understanding tests
 - **[ENV_VARIABLES.md](./docs/ENV_VARIABLES.md)** - Environment variables configuration guide
 - **[VERIFICACION_COMPLETA.md](./docs/VERIFICACION_COMPLETA.md)** - Complete verification guide (how to test and verify all features)
+- **[PRE_COMMIT_CHECKLIST.md](./docs/PRE_COMMIT_CHECKLIST.md)** - Pre-commit checklist (what to verify before pushing changes)
 - **[CI_CD_GUIDE.md](./docs/CI_CD_GUIDE.md)** - Complete guide to CI/CD configuration and usage
 - **[DEPLOY_VERCEL.md](./docs/DEPLOY_VERCEL.md)** - Step-by-step guide for deploying to Vercel
 - **[ADR (Architecture Decision Records)](./docs/adr/)** - Technical decision documentation

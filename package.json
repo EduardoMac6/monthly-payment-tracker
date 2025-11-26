@@ -25,6 +25,8 @@
         "lint:fix": "eslint src/**/*.ts --fix",
         "format": "prettier --write \"src/**/*.{ts,json}\"",
         "format:check": "prettier --check \"src/**/*.{ts,json}\"",
+        "verify": "npm run test:run && npx tsc --noEmit && npm run format:check && npm run lint",
+        "verify:quick": "npm run test:run && npx tsc --noEmit",
         "docs": "typedoc",
         "docs:build": "typedoc && echo Documentation generated in docs/api/",
         "prepare": "husky"
