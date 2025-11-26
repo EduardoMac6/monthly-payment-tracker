@@ -84,12 +84,31 @@
         </div>
         <h2 class="text-lg font-semibold text-deep-black dark:text-pure-white">Your Payment Plan</h2>
         
+        <!-- Search and Filter -->
+        <div class="mb-4 space-y-2">
+            <input
+                type="text"
+                id="plan-search"
+                placeholder="Search plans..."
+                class="w-full rounded-lg border border-soft-gray/60 bg-pure-white px-4 py-2 text-sm text-deep-black placeholder-gray-400 focus:border-lime-vibrant focus:outline-none focus:ring-2 focus:ring-lime-vibrant dark:border-charcoal-gray/60 dark:bg-charcoal-gray/50 dark:text-pure-white dark:placeholder-gray-500"
+            />
+            <select
+                id="plan-filter"
+                class="w-full rounded-lg border border-soft-gray/60 bg-pure-white px-4 py-2 text-sm text-deep-black focus:border-lime-vibrant focus:outline-none focus:ring-2 focus:ring-lime-vibrant dark:border-charcoal-gray/60 dark:bg-charcoal-gray/50 dark:text-pure-white"
+            >
+                <option value="all">All Plans</option>
+                <option value="self">My Debts</option>
+                <option value="other">Receivables</option>
+            </select>
+        </div>
+
         <!-- Lista de Planes Guardados -->
         <div class="mb-4">
             <div id="plans-list" class="max-h-80 overflow-y-auto">
                 <!-- Los planes se cargarán dinámicamente aquí con secciones separadas -->
             </div>
         </div>
+
     </aside>
 
     <div class="absolute top-6 right-6">
@@ -140,6 +159,24 @@
                 <h2 class="text-2xl font-bold text-deep-black dark:text-pure-white transition-colors duration-300">Financial Overview</h2>
                 <p id="overview-description" class="text-gray-600 dark:text-pure-white/70 mt-2 transition-colors duration-300">Summary of your <span id="overview-plans-number" class="text-lime-vibrant font-bold text-xl">0</span> payment plan<span id="overview-plans-plural">s</span>.</p>
             </header>
+
+            <!-- Search and Filter for Overview -->
+            <div class="mb-6 flex flex-col sm:flex-row gap-3">
+                <input
+                    type="text"
+                    id="overview-search"
+                    placeholder="Search plans..."
+                    class="flex-1 rounded-lg border border-soft-gray/60 bg-pure-white px-4 py-2 text-sm text-deep-black placeholder-gray-400 focus:border-lime-vibrant focus:outline-none focus:ring-2 focus:ring-lime-vibrant dark:border-charcoal-gray/60 dark:bg-charcoal-gray/50 dark:text-pure-white dark:placeholder-gray-500"
+                />
+                <select
+                    id="overview-filter"
+                    class="rounded-lg border border-soft-gray/60 bg-pure-white px-4 py-2 text-sm text-deep-black focus:border-lime-vibrant focus:outline-none focus:ring-2 focus:ring-lime-vibrant dark:border-charcoal-gray/60 dark:bg-charcoal-gray/50 dark:text-pure-white"
+                >
+                    <option value="all">All Plans</option>
+                    <option value="self">My Debts</option>
+                    <option value="other">Receivables</option>
+                </select>
+            </div>
 
             <!-- Resumen Total de Todos los Planes -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">

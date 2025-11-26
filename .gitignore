@@ -6,6 +6,11 @@ package-lock.json
 dist/
 *.js.map
 
+# Development assets (generated files in root)
+scripts.js
+start.js
+env-config.js
+
 # Environment variables
 .env
 .env.local

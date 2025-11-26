@@ -40,12 +40,21 @@ export class ThemeToggleComponent {
             return;
         }
 
-        // Get stored preference or default to light
+        // Check if theme was already applied by inline script
+        const isDarkAlready = this.rootElement.classList.contains('dark');
         const storedThemePreference: ThemeChoice =
             localStorage.getItem('debtLiteTheme') === 'dark' ? 'dark' : 'light';
 
-        console.log('Stored theme preference:', storedThemePreference);
-        this.applyTheme(storedThemePreference);
+        // Only apply if not already applied or if there's a mismatch
+        if (!isDarkAlready && storedThemePreference === 'dark') {
+            this.applyTheme('dark');
+        } else if (isDarkAlready && storedThemePreference === 'light') {
+            this.applyTheme('light');
+        } else {
+            // Just update UI to match current state
+            this.updateThemeToggleUI(storedThemePreference);
+            this.updateLogo(storedThemePreference);
+        }
 
         // Add click event listener
         this.themeToggle.addEventListener('click', (e) => {
@@ -53,12 +62,6 @@ export class ThemeToggleComponent {
             e.stopPropagation();
             const isCurrentlyDark = this.rootElement.classList.contains('dark');
             const newTheme = isCurrentlyDark ? 'light' : 'dark';
-            console.log(
-                'Theme toggle clicked. Current:',
-                isCurrentlyDark ? 'dark' : 'light',
-                '-> New:',
-                newTheme
-            );
             this.applyTheme(newTheme);
         });
     }
@@ -81,7 +84,7 @@ export class ThemeToggleComponent {
      * Update logo images based on theme
      */
     private updateLogo(theme: ThemeChoice): void {
-        // Update overview logo
+        // Update dashboard logo
         if (this.dashboardLogo) {
             const lightSrc = this.dashboardLogo.dataset.logoLight;
             const darkSrc = this.dashboardLogo.dataset.logoDark;
@@ -103,14 +106,23 @@ export class ThemeToggleComponent {
                 planDetailLogo.setAttribute('src', nextSrc);
             }
         }
+
+        // Update brand logo (start page)
+        const brandLogo = document.getElementById('brand-logo') as HTMLImageElement | null;
+        if (brandLogo) {
+            const lightSrc = brandLogo.dataset.logoLight;
+            const darkSrc = brandLogo.dataset.logoDark;
+            const nextSrc = theme === 'dark' ? darkSrc : lightSrc;
+            if (nextSrc) {
+                brandLogo.setAttribute('src', nextSrc);
+            }
+        }
     }
 
     /**
      * Apply theme to the document
      */
     private applyTheme(theme: ThemeChoice): void {
-        console.log('Applying theme:', theme);
-
         // Force remove first, then add to ensure it works
         this.rootElement.classList.remove('dark');
         if (theme === 'dark') {
@@ -123,11 +135,6 @@ export class ThemeToggleComponent {
         // Update UI elements
         this.updateThemeToggleUI(theme);
         this.updateLogo(theme);
-
-        console.log(
-            'Theme applied. Dark class present:',
-            this.rootElement.classList.contains('dark')
-        );
     }
 
     /**

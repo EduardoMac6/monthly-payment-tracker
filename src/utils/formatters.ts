@@ -68,15 +68,16 @@ export function formatMonthsText(plan: Plan, paidMonths: number): string {
  *
  * Converts the debtOwner property to a user-friendly display text.
  *
- * @param plan - The plan to format owner for
- * @returns "My Debt" for 'self', "Receivable" for 'other'
+ * @param debtOwner - The debt owner value ('self' | 'other' | undefined)
+ * @returns "My Debt" for 'self', "Receivable" for 'other', "My Debt" for undefined
  *
  * @example
  * ```typescript
- * formatOwnerText({ debtOwner: 'self' }) // "My Debt"
- * formatOwnerText({ debtOwner: 'other' }) // "Receivable"
+ * formatOwnerText('self') // "My Debt"
+ * formatOwnerText('other') // "Receivable"
+ * formatOwnerText(undefined) // "My Debt"
  * ```
  */
-export function formatOwnerText(plan: Plan): string {
-    return plan.debtOwner === 'other' ? 'Receivable' : 'My Debt';
+export function formatOwnerText(debtOwner?: 'self' | 'other'): string {
+    return debtOwner === 'other' ? 'Receivable' : 'My Debt';
 }
