@@ -10,10 +10,14 @@ A lightweight web experience that helps users plan and monitor monthly payments 
 - **Guided Onboarding** (`pages/start.html`) — Capture total amount and repayment timeline with an intuitive form
 - **Interactive Dashboard** (`pages/dashboard.html`) — Overview view with aggregated statistics, payment summary, interactive status table, and multiple payment plan management
 - **Dashboard Overview** — Financial overview showing total plans, total debt, total paid, and remaining balance with breakdown by categories (My Debts and Receivables)
+- **Search & Filter** — Search plans by name and filter by category (My Debts, Receivables, or All Plans)
 - **Multiple Payment Plans** — Create and manage multiple payment plans simultaneously
 - **Dark Mode Support** — Toggle between light and dark themes with persistent preference
 - **Payment Tracking** — Mark payments as completed with visual toggles and status indicators
 - **Real-time Statistics** — Overview automatically updates when payment status changes across all plans
+- **Loading States** — Visual feedback during asynchronous operations
+- **Error Handling** — User-friendly error messages with retry options
+- **Empty States** — Helpful messages when no data is available
 - **Data Persistence** — Payment progress persists in `localStorage`; onboarding selections stored in `sessionStorage`
 - **Responsive Design** — Mobile-first UI built with Tailwind CSS and optimized for accessibility
 - **Modular Architecture** — TypeScript source organized into components, services, types, and utilities
@@ -112,10 +116,11 @@ monthly-payment-tracker/
 
 ### Build Commands
 - `npm run build` — Legacy TypeScript build
-- `npm run build:dev` — Development build with Vite (includes env vars)
+- `npm run build:dev` — Development build with Vite (includes env vars and copies dev assets)
 - `npm run build:prod` — Production build optimized with Vite
 - `npm run watch` — Watch mode: automatically rebuild when files change
-- `npm run dev` — Vite dev server with Hot Module Replacement (HMR)
+- `npm run dev` — Development server: builds and copies assets, then starts Vite with HMR
+- `npm run preview` — Preview production build locally
 
 ### Testing
 - `npm run test` — Run tests in watch mode
