@@ -29,6 +29,23 @@ jobs:
       - name: Build production
         run: npm run build:prod
       
+      - name: Verify build artifacts
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "Error: dist directory not found"
+            exit 1
+          fi
+          if [ ! -f "dist/index.html" ]; then
+            echo "Error: dist/index.html not found"
+            exit 1
+          fi
+          if [ ! -f "dist/scripts.js" ]; then
+            echo "Error: dist/scripts.js not found"
+            exit 1
+          fi
+          echo "Build artifacts verified successfully"
+          ls -la dist/
+      
       - name: Check Vercel secrets
         id: check-secrets
         run: |
@@ -47,25 +64,29 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       
+      - name: Install Vercel CLI
+        if: steps.check-secrets.outputs.has_secrets == 'true'
+        run: npm install --global vercel@latest
+      
       - name: Deploy to Vercel (with project ID)
         if: steps.check-secrets.outputs.has_secrets == 'true' && steps.check-secrets.outputs.has_project_id == 'true'
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+        run: |
+          echo "Deploying to Vercel with project ID..."
+          vercel deploy --prod \
+            --token ${{ secrets.VERCEL_TOKEN }} \
+            --yes \
+            --scope ${{ secrets.VERCEL_ORG_ID }}
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       
       - name: Deploy to Vercel (auto-detect, no org/project ID)
         if: steps.check-secrets.outputs.has_secrets == 'true' && steps.check-secrets.outputs.has_project_id == 'false'
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-args: '--prod'
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          echo "Deploying to Vercel (auto-detect)..."
+          vercel deploy --prod \
+            --token ${{ secrets.VERCEL_TOKEN }} \
+            --yes
       
       - name: Deploy to GitHub Pages (fallback)
         if: steps.check-secrets.outputs.has_secrets == 'false'
