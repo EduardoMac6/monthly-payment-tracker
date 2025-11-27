@@ -8,10 +8,8 @@ import { ToastService } from './components/toast/toast.component.js';
 import { ThemeToggleComponent } from './components/theme-toggle/theme-toggle.component.js';
 
 // Make ToastService available globally
-interface WindowWithToastService extends Window {
-    ToastService: typeof ToastService;
-}
-(window as WindowWithToastService).ToastService = ToastService;
+// Type is now properly declared in src/types/global.d.ts
+window.ToastService = ToastService;
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {

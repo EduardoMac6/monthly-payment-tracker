@@ -8,7 +8,8 @@ import { ToastService } from './components/toast/toast.component.js';
 import { ThemeToggleComponent } from './components/theme-toggle/theme-toggle.component.js';
 
 // Make ToastService available globally for onclick handlers and error handling
-(window as any).ToastService = ToastService;
+// Type is now properly declared in src/types/global.d.ts
+window.ToastService = ToastService;
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
