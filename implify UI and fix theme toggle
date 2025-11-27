@@ -1,0 +1,22 @@
+warning: in the working copy of 'package.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/theme-toggle/theme-toggle.component.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/pages/dashboard/dashboard.page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/start.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/formatters.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/formatters.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/index.ts', LF will be replaced by CRLF the next time Git touches it
+ .gitignore                                         |   5 [32m+[m
+ package.json                                       |   6 [32m+[m[31m-[m
+ pages/dashboard.html                               |  37 [32m++[m
+ pages/start.html                                   |   2 [32m+[m
+ src/components/index.ts                            |   3 [32m+[m
+ .../theme-toggle/theme-toggle.component.ts         |  41 [32m+[m[31m-[m
+ src/pages/dashboard/dashboard.page.ts              | 480 [32m++++++++++++++[m[31m-------[m
+ src/start.ts                                       |  76 [32m+[m[31m---[m
+ src/utils/formatters.test.ts                       |  29 [32m+[m[31m-[m
+ src/utils/formatters.ts                            |  13 [32m+[m[31m-[m
+ src/utils/index.ts                                 |   8 [32m+[m[31m-[m
+ vite-plugin-inject-env.ts                          |  62 [32m+++[m
+ vite.config.ts                                     |   4 [32m+[m
+ 13 files changed, 495 insertions(+), 271 deletions(-)

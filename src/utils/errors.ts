@@ -71,8 +71,9 @@ export class ErrorHandler {
      */
     static showUserError(message: string): void {
         // Use toast notification if available, otherwise fallback to alert
-        if (typeof window !== 'undefined' && (window as any).ToastService) {
-            (window as any).ToastService.error(message);
+        // Type is now properly declared in src/types/global.d.ts
+        if (typeof window !== 'undefined' && window.ToastService) {
+            window.ToastService.error(message);
         } else if (typeof window !== 'undefined' && window.alert) {
             // Fallback to alert if ToastService is not loaded
             window.alert(message);

@@ -202,4 +202,5 @@ export class ToastService {
 }
 
 // Make ToastService available globally for onclick handlers
-(window as any).ToastService = ToastService;
+// Type is now properly declared in src/types/global.d.ts
+window.ToastService = ToastService;

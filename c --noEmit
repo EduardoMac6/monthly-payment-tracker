@@ -1,0 +1,52 @@
+warning: in the working copy of 'src/__tests__/integration.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/form-validator/form-validator.component.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/form-validator/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/payment-table/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/payment-table/payment-table.component.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/plan-list/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/plan-list/plan-list.component.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/theme-toggle/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/theme-toggle/theme-toggle.component.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/toast/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/components/toast/toast.component.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/config/env.config.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/config/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/config/storage.config.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/pages/dashboard/dashboard.page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/pages/dashboard/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/pages/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/pages/start/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/pages/start/start.page.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/scripts.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/payments/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/payments/payments.service.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/payments/payments.service.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/plans/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/plans/plans.service.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/plans/plans.service.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/storage/api.service.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/storage/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/storage/localStorage.service.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/storage/localStorage.service.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/storage/storage.factory.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/services/storage/storage.interface.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/start.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/types/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/types/plan.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/errors.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/errors.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/formatters.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/formatters.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/index.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/sanitizer.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/sanitizer.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/validators.test.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/utils/validators.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/vitest.d.ts', LF will be replaced by CRLF the next time Git touches it
+ README.md                  | 5 [32m+++++[m
+ docs/PLAN_ACCION_VERCEL.md | 2 [32m++[m
+ package.json               | 2 [32m++[m
+ 3 files changed, 9 insertions(+)

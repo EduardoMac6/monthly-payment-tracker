@@ -192,6 +192,10 @@ export default defineConfig({
     server: {
         port: 3000,
         open: true,
+        // Serve env-config.js from root in development
+        fs: {
+            allow: ['..'],
+        },
     },
 
     // Preview configuration (for testing production build)

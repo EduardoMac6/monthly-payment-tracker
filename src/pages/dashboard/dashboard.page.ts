@@ -1,10 +1,13 @@
-import type { Plan, OverviewStats, TotalsSnapshot } from '../../types/index.js';
+import type { Plan, OverviewStats, TotalsSnapshot, PaymentStatus } from '../../types/index.js';
 import { PlansService } from '../../services/plans/plans.service.js';
 import { PaymentsService } from '../../services/payments/payments.service.js';
 import { StorageFactory } from '../../services/storage/storage.factory.js';
 import { PaymentTableComponent } from '../../components/payment-table/payment-table.component.js';
 import { PlanListComponent } from '../../components/plan-list/plan-list.component.js';
 import { ToastService } from '../../components/toast/toast.component.js';
+import { LoadingComponent } from '../../components/loading/loading.component.js';
+import { ErrorStateComponent } from '../../components/error-state/error-state.component.js';
+import { EmptyStateComponent } from '../../components/empty-state/empty-state.component.js';
 import { formatCurrency, formatMonthsText, formatOwnerText } from '../../utils/formatters.js';
 import { ErrorHandler } from '../../utils/errors.js';
 import { escapeHtml } from '../../utils/sanitizer.js';
@@ -16,6 +19,7 @@ import { escapeHtml } from '../../utils/sanitizer.js';
 export class DashboardPage {
     private allPlans: Plan[] = [];
     private activePlan: Plan | null = null;
+    private filteredPlans: Plan[] = [];
 
     // DOM Elements
     private overviewView: HTMLElement | null;
@@ -27,6 +31,10 @@ export class DashboardPage {
     private planDescription: HTMLElement | null;
     private backToOverviewBtn: HTMLElement | null;
     private clearBtn: HTMLElement | null;
+    private planSearch: HTMLInputElement | null;
+    private planFilter: HTMLSelectElement | null;
+    private overviewSearch: HTMLInputElement | null;
+    private overviewFilter: HTMLSelectElement | null;
 
     // Components
     private paymentTable: PaymentTableComponent;
@@ -43,6 +51,12 @@ export class DashboardPage {
         this.planDescription = document.getElementById('plan-description');
         this.backToOverviewBtn = document.getElementById('back-to-overview');
         this.clearBtn = document.getElementById('clear-btn');
+        this.planSearch = document.getElementById('plan-search') as HTMLInputElement | null;
+        this.planFilter = document.getElementById('plan-filter') as HTMLSelectElement | null;
+        this.overviewSearch = document.getElementById('overview-search') as HTMLInputElement | null;
+        this.overviewFilter = document.getElementById(
+            'overview-filter'
+        ) as HTMLSelectElement | null;
 
         // Initialize components
         this.paymentTable = new PaymentTableComponent('payment-table-body');
@@ -56,13 +70,14 @@ export class DashboardPage {
      * Initialize the dashboard page
      */
     async init(): Promise<void> {
+        const loaderId = LoadingComponent.show(null, { message: 'Loading dashboard...' });
         try {
             // Check if plans exist
             this.allPlans = await PlansService.getAllPlans();
+            LoadingComponent.hide(loaderId);
+
             if (this.allPlans.length === 0) {
-                if (confirm('No payment plan found. Would you like to create one?')) {
-                    window.location.href = 'start.html';
-                }
+                this.showEmptyState();
                 return;
             }
 
@@ -75,10 +90,17 @@ export class DashboardPage {
             // Show overview by default
             await this.showOverview();
 
+            // Initialize filtered plans
+            this.filteredPlans = [...this.allPlans];
+
             // Render plan list in sidebar
             this.planList.setActivePlan(this.activePlan);
-            await this.planList.render(this.allPlans);
+            await this.planList.render(this.filteredPlans);
         } catch (error) {
+            LoadingComponent.hide(loaderId);
+            this.showErrorState(
+                error instanceof Error ? error : new Error('Failed to load dashboard')
+            );
             ErrorHandler.handle(
                 error instanceof Error ? error : new Error('Unknown error'),
                 'DashboardPage.init'
@@ -137,6 +159,31 @@ export class DashboardPage {
                 }
             });
         }
+
+        // Search and filter listeners
+        if (this.planSearch) {
+            this.planSearch.addEventListener('input', () => {
+                this.applyFilters();
+            });
+        }
+
+        if (this.planFilter) {
+            this.planFilter.addEventListener('change', () => {
+                this.applyFilters();
+            });
+        }
+
+        if (this.overviewSearch) {
+            this.overviewSearch.addEventListener('input', () => {
+                this.applyOverviewFilters();
+            });
+        }
+
+        if (this.overviewFilter) {
+            this.overviewFilter.addEventListener('change', () => {
+                this.applyOverviewFilters();
+            });
+        }
     }
 
     /**
@@ -186,94 +233,64 @@ export class DashboardPage {
      * Render overview view
      */
     private async renderOverview(): Promise<void> {
-        const stats = await this.calculateOverviewStats();
-
-        // Update header description
-        const overviewPlansNumber = document.getElementById('overview-plans-number');
-        const overviewPlansPlural = document.getElementById('overview-plans-plural');
-        if (overviewPlansNumber) {
-            overviewPlansNumber.textContent = stats.totalPlans.toString();
-        }
-        if (overviewPlansPlural) {
-            overviewPlansPlural.textContent = stats.totalPlans === 1 ? '' : 's';
-        }
-
-        // Update general statistics
-        const overviewTotalDebt = document.getElementById('overview-total-debt');
-        const overviewTotalPaid = document.getElementById('overview-total-paid');
-        const overviewRemaining = document.getElementById('overview-remaining');
-
-        if (overviewTotalDebt) overviewTotalDebt.textContent = formatCurrency(stats.totalDebt);
-        if (overviewTotalPaid) overviewTotalPaid.textContent = formatCurrency(stats.totalPaid);
-        if (overviewRemaining) overviewRemaining.textContent = formatCurrency(stats.remaining);
-
-        // Update "My Debts" section
-        const myDebtsTotal = document.getElementById('my-debts-total');
-        const myDebtsPaid = document.getElementById('my-debts-paid');
-        const myDebtsRemaining = document.getElementById('my-debts-remaining');
-
-        if (myDebtsTotal) myDebtsTotal.textContent = formatCurrency(stats.myDebts.total);
-        if (myDebtsPaid) myDebtsPaid.textContent = formatCurrency(stats.myDebts.paid);
-        if (myDebtsRemaining)
-            myDebtsRemaining.textContent = formatCurrency(stats.myDebts.remaining);
-
-        // Update "Receivables" section
-        const receivablesTotal = document.getElementById('receivables-total');
-        const receivablesReceived = document.getElementById('receivables-received');
-        const receivablesPending = document.getElementById('receivables-pending');
-
-        if (receivablesTotal)
-            receivablesTotal.textContent = formatCurrency(stats.receivables.total);
-        if (receivablesReceived)
-            receivablesReceived.textContent = formatCurrency(stats.receivables.received);
-        if (receivablesPending)
-            receivablesPending.textContent = formatCurrency(stats.receivables.pending);
-
-        // Render plans list in overview
-        await this.renderOverviewPlansList();
-    }
-
-    /**
-     * Render plans list in overview
-     */
-    private async renderOverviewPlansList(): Promise<void> {
-        const overviewPlansList = document.getElementById('overview-plans-list');
-        if (!overviewPlansList) {
-            return;
-        }
-
-        const plansHTMLPromises = this.allPlans.map(async (plan) => {
-            const planStatus = await PaymentsService.getPlanPaymentStatus(plan.id, this.allPlans);
-            const paidMonths = await PaymentsService.getPaidMonthsCount(plan.id);
-            const monthsText = formatMonthsText(plan, paidMonths);
-            const ownerText = formatOwnerText(plan);
-            const progressPercent =
-                plan.totalAmount > 0 ? (planStatus.totalPaid / plan.totalAmount) * 100 : 0;
-
-            return `
-                <div class="bg-soft-gray/40 dark:bg-charcoal-gray/50 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 cursor-pointer" data-view-plan-id="${plan.id}">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <h4 class="font-semibold text-deep-black dark:text-pure-white">${escapeHtml(plan.planName)}</h4>
-                            <p class="text-xs text-gray-600 dark:text-pure-white/70 mt-1">${monthsText} • ${ownerText}</p>
-                        </div>
-                        <span class="text-lg font-bold text-deep-black dark:text-pure-white">${formatCurrency(plan.totalAmount)}</span>
-                    </div>
-                    <div class="mt-3">
-                        <div class="flex justify-between text-xs mb-1">
-                            <span class="text-gray-600 dark:text-pure-white/70">Paid: ${formatCurrency(planStatus.totalPaid)}</span>
-                            <span class="text-gray-600 dark:text-pure-white/70">${Math.round(progressPercent)}%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 dark:bg-charcoal-gray rounded-full h-2">
-                            <div class="bg-lime-vibrant h-2 rounded-full transition-all duration-300" style="width: ${progressPercent}%"></div>
-                        </div>
-                    </div>
-                </div>
-            `;
+        const loaderId = LoadingComponent.show(this.overviewView, {
+            message: 'Loading overview...',
+            size: 'small',
         });
+        try {
+            const stats = await this.calculateOverviewStats();
 
-        const plansHTML = (await Promise.all(plansHTMLPromises)).join('');
-        overviewPlansList.innerHTML = plansHTML;
+            // Update header description
+            const overviewPlansNumber = document.getElementById('overview-plans-number');
+            const overviewPlansPlural = document.getElementById('overview-plans-plural');
+            if (overviewPlansNumber) {
+                overviewPlansNumber.textContent = stats.totalPlans.toString();
+            }
+            if (overviewPlansPlural) {
+                overviewPlansPlural.textContent = stats.totalPlans === 1 ? '' : 's';
+            }
+
+            // Update general statistics
+            const overviewTotalDebt = document.getElementById('overview-total-debt');
+            const overviewTotalPaid = document.getElementById('overview-total-paid');
+            const overviewRemaining = document.getElementById('overview-remaining');
+
+            if (overviewTotalDebt) overviewTotalDebt.textContent = formatCurrency(stats.totalDebt);
+            if (overviewTotalPaid) overviewTotalPaid.textContent = formatCurrency(stats.totalPaid);
+            if (overviewRemaining) overviewRemaining.textContent = formatCurrency(stats.remaining);
+
+            // Update "My Debts" section
+            const myDebtsTotal = document.getElementById('my-debts-total');
+            const myDebtsPaid = document.getElementById('my-debts-paid');
+            const myDebtsRemaining = document.getElementById('my-debts-remaining');
+
+            if (myDebtsTotal) myDebtsTotal.textContent = formatCurrency(stats.myDebts.total);
+            if (myDebtsPaid) myDebtsPaid.textContent = formatCurrency(stats.myDebts.paid);
+            if (myDebtsRemaining)
+                myDebtsRemaining.textContent = formatCurrency(stats.myDebts.remaining);
+
+            // Update "Receivables" section
+            const receivablesTotal = document.getElementById('receivables-total');
+            const receivablesReceived = document.getElementById('receivables-received');
+            const receivablesPending = document.getElementById('receivables-pending');
+
+            if (receivablesTotal)
+                receivablesTotal.textContent = formatCurrency(stats.receivables.total);
+            if (receivablesReceived)
+                receivablesReceived.textContent = formatCurrency(stats.receivables.received);
+            if (receivablesPending)
+                receivablesPending.textContent = formatCurrency(stats.receivables.pending);
+
+            // Render plans list in overview
+            await this.renderOverviewPlansList();
+            LoadingComponent.hide(loaderId);
+        } catch (error) {
+            LoadingComponent.hide(loaderId);
+            ErrorHandler.handle(
+                error instanceof Error ? error : new Error('Unknown error'),
+                'DashboardPage.renderOverview'
+            );
+        }
     }
 
     /**
@@ -289,46 +306,58 @@ export class DashboardPage {
      * Show plan detail view
      */
     async showPlanDetail(planId: string): Promise<void> {
-        const plan = await PlansService.getPlanById(planId);
-        if (!plan) {
-            return;
+        const loaderId = LoadingComponent.show(this.planDetailView, { message: 'Loading plan...' });
+        try {
+            const plan = await PlansService.getPlanById(planId);
+            if (!plan) {
+                LoadingComponent.hide(loaderId);
+                return;
+            }
+
+            this.activePlan = plan;
+            this.paymentTable.setPlan(plan);
+            this.paymentTable.render();
+
+            // Update header
+            if (this.planNameHeader) {
+                this.planNameHeader.textContent = plan.planName;
+            }
+            if (this.planDescription) {
+                const monthsText =
+                    plan.numberOfMonths === 'one-time'
+                        ? 'One-time payment'
+                        : `${plan.numberOfMonths}-month payment plan`;
+                this.planDescription.textContent = `Track your ${monthsText.toLowerCase()}.`;
+            }
+
+            // Load payment status
+            const storage = StorageFactory.create();
+            const statusArray = await storage.getPaymentStatus(plan.id);
+            this.paymentTable.loadPaymentStatus(statusArray);
+
+            // Update totals
+            const totals = this.updateTotals();
+            await this.savePaymentStatus(totals);
+
+            // Switch views
+            if (this.overviewView) this.overviewView.classList.add('hidden');
+            if (this.planDetailView) this.planDetailView.classList.remove('hidden');
+
+            // Update logo
+            this.updatePlanDetailLogo();
+
+            // Update plan list active state
+            this.planList.setActivePlan(plan);
+            await this.planList.render(this.allPlans);
+            LoadingComponent.hide(loaderId);
+        } catch (error) {
+            LoadingComponent.hide(loaderId);
+            ToastService.error('Failed to load plan details');
+            ErrorHandler.handle(
+                error instanceof Error ? error : new Error('Unknown error'),
+                'DashboardPage.showPlanDetail'
+            );
         }
-
-        this.activePlan = plan;
-        this.paymentTable.setPlan(plan);
-        this.paymentTable.render();
-
-        // Update header
-        if (this.planNameHeader) {
-            this.planNameHeader.textContent = plan.planName;
-        }
-        if (this.planDescription) {
-            const monthsText =
-                plan.numberOfMonths === 'one-time'
-                    ? 'One-time payment'
-                    : `${plan.numberOfMonths}-month payment plan`;
-            this.planDescription.textContent = `Track your ${monthsText.toLowerCase()}.`;
-        }
-
-        // Load payment status
-        const storage = StorageFactory.create();
-        const statusArray = await storage.getPaymentStatus(plan.id);
-        this.paymentTable.loadPaymentStatus(statusArray);
-
-        // Update totals
-        const totals = this.updateTotals();
-        await this.savePaymentStatus(totals);
-
-        // Switch views
-        if (this.overviewView) this.overviewView.classList.add('hidden');
-        if (this.planDetailView) this.planDetailView.classList.remove('hidden');
-
-        // Update logo
-        this.updatePlanDetailLogo();
-
-        // Update plan list active state
-        this.planList.setActivePlan(plan);
-        await this.planList.render(this.allPlans);
     }
 
     /**
@@ -379,7 +408,7 @@ export class DashboardPage {
 
         await PaymentsService.savePaymentStatus(
             this.activePlan.id,
-            statusArray as any,
+            statusArray as PaymentStatus[],
             totals,
             this.allPlans
         );
@@ -398,43 +427,61 @@ export class DashboardPage {
             return;
         }
 
-        const allToggles = this.paymentTable.getPaymentToggles();
+        const loaderId = LoadingComponent.show(this.planDetailView, {
+            message: 'Saving payment status...',
+            size: 'small',
+        });
+        try {
+            const allToggles = this.paymentTable.getPaymentToggles();
 
-        if (isChecked) {
-            // If checking a month, check all previous months
-            allToggles.forEach((toggle) => {
-                const toggleIndex = parseInt(toggle.dataset.monthIndex || '0', 10);
-                if (toggleIndex <= monthIndex && !toggle.checked) {
-                    toggle.checked = true;
-                    this.paymentTable.updateToggleVisual(toggle);
-                }
-            });
-        } else {
-            // If unchecking a month, uncheck all following months
-            allToggles.forEach((toggle) => {
-                const toggleIndex = parseInt(toggle.dataset.monthIndex || '0', 10);
-                if (toggleIndex >= monthIndex && toggle.checked) {
-                    toggle.checked = false;
-                    this.paymentTable.updateToggleVisual(toggle);
-                }
-            });
+            if (isChecked) {
+                // If checking a month, check all previous months
+                allToggles.forEach((toggle) => {
+                    const toggleIndex = parseInt(toggle.dataset.monthIndex || '0', 10);
+                    if (toggleIndex <= monthIndex && !toggle.checked) {
+                        toggle.checked = true;
+                        this.paymentTable.updateToggleVisual(toggle);
+                    }
+                });
+            } else {
+                // If unchecking a month, uncheck all following months
+                allToggles.forEach((toggle) => {
+                    const toggleIndex = parseInt(toggle.dataset.monthIndex || '0', 10);
+                    if (toggleIndex >= monthIndex && toggle.checked) {
+                        toggle.checked = false;
+                        this.paymentTable.updateToggleVisual(toggle);
+                    }
+                });
+            }
+
+            const updatedTotals = this.updateTotals();
+            await this.savePaymentStatus(updatedTotals);
+            LoadingComponent.hide(loaderId);
+            ToastService.success('Estado de pago actualizado');
+        } catch (error) {
+            LoadingComponent.hide(loaderId);
+            ToastService.error('Failed to save payment status');
+            ErrorHandler.handle(
+                error instanceof Error ? error : new Error('Unknown error'),
+                'DashboardPage.handlePaymentToggleChange'
+            );
         }
-
-        const updatedTotals = this.updateTotals();
-        await this.savePaymentStatus(updatedTotals);
-        ToastService.success('Estado de pago actualizado');
     }
 
     /**
      * Switch to a different plan
      */
     private async switchToPlan(planId: string): Promise<void> {
+        const loaderId = LoadingComponent.show(null, { message: 'Switching plan...' });
         try {
             await PlansService.switchToPlan(planId);
-            ToastService.success('Plan cambiado exitosamente');
             this.allPlans = await PlansService.getAllPlans();
+            LoadingComponent.hide(loaderId);
+            ToastService.success('Plan cambiado exitosamente');
             await this.showPlanDetail(planId);
         } catch (error) {
+            LoadingComponent.hide(loaderId);
+            ToastService.error('Failed to switch plan');
             ErrorHandler.handle(
                 error instanceof Error ? error : new Error('Unknown error'),
                 'DashboardPage.switchToPlan'
@@ -456,12 +503,14 @@ export class DashboardPage {
             return;
         }
 
+        const loaderId = LoadingComponent.show(null, { message: 'Deleting plan...' });
         try {
             const isDeletingActivePlan = this.activePlan !== null && planId === this.activePlan.id;
             await PlansService.deletePlan(planId);
 
-            ToastService.success('Plan eliminado exitosamente');
             this.allPlans = await PlansService.getAllPlans();
+            LoadingComponent.hide(loaderId);
+            ToastService.success('Plan eliminado exitosamente');
 
             if (isDeletingActivePlan && this.allPlans.length === 0) {
                 setTimeout(() => {
@@ -474,6 +523,8 @@ export class DashboardPage {
                 }, 500);
             }
         } catch (error) {
+            LoadingComponent.hide(loaderId);
+            ToastService.error('Failed to delete plan');
             ErrorHandler.handle(
                 error instanceof Error ? error : new Error('Unknown error'),
                 'DashboardPage.deletePlan'
@@ -490,14 +541,20 @@ export class DashboardPage {
         }
 
         if (confirm('Are you sure you want to clear the payment records for this plan?')) {
+            const loaderId = LoadingComponent.show(this.planDetailView, {
+                message: 'Clearing payment records...',
+            });
             try {
                 await PaymentsService.clearPaymentRecords(this.activePlan.id);
+                LoadingComponent.hide(loaderId);
                 ToastService.success('Registros de pago eliminados');
                 await this.showPlanDetail(this.activePlan.id);
                 if (this.overviewView && !this.overviewView.classList.contains('hidden')) {
                     await this.renderOverview();
                 }
             } catch (error) {
+                LoadingComponent.hide(loaderId);
+                ToastService.error('Failed to clear payment records');
                 ErrorHandler.handle(
                     error instanceof Error ? error : new Error('Unknown error'),
                     'DashboardPage.clearPaymentRecords'
@@ -522,5 +579,134 @@ export class DashboardPage {
                 planDetailLogo.setAttribute('src', logoSrc);
             }
         }
+    }
+
+    /**
+     * Show empty state when no plans exist
+     */
+    private showEmptyState(): void {
+        const container = this.overviewView || document.body;
+        EmptyStateComponent.render(container, {
+            title: 'No Payment Plans Yet',
+            message: 'Create your first payment plan to start tracking your payments.',
+            actionLabel: 'Create Plan',
+            onAction: () => {
+                window.location.href = 'start.html';
+            },
+        });
+    }
+
+    /**
+     * Show error state
+     */
+    private showErrorState(error: Error): void {
+        const container = this.overviewView || document.body;
+        ErrorStateComponent.render(container, {
+            title: 'Error Loading Dashboard',
+            message:
+                error.message || 'An unexpected error occurred. Please try refreshing the page.',
+            actionLabel: 'Retry',
+            onAction: () => {
+                location.reload();
+            },
+        });
+    }
+
+    /**
+     * Apply filters to plan list in sidebar
+     */
+    private applyFilters(): void {
+        const searchTerm = this.planSearch?.value.toLowerCase() || '';
+        const filterValue = this.planFilter?.value || 'all';
+
+        this.filteredPlans = this.allPlans.filter((plan) => {
+            // Search filter
+            const matchesSearch = plan.planName.toLowerCase().includes(searchTerm);
+
+            // Category filter
+            let matchesFilter = true;
+            if (filterValue === 'self') {
+                matchesFilter = plan.debtOwner === 'self' || !plan.debtOwner;
+            } else if (filterValue === 'other') {
+                matchesFilter = plan.debtOwner === 'other';
+            }
+
+            return matchesSearch && matchesFilter;
+        });
+
+        this.planList.render(this.filteredPlans);
+    }
+
+    /**
+     * Apply filters to overview plans list
+     */
+    private applyOverviewFilters(): void {
+        const searchTerm = this.overviewSearch?.value.toLowerCase() || '';
+        const filterValue = this.overviewFilter?.value || 'all';
+
+        // Filter plans for overview display
+        const filtered = this.allPlans.filter((plan) => {
+            const matchesSearch = plan.planName.toLowerCase().includes(searchTerm);
+            let matchesFilter = true;
+            if (filterValue === 'self') {
+                matchesFilter = plan.debtOwner === 'self' || !plan.debtOwner;
+            } else if (filterValue === 'other') {
+                matchesFilter = plan.debtOwner === 'other';
+            }
+            return matchesSearch && matchesFilter;
+        });
+
+        // Re-render overview with filtered plans
+        this.renderOverviewPlansList(filtered);
+    }
+
+    /**
+     * Render overview plans list (with optional filtered plans)
+     */
+    private async renderOverviewPlansList(plans?: Plan[]): Promise<void> {
+        const plansToRender = plans || this.allPlans;
+        const overviewPlansList = document.getElementById('overview-plans-list');
+        if (!overviewPlansList) {
+            return;
+        }
+
+        const plansHTMLPromises = plansToRender.map(async (plan) => {
+            const planStatus = await PaymentsService.getPlanPaymentStatus(plan.id, this.allPlans);
+            const paidMonths = await PaymentsService.getPaidMonthsCount(plan.id);
+            const monthsText = formatMonthsText(plan, paidMonths);
+            const ownerText = formatOwnerText(plan.debtOwner);
+
+            return `
+                <div
+                    data-view-plan-id="${escapeHtml(plan.id)}"
+                    class="plan-card cursor-pointer rounded-2xl border-2 border-soft-gray/60 bg-pure-white p-6 shadow-lg transition-all duration-300 hover:border-lime-vibrant hover:shadow-xl dark:border-charcoal-gray/60 dark:bg-charcoal-gray/50 dark:hover:border-lime-vibrant"
+                >
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-deep-black dark:text-pure-white mb-1">${escapeHtml(plan.planName)}</h3>
+                            <p class="text-sm text-gray-600 dark:text-pure-white/70">${ownerText}</p>
+                        </div>
+                        <span class="text-2xl font-bold text-lime-vibrant">${formatCurrency(planStatus.totalPaid)}</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-pure-white/70">Total:</span>
+                            <span class="font-semibold text-deep-black dark:text-pure-white">${formatCurrency(plan.totalAmount)}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-pure-white/70">Progress:</span>
+                            <span class="font-semibold text-deep-black dark:text-pure-white">${monthsText}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-pure-white/70">Remaining:</span>
+                            <span class="font-semibold text-deep-black dark:text-pure-white">${formatCurrency(planStatus.remaining)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        const plansHTML = (await Promise.all(plansHTMLPromises)).join('');
+        overviewPlansList.innerHTML = plansHTML;
     }
 }

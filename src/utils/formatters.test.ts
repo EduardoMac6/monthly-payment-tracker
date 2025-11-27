@@ -86,33 +86,18 @@ describe('Formatters', () => {
 
     describe('formatOwnerText', () => {
         it('should return "My Debt" for self-owned plans', () => {
-            const plan: Plan = {
-                id: '1',
-                planName: 'Test',
-                totalAmount: 1000,
-                numberOfMonths: 12,
-                monthlyPayment: 100,
-                debtOwner: 'self',
-                createdAt: new Date().toISOString(),
-                isActive: true,
-            };
-            const result = formatOwnerText(plan);
+            const result = formatOwnerText('self');
             expect(result).toBe('My Debt');
         });
 
         it('should return "Receivable" for other-owned plans', () => {
-            const plan: Plan = {
-                id: '1',
-                planName: 'Test',
-                totalAmount: 1000,
-                numberOfMonths: 12,
-                monthlyPayment: 100,
-                debtOwner: 'other',
-                createdAt: new Date().toISOString(),
-                isActive: true,
-            };
-            const result = formatOwnerText(plan);
+            const result = formatOwnerText('other');
             expect(result).toBe('Receivable');
+        });
+
+        it('should return "My Debt" for undefined debtOwner', () => {
+            const result = formatOwnerText(undefined);
+            expect(result).toBe('My Debt');
         });
     });
 });
