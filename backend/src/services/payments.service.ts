@@ -4,8 +4,8 @@
  */
 
 import { prisma } from '../config/database.js';
-import { PaymentStatusInput, PaymentTotalsInput } from '../utils/types.js';
-import { AppError } from '../middleware/error.middleware.js';
+import { PaymentStatusInput, PaymentTotalsInput } from '../types/payments.types.js';
+import { AppError } from '../errors/app.error.js';
 
 export class PaymentsService {
     /**

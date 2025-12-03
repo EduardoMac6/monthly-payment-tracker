@@ -15,13 +15,19 @@ export type ThemeChoice = 'light' | 'dark';
 
 export class ThemeToggleComponent {
     private themeToggle: HTMLButtonElement | null;
+    private themeToggleMenu: HTMLButtonElement | null;
     private themeLabel: HTMLElement | null;
+    private themeLabelMenu: HTMLElement | null;
     private dashboardLogo: HTMLImageElement | null;
     private rootElement: HTMLElement;
 
     constructor() {
         this.themeToggle = document.getElementById('theme-toggle') as HTMLButtonElement | null;
+        this.themeToggleMenu = document.getElementById(
+            'theme-toggle-menu'
+        ) as HTMLButtonElement | null;
         this.themeLabel = document.getElementById('theme-toggle-label');
+        this.themeLabelMenu = document.getElementById('theme-toggle-label-menu');
         this.dashboardLogo = document.getElementById('dashboard-logo') as HTMLImageElement | null;
         this.rootElement = document.documentElement;
     }
@@ -35,8 +41,9 @@ export class ThemeToggleComponent {
      * @returns void
      */
     public init(): void {
-        if (!this.themeToggle) {
-            console.warn('Theme toggle button not found');
+        // At least one toggle must exist
+        if (!this.themeToggle && !this.themeToggleMenu) {
+            console.warn('Theme toggle buttons not found');
             return;
         }
 
@@ -56,27 +63,51 @@ export class ThemeToggleComponent {
             this.updateLogo(storedThemePreference);
         }
 
-        // Add click event listener
-        this.themeToggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const isCurrentlyDark = this.rootElement.classList.contains('dark');
-            const newTheme = isCurrentlyDark ? 'light' : 'dark';
-            this.applyTheme(newTheme);
-        });
+        // Add click event listener to main toggle (desktop)
+        if (this.themeToggle) {
+            this.themeToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const isCurrentlyDark = this.rootElement.classList.contains('dark');
+                const newTheme = isCurrentlyDark ? 'light' : 'dark';
+                this.applyTheme(newTheme);
+            });
+        }
+
+        // Add click event listener to menu toggle (mobile/tablet)
+        if (this.themeToggleMenu) {
+            this.themeToggleMenu.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const isCurrentlyDark = this.rootElement.classList.contains('dark');
+                const newTheme = isCurrentlyDark ? 'light' : 'dark';
+                this.applyTheme(newTheme);
+            });
+        }
     }
 
     /**
      * Update theme toggle UI elements
      */
     private updateThemeToggleUI(theme: ThemeChoice): void {
-        if (!this.themeToggle) return;
+        // Update main toggle (desktop)
+        if (this.themeToggle) {
+            this.themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+            this.themeToggle.setAttribute('data-theme', theme);
+        }
 
-        this.themeToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-        this.themeToggle.setAttribute('data-theme', theme);
+        // Update menu toggle (mobile/tablet)
+        if (this.themeToggleMenu) {
+            this.themeToggleMenu.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+            this.themeToggleMenu.setAttribute('data-theme', theme);
+        }
 
+        // Update labels
         if (this.themeLabel) {
             this.themeLabel.textContent = theme === 'dark' ? 'Dark' : 'Light';
+        }
+        if (this.themeLabelMenu) {
+            this.themeLabelMenu.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
         }
     }
 

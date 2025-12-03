@@ -10,7 +10,7 @@
     "rewrites": [
         {
             "source": "/favicon.ico",
-            "destination": "/fav.ico"
+            "destination": "/assets/favicon.ico"
         },
         {
             "source": "/pages/(.*)",
@@ -23,10 +23,6 @@
         {
             "source": "/js/(.*)",
             "destination": "/js/$1"
-        },
-        {
-            "source": "/fav.ico",
-            "destination": "/fav.ico"
         },
         {
             "source": "/env-config.js",

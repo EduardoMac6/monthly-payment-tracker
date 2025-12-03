@@ -1,6 +1,7 @@
 /**
- * Simple HTTP server for testing
- * Run with: node test-server.js
+ * Development HTTP Server
+ * Simple HTTP server for local development and testing
+ * Run with: node scripts/dev-server.js
  */
 
 const http = require('http');
@@ -25,9 +26,23 @@ const MIME_TYPES = {
 };
 
 const server = http.createServer((req, res) => {
-    let filePath = '.' + req.url;
-    if (filePath === './') {
-        filePath = './index.html';
+    // Serve files from dist directory (where build output is)
+    let filePath = path.join(__dirname, '..', 'dist', req.url);
+    
+    // Handle root path
+    if (req.url === '/' || req.url === '') {
+        filePath = path.join(__dirname, '..', 'dist', 'index.html');
+    }
+    
+    // Normalize the path to prevent directory traversal
+    const distDir = path.join(__dirname, '..', 'dist');
+    filePath = path.normalize(filePath);
+    
+    // Ensure the file is within dist directory
+    if (!filePath.startsWith(distDir)) {
+        res.writeHead(403, { 'Content-Type': 'text/html' });
+        res.end('<h1>403 - Forbidden</h1>', 'utf-8');
+        return;
     }
 
     const extname = String(path.extname(filePath)).toLowerCase();
@@ -37,7 +52,7 @@ const server = http.createServer((req, res) => {
         if (error) {
             if (error.code === 'ENOENT') {
                 res.writeHead(404, { 'Content-Type': 'text/html' });
-                res.end('<h1>404 - File Not Found</h1>', 'utf-8');
+                res.end(`<h1>404 - File Not Found</h1><p>Requested: ${req.url}</p>`, 'utf-8');
             } else {
                 res.writeHead(500);
                 res.end(`Server Error: ${error.code}`, 'utf-8');
@@ -59,5 +74,4 @@ server.listen(PORT, () => {
     console.log(`📝 Or http://localhost:${PORT}/pages/dashboard.html for dashboard`);
     console.log(`\n💡 Press Ctrl+C to stop the server\n`);
 });
-
 

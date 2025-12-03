@@ -3,60 +3,18 @@
  * Business logic for authentication
  */
 
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { prisma } from '../config/database.js';
-import { env } from '../config/env.js';
-import { AppError } from '../middleware/error.middleware.js';
-
-export interface RegisterInput {
-    email: string;
-    password: string;
-}
-
-export interface LoginInput {
-    email: string;
-    password: string;
-}
-
-export interface TokenPayload {
-    userId: string;
-    email: string;
-}
+import { AppError } from '../errors/app.error.js';
+import { RegisterInput, LoginInput, TokenPayload } from '../types/auth.types.js';
+import { hashPassword, comparePassword } from '../utils/hash.util.js';
+import { generateToken, verifyToken as verifyJwtToken } from '../utils/token.util.js';
 
 export class AuthService {
-    /**
-     * Hash password
-     */
-    private async hashPassword(password: string): Promise<string> {
-        return bcrypt.hash(password, 10);
-    }
-
-    /**
-     * Compare password with hash
-     */
-    private async comparePassword(password: string, hash: string): Promise<boolean> {
-        return bcrypt.compare(password, hash);
-    }
-
-    /**
-     * Generate JWT token
-     */
-    private generateToken(payload: TokenPayload): string {
-        return jwt.sign(payload, env.JWT_SECRET, {
-            expiresIn: env.JWT_EXPIRES_IN,
-        });
-    }
-
     /**
      * Verify JWT token
      */
     verifyToken(token: string): TokenPayload {
-        try {
-            return jwt.verify(token, env.JWT_SECRET) as TokenPayload;
-        } catch (error) {
-            throw new AppError('Invalid or expired token', 401);
-        }
+        return verifyJwtToken(token);
     }
 
     /**
@@ -73,7 +31,7 @@ export class AuthService {
         }
 
         // Hash password
-        const hashedPassword = await this.hashPassword(data.password);
+        const hashedPassword = await hashPassword(data.password);
 
         // Create user
         const user = await prisma.user.create({
@@ -89,7 +47,7 @@ export class AuthService {
         });
 
         // Generate token
-        const token = this.generateToken({
+        const token = generateToken({
             userId: user.id,
             email: user.email,
         });
@@ -114,14 +72,14 @@ export class AuthService {
         }
 
         // Verify password
-        const isValidPassword = await this.comparePassword(data.password, user.password);
+        const isValidPassword = await comparePassword(data.password, user.password);
 
         if (!isValidPassword) {
             throw new AppError('Invalid email or password', 401);
         }
 
         // Generate token
-        const token = this.generateToken({
+        const token = generateToken({
             userId: user.id,
             email: user.email,
         });
@@ -138,4 +96,7 @@ export class AuthService {
 }
 
 export const authService = new AuthService();
+
+// Re-export types for convenience
+export type { RegisterInput, LoginInput, TokenPayload };
 

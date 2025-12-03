@@ -60,9 +60,9 @@ function copyAssetsPlugin(): Plugin {
             }
             
             // Copy favicon
-            const favicon = resolve(__dirname, 'fav.ico');
+            const favicon = resolve(__dirname, 'assets', 'favicon.ico');
             if (existsSync(favicon)) {
-                copyFileSync(favicon, resolve(__dirname, 'dist', 'fav.ico'));
+                copyFileSync(favicon, resolve(__dirname, 'dist', 'assets', 'favicon.ico'));
             }
         },
     };

@@ -5,7 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { AuthService } from '../../src/services/auth.service.js';
 import { prisma } from '../../src/config/database.js';
-import { AppError } from '../../src/middleware/error.middleware.js';
+import { AppError } from '../../src/errors/app.error.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 

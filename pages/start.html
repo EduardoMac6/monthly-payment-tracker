@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DebtLite</title>
-    <link rel="icon" type="image/x-icon" href="../fav.ico">
-    <link rel="shortcut icon" href="../fav.ico">
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico">
+    <link rel="shortcut icon" href="../assets/favicon.ico">
     <script>
         const savedThemePreference = localStorage.getItem('debtLiteTheme');
         if (savedThemePreference === 'dark') {
@@ -86,6 +86,43 @@
                 ✕
             </button>
         </div>
+        
+        <!-- Theme Toggle (visible only on mobile/tablet, hidden on desktop) -->
+        <div class="md:hidden flex items-center justify-between gap-3">
+            <span class="text-sm font-medium text-deep-black dark:text-pure-white transition-colors duration-300" id="theme-toggle-label-menu">
+                Light Mode
+            </span>
+            <button
+                id="theme-toggle-menu"
+                type="button"
+                aria-pressed="false"
+                aria-label="Toggle dark mode"
+                class="theme-toggle-switch"
+                data-theme="light">
+                <span class="theme-toggle-track" aria-hidden="true">
+                    <span class="theme-toggle-icon sun">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </span>
+                    <span class="theme-toggle-icon moon">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </span>
+                    <span class="theme-toggle-thumb"></span>
+                </span>
+            </button>
+        </div>
+        
         <h2 class="text-lg font-semibold text-deep-black dark:text-pure-white">Your Payment Plan</h2>
         
         <nav class="space-y-4 text-sm font-medium text-deep-black/80 dark:text-pure-white/80 border-t border-soft-gray/60 dark:border-charcoal-gray/60 pt-4">
@@ -98,7 +135,7 @@
         </nav>
     </aside>
 
-    <div class="absolute top-6 right-6">
+    <div class="absolute top-6 right-6 hidden md:block">
         <button
             id="theme-toggle"
             type="button"

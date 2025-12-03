@@ -65,17 +65,53 @@ The server will start on `http://localhost:3000`
 ```
 backend/
 ├── src/
-│   ├── controllers/    # Request handlers
-│   ├── services/       # Business logic
-│   ├── middleware/     # Express middleware
-│   ├── routes/         # Route definitions
-│   ├── utils/          # Utility functions
 │   ├── config/         # Configuration files
+│   │   ├── database.ts # Database connection
+│   │   └── env.ts      # Environment variables
+│   ├── constants/      # Application constants
+│   │   └── index.ts   # HTTP status codes, error messages
+│   ├── controllers/    # Request handlers
+│   │   ├── auth.controller.ts
+│   │   ├── payments.controller.ts
+│   │   └── plans.controller.ts
+│   ├── errors/         # Custom error classes
+│   │   ├── app.error.ts
+│   │   └── index.ts
+│   ├── middleware/     # Express middleware
+│   │   ├── auth.middleware.ts
+│   │   ├── error.middleware.ts
+│   │   └── validation.middleware.ts
+│   ├── routes/         # Route definitions
+│   │   ├── auth.routes.ts
+│   │   ├── payments.routes.ts
+│   │   └── plans.routes.ts
+│   ├── schemas/        # Zod validation schemas
+│   │   ├── auth.schemas.ts
+│   │   ├── plans.schemas.ts
+│   │   ├── payments.schemas.ts
+│   │   └── index.ts
+│   ├── services/       # Business logic
+│   │   ├── auth.service.ts
+│   │   ├── payments.service.ts
+│   │   └── plans.service.ts
+│   ├── types/          # TypeScript type definitions
+│   │   ├── auth.types.ts
+│   │   ├── plans.types.ts
+│   │   ├── payments.types.ts
+│   │   ├── common.types.ts
+│   │   ├── express.d.ts  # Express type extensions
+│   │   └── index.ts
+│   ├── utils/          # Utility functions
+│   │   ├── hash.util.ts    # Password hashing
+│   │   ├── token.util.ts   # JWT token utilities
+│   │   └── index.ts
 │   └── server.ts       # Entry point
 ├── prisma/
 │   ├── schema.prisma   # Database schema
 │   └── seed.ts         # Seed data
 └── tests/              # Tests
+    ├── integration/    # Integration tests
+    └── unit/           # Unit tests
 ```
 
 ## API Endpoints

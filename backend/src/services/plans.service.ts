@@ -4,8 +4,8 @@
  */
 
 import { prisma } from '../config/database.js';
-import { PlanCreateInput, PlanUpdateInput, BulkPlansInput } from '../utils/types.js';
-import { AppError } from '../middleware/error.middleware.js';
+import { PlanCreateInput, PlanUpdateInput, BulkPlansInput } from '../types/plans.types.js';
+import { AppError } from '../errors/app.error.js';
 
 export class PlansService {
     /**

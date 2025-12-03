@@ -5,7 +5,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PlansService } from '../../src/services/plans.service.js';
 import { prisma } from '../../src/config/database.js';
-import { AppError } from '../../src/middleware/error.middleware.js';
+import { AppError } from '../../src/errors/app.error.js';
 
 // Mock Prisma
 vi.mock('../../src/config/database.js', () => ({

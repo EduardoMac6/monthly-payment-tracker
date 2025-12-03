@@ -31,45 +31,63 @@ A lightweight web experience that helps users plan and monitor monthly payments 
 
 ```
 monthly-payment-tracker/
-├── assets/
+├── assets/                  # Static assets
 │   ├── css/                # Custom stylesheets
 │   │   ├── shared.css      # Shared styles
 │   │   └── start.css       # Onboarding page styles
 │   ├── js/                 # JavaScript utilities
 │   │   └── menu.js         # Navigation menu logic
-│   └── images/             # Logo and brand assets
-├── dist/                   # Compiled JavaScript output
-│   ├── components/         # UI components
-│   │   ├── payment-table.js
-│   │   └── plan-list.js
-│   ├── pages/              # Page-specific logic
-│   │   └── dashboard.js
-│   ├── services/           # Business logic
-│   │   ├── plans.js
-│   │   └── storage.js
-│   ├── types/              # Type definitions
-│   │   └── plan.js
-│   ├── utils/              # Utility functions
-│   │   └── formatters.js
-│   └── scripts.js          # Main compiled bundle
-├── pages/
+│   ├── images/             # Logo and brand assets
+│   └── favicon.ico         # Favicon
+├── backend/                # Backend API (Node.js + Express + Prisma)
+│   ├── src/
+│   │   ├── config/         # Configuration
+│   │   ├── constants/      # Application constants
+│   │   ├── controllers/    # Request handlers
+│   │   ├── errors/         # Error classes
+│   │   ├── middleware/     # Express middleware
+│   │   ├── routes/         # API routes
+│   │   ├── schemas/        # Validation schemas (Zod)
+│   │   ├── services/       # Business logic
+│   │   ├── types/          # TypeScript types
+│   │   ├── utils/          # Utilities
+│   │   └── server.ts       # Entry point
+│   ├── prisma/             # Database schema and migrations
+│   └── tests/              # Backend tests
+│       ├── integration/    # Integration tests
+│       └── unit/           # Unit tests
+├── docs/                   # Documentation and planning
+│   ├── adr/                # Architecture Decision Records
+│   ├── archive/            # Archived documentation
+│   └── *.md                # Various guides and plans
+├── pages/                  # HTML pages
 │   ├── start.html          # Onboarding step
 │   └── dashboard.html      # Main payment dashboard
-├── src/                    # TypeScript source
-│   ├── components/         # Component modules
+├── scripts/                # Build and development scripts
+│   ├── copy-dev-assets.js  # Copy dev assets
+│   ├── copy-static.js      # Copy static files
+│   ├── dev-server.js       # Development HTTP server
+│   ├── generate-env-dev.js # Generate dev env config
+│   └── inject-env.js       # Inject environment variables
+├── src/                    # TypeScript source (frontend)
+│   ├── components/         # UI component modules
+│   ├── config/             # Configuration
 │   ├── pages/              # Page modules
 │   ├── services/           # Service modules
 │   ├── types/              # Type definitions
 │   ├── utils/              # Utility modules
-│   └── scripts.ts          # Main TypeScript entry
-├── docs/                   # Documentation and planning
-│   ├── PLAN_MEJORAS.md     # Detailed improvement plan
-│   ├── BACKEND_GUIDE.md    # Backend implementation guide
-│   └── RESUMEN_EJECUTIVO.md # Executive summary
+│   └── __tests__/          # Integration tests
+├── tools/                  # Development tools
+│   ├── test-env.html       # Environment variables tester
+│   └── README.md           # Tools documentation
+├── dist/                   # Build output (gitignored)
 ├── index.html              # Landing page
-├── fav.ico                 # Favicon
-├── package.json
-├── tsconfig.json
+├── package.json            # Project configuration
+├── tsconfig.json           # TypeScript configuration
+├── vite.config.ts          # Vite configuration
+├── vitest.config.ts        # Vitest configuration
+├── eslint.config.js        # ESLint configuration
+├── vercel.json             # Vercel deployment configuration
 └── README.md
 ```
 

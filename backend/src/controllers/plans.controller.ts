@@ -3,14 +3,9 @@
  * Handles HTTP requests for plans
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { plansService } from '../services/plans.service.js';
-import { PlanCreateInput, PlanUpdateInput, BulkPlansInput } from '../utils/types.js';
-
-// Extend Request to include userId from auth middleware
-export interface AuthRequest extends Request {
-    userId?: string;
-}
+import { PlanCreateInput, PlanUpdateInput, BulkPlansInput, AuthRequest } from '../types/index.js';
 
 export class PlansController {
     /**

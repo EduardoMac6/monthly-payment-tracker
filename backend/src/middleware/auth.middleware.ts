@@ -5,8 +5,8 @@
 
 import { Response, NextFunction } from 'express';
 import { authService } from '../services/auth.service.js';
-import { AppError } from './error.middleware.js';
-import { AuthRequest } from '../controllers/plans.controller.js';
+import { AppError } from '../errors/app.error.js';
+import { AuthRequest } from '../types/express.d.js';
 
 /**
  * Authenticate request using JWT token

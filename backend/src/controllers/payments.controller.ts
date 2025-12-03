@@ -5,8 +5,7 @@
 
 import { Response, NextFunction } from 'express';
 import { paymentsService } from '../services/payments.service.js';
-import { PaymentStatusInput, PaymentTotalsInput } from '../utils/types.js';
-import { AuthRequest } from './plans.controller.js';
+import { PaymentStatusInput, PaymentTotalsInput, AuthRequest } from '../types/index.js';
 
 export class PaymentsController {
     /**
