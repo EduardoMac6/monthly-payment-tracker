@@ -1,6 +1,8 @@
 import type { IStorageService } from './storage.interface.js';
 import { LocalStorageService } from './localStorage.service.js';
+import { ApiStorageService } from './api.service.js';
 import { getStorageType } from '../../config/storage.config.js';
+import { getApiUrl } from '../../config/env.config.js';
 
 /**
  * Storage Factory
@@ -25,9 +27,16 @@ export class StorageFactory {
             case 'localStorage':
                 this.instance = new LocalStorageService();
                 break;
-            case 'api':
-                // Future: return new ApiStorageService();
-                throw new Error('API storage not yet implemented. Please use localStorage.');
+            case 'api': {
+                const apiUrl = getApiUrl();
+                if (!apiUrl) {
+                    throw new Error(
+                        'API storage requires VITE_API_URL to be configured. Please set it in your environment variables.'
+                    );
+                }
+                this.instance = new ApiStorageService(apiUrl);
+                break;
+            }
             default:
                 throw new Error(`Unknown storage type: ${storageType}`);
         }

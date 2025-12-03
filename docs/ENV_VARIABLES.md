@@ -10,7 +10,7 @@ Guía para configurar y usar variables de entorno en el proyecto.
 |----------|-------------|-------------------|---------|
 | `VITE_APP_NAME` | Nombre de la aplicación | `DebtLite` | `DebtLite (Dev)` |
 | `VITE_STORAGE_TYPE` | Tipo de almacenamiento | `localStorage` | `localStorage` o `api` |
-| `VITE_API_URL` | URL del API (futuro) | `http://localhost:3000/api` | `https://api.debtlite.com/api` |
+| `VITE_API_URL` | URL del API (requerido si `VITE_STORAGE_TYPE=api`) | `http://localhost:3000/api` | `https://api.debtlite.com/api` |
 | `VITE_MAX_PLANS` | Máximo número de planes | `50` | `100` |
 | `VITE_MAX_PLAN_AMOUNT` | Monto máximo por plan | `1000000000` | `5000000000` |
 | `VITE_MAX_PLAN_MONTHS` | Máximo número de meses | `120` | `240` |
@@ -35,7 +35,7 @@ cp .env.example .env.production
 
 Abre el archivo correspondiente (`.env.development` o `.env.production`) y ajusta los valores según necesites.
 
-**Ejemplo `.env.development`:**
+**Ejemplo `.env.development` (localStorage):**
 ```env
 VITE_APP_NAME=DebtLite (Dev)
 VITE_STORAGE_TYPE=localStorage
@@ -44,6 +44,18 @@ VITE_MAX_PLANS=50
 VITE_MAX_PLAN_AMOUNT=1000000000
 VITE_MAX_PLAN_MONTHS=120
 ```
+
+**Ejemplo `.env.development` (API):**
+```env
+VITE_APP_NAME=DebtLite (Dev)
+VITE_STORAGE_TYPE=api
+VITE_API_URL=http://localhost:3000/api
+VITE_MAX_PLANS=50
+VITE_MAX_PLAN_AMOUNT=1000000000
+VITE_MAX_PLAN_MONTHS=120
+```
+
+**Nota:** Cuando `VITE_STORAGE_TYPE=api`, asegúrate de que `VITE_API_URL` apunte a un servidor API válido. La aplicación mostrará un indicador de estado de conexión y sincronizará automáticamente las operaciones cuando esté offline.
 
 ### 3. Compilar con variables de entorno
 
@@ -99,6 +111,40 @@ function validateAmount(amount: number): boolean {
 ```
 
 ---
+
+## 🔌 Configuración API (Fase 4)
+
+Cuando `VITE_STORAGE_TYPE=api`, la aplicación usa `ApiStorageService` para conectarse a un backend API.
+
+### Requisitos
+
+1. **Servidor API funcionando**: El servidor debe estar corriendo y accesible en la URL especificada en `VITE_API_URL`
+2. **Endpoints implementados**: El API debe implementar los siguientes endpoints:
+   - `GET /api/plans` - Listar todos los planes
+   - `POST /api/plans` - Crear nuevo plan
+   - `PUT /api/plans/:id` - Actualizar plan
+   - `DELETE /api/plans/:id` - Eliminar plan
+   - `POST /api/plans/bulk` - Guardar múltiples planes
+   - `GET /api/plans/:id/payments` - Obtener estado de pagos
+   - `PUT /api/plans/:id/payments` - Actualizar estado de pagos
+   - `GET /api/plans/:id/totals` - Obtener totales de pagos
+   - `PUT /api/plans/:id/totals` - Actualizar totales de pagos
+
+### Características
+
+- **Sincronización offline**: Las operaciones se encolan cuando no hay conexión y se sincronizan automáticamente cuando vuelve
+- **Indicador de conexión**: El dashboard muestra un indicador visual del estado de conexión
+- **Retry automático**: El HttpClient reintenta automáticamente en caso de errores transitorios (5xx, 429)
+- **Fallback a localStorage**: `getActivePlanId` y `setActivePlanId` usan localStorage como fallback (estado de UI)
+
+### Ejemplo de configuración
+
+```env
+VITE_STORAGE_TYPE=api
+VITE_API_URL=http://localhost:3000/api
+```
+
+**Nota**: Si el API no está disponible, la aplicación mostrará errores. Asegúrate de tener el servidor corriendo antes de cambiar a modo API.
 
 ## 🔄 Flujo de Trabajo
 
