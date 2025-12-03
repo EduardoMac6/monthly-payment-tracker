@@ -140,7 +140,24 @@ monthly-payment-tracker/
 ├── assets/                      # Assets estáticos
 │   ├── css/                     # Estilos
 │   ├── js/                      # Scripts legacy
-│   └── images/                  # Imágenes
+│   ├── images/                  # Imágenes
+│   └── favicon.ico              # Favicon
+│
+├── backend/                     # Backend API
+│   ├── src/                     # Código fuente del backend
+│   │   ├── config/              # Configuración
+│   │   ├── constants/           # Constantes
+│   │   ├── controllers/         # Controladores HTTP
+│   │   ├── errors/              # Clases de error
+│   │   ├── middleware/          # Middleware de Express
+│   │   ├── routes/              # Definición de rutas
+│   │   ├── schemas/             # Schemas de validación
+│   │   ├── services/            # Lógica de negocio
+│   │   ├── types/               # Tipos TypeScript
+│   │   ├── utils/               # Utilidades
+│   │   └── server.ts            # Punto de entrada
+│   ├── prisma/                  # Esquema y migraciones de BD
+│   └── tests/                   # Tests del backend
 │
 ├── dist/                        # Build output
 │   ├── scripts.js               # Bundle principal
@@ -151,11 +168,20 @@ monthly-payment-tracker/
 │   └── pages/                  # HTML copiados
 │
 ├── docs/                        # Documentación
-│   ├── api/                     # TypeDoc generado
+│   ├── adr/                     # Architecture Decision Records
+│   ├── archive/                 # Documentación archivada
 │   └── *.md                     # Guías y planes
 │
-└── scripts/                     # Scripts de build
-    └── inject-env.js            # Inyección de env vars
+├── scripts/                     # Scripts de build y desarrollo
+│   ├── copy-dev-assets.js       # Copiar assets de desarrollo
+│   ├── copy-static.js           # Copiar archivos estáticos
+│   ├── dev-server.js            # Servidor HTTP de desarrollo
+│   ├── generate-env-dev.js       # Generar config de env dev
+│   └── inject-env.js            # Inyección de env vars
+│
+└── tools/                       # Herramientas de desarrollo
+    ├── test-env.html            # Tester de variables de entorno
+    └── README.md                # Documentación de herramientas
 ```
 
 ---

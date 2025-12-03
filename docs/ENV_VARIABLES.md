@@ -9,8 +9,10 @@ Guía para configurar y usar variables de entorno en el proyecto.
 | Variable | Descripción | Valor por Defecto | Ejemplo |
 |----------|-------------|-------------------|---------|
 | `VITE_APP_NAME` | Nombre de la aplicación | `DebtLite` | `DebtLite (Dev)` |
-| `VITE_STORAGE_TYPE` | Tipo de almacenamiento | `localStorage` | `localStorage` o `api` |
-| `VITE_API_URL` | URL del API (futuro) | `http://localhost:3000/api` | `https://api.debtlite.com/api` |
+| `VITE_STORAGE_TYPE` | Tipo de almacenamiento | `localStorage` | `localStorage`, `api`, o `supabase` |
+| `VITE_API_URL` | URL del API (requerido si `VITE_STORAGE_TYPE=api`) | `http://localhost:3000/api` | `https://api.debtlite.com/api` |
+| `VITE_SUPABASE_URL` | URL del proyecto Supabase (requerido si `VITE_STORAGE_TYPE=supabase`) | `` | `https://xxxxx.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | Clave anónima de Supabase (requerido si `VITE_STORAGE_TYPE=supabase`) | `` | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
 | `VITE_MAX_PLANS` | Máximo número de planes | `50` | `100` |
 | `VITE_MAX_PLAN_AMOUNT` | Monto máximo por plan | `1000000000` | `5000000000` |
 | `VITE_MAX_PLAN_MONTHS` | Máximo número de meses | `120` | `240` |
@@ -35,7 +37,7 @@ cp .env.example .env.production
 
 Abre el archivo correspondiente (`.env.development` o `.env.production`) y ajusta los valores según necesites.
 
-**Ejemplo `.env.development`:**
+**Ejemplo `.env.development` (localStorage):**
 ```env
 VITE_APP_NAME=DebtLite (Dev)
 VITE_STORAGE_TYPE=localStorage
@@ -44,6 +46,31 @@ VITE_MAX_PLANS=50
 VITE_MAX_PLAN_AMOUNT=1000000000
 VITE_MAX_PLAN_MONTHS=120
 ```
+
+**Ejemplo `.env.development` (API):**
+```env
+VITE_APP_NAME=DebtLite (Dev)
+VITE_STORAGE_TYPE=api
+VITE_API_URL=http://localhost:3000/api
+VITE_MAX_PLANS=50
+VITE_MAX_PLAN_AMOUNT=1000000000
+VITE_MAX_PLAN_MONTHS=120
+```
+
+**Ejemplo `.env.development` (Supabase):**
+```env
+VITE_APP_NAME=DebtLite (Dev)
+VITE_STORAGE_TYPE=supabase
+VITE_SUPABASE_URL=https://xxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+VITE_MAX_PLANS=50
+VITE_MAX_PLAN_AMOUNT=1000000000
+VITE_MAX_PLAN_MONTHS=120
+```
+
+**Nota:** Cuando `VITE_STORAGE_TYPE=api`, asegúrate de que `VITE_API_URL` apunte a un servidor API válido. La aplicación mostrará un indicador de estado de conexión y sincronizará automáticamente las operaciones cuando esté offline.
+
+**Nota:** Cuando `VITE_STORAGE_TYPE=supabase`, asegúrate de que `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` estén configurados correctamente. Puedes obtener estas credenciales desde tu proyecto en [Supabase Dashboard](https://app.supabase.com) → Project Settings → API.
 
 ### 3. Compilar con variables de entorno
 
@@ -99,6 +126,85 @@ function validateAmount(amount: number): boolean {
 ```
 
 ---
+
+## 🔌 Configuración API (Fase 4)
+
+Cuando `VITE_STORAGE_TYPE=api`, la aplicación usa `ApiStorageService` para conectarse a un backend API.
+
+### Requisitos
+
+1. **Servidor API funcionando**: El servidor debe estar corriendo y accesible en la URL especificada en `VITE_API_URL`
+2. **Endpoints implementados**: El API debe implementar los siguientes endpoints:
+   - `GET /api/plans` - Listar todos los planes
+   - `POST /api/plans` - Crear nuevo plan
+   - `PUT /api/plans/:id` - Actualizar plan
+   - `DELETE /api/plans/:id` - Eliminar plan
+   - `POST /api/plans/bulk` - Guardar múltiples planes
+   - `GET /api/plans/:id/payments` - Obtener estado de pagos
+   - `PUT /api/plans/:id/payments` - Actualizar estado de pagos
+   - `GET /api/plans/:id/totals` - Obtener totales de pagos
+   - `PUT /api/plans/:id/totals` - Actualizar totales de pagos
+
+### Características
+
+- **Sincronización offline**: Las operaciones se encolan cuando no hay conexión y se sincronizan automáticamente cuando vuelve
+- **Indicador de conexión**: El dashboard muestra un indicador visual del estado de conexión
+- **Retry automático**: El HttpClient reintenta automáticamente en caso de errores transitorios (5xx, 429)
+- **Fallback a localStorage**: `getActivePlanId` y `setActivePlanId` usan localStorage como fallback (estado de UI)
+
+### Ejemplo de configuración
+
+```env
+VITE_STORAGE_TYPE=api
+VITE_API_URL=http://localhost:3000/api
+```
+
+**Nota**: Si el API no está disponible, la aplicación mostrará errores. Asegúrate de tener el servidor corriendo antes de cambiar a modo API.
+
+## 🗄️ Configuración Supabase
+
+Cuando `VITE_STORAGE_TYPE=supabase`, la aplicación usa `SupabaseStorageService` para conectarse a Supabase como backend.
+
+### Requisitos
+
+1. **Proyecto Supabase creado**: Debes tener un proyecto en [Supabase](https://supabase.com)
+2. **Credenciales obtenidas**: Necesitas la URL del proyecto y la clave anónima (anon key)
+3. **Tablas configuradas**: Las tablas necesarias se crean automáticamente o puedes configurarlas manualmente
+
+### Obtener Credenciales de Supabase
+
+1. Ve a [Supabase Dashboard](https://app.supabase.com)
+2. Selecciona tu proyecto (o crea uno nuevo)
+3. Ve a **Project Settings** → **API**
+4. Copia los siguientes valores:
+   - **Project URL** → Usa como `VITE_SUPABASE_URL`
+   - **anon public** (bajo "Project API keys") → Usa como `VITE_SUPABASE_ANON_KEY`
+
+### Características
+
+- **Autenticación integrada**: Supabase maneja autenticación de usuarios automáticamente
+- **Persistencia de sesión**: Las sesiones se persisten automáticamente
+- **Auto-refresh de tokens**: Los tokens se renuevan automáticamente
+- **Detección de sesión en URL**: Soporte para autenticación mediante enlaces
+- **Base de datos en tiempo real**: Soporte para actualizaciones en tiempo real (si se configura)
+
+### Seguridad
+
+**Importante sobre la anon key:**
+- La `anon key` es **pública** y está diseñada para usarse en el cliente
+- Es segura exponerla en el código frontend
+- Supabase usa Row Level Security (RLS) para proteger los datos
+- **NUNCA** uses la `service_role` key en el frontend (es un secreto del servidor)
+
+### Ejemplo de configuración
+
+```env
+VITE_STORAGE_TYPE=supabase
+VITE_SUPABASE_URL=https://xxxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+**Nota**: Si las credenciales de Supabase no están configuradas o son inválidas, la aplicación mostrará errores. Asegúrate de tener un proyecto Supabase activo antes de cambiar a modo Supabase.
 
 ## 🔄 Flujo de Trabajo
 
@@ -168,6 +274,8 @@ Esto significa que:
 
 - `src/config/env.config.ts` - Configuración de variables de entorno
 - `src/config/storage.config.ts` - Usa `VITE_STORAGE_TYPE`
+- `src/config/supabase.config.ts` - Configuración del cliente Supabase
+- `src/services/storage/supabase.service.ts` - Servicio de storage para Supabase
 - `src/utils/validators.ts` - Usa `VITE_MAX_PLAN_AMOUNT` y `VITE_MAX_PLAN_MONTHS`
 - `src/services/plans/plans.service.ts` - Usa `VITE_MAX_PLANS`
 - `scripts/inject-env.js` - Script para inyectar variables

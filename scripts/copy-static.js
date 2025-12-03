@@ -16,7 +16,6 @@ if (!fs.existsSync(distDir)) {
 // Files and directories to copy
 const filesToCopy = [
     { src: 'index.html', dest: 'index.html' },
-    { src: 'fav.ico', dest: 'fav.ico' },
     { src: 'pages', dest: 'pages' },
     { src: 'assets', dest: 'assets' },
 ];

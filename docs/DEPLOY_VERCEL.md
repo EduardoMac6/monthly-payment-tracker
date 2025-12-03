@@ -33,7 +33,7 @@ git push -u origin main
 2. Click en **"Add New Project"**
 3. Importa tu repositorio de GitHub
 4. Vercel detectará automáticamente la configuración:
-   - **Framework Preset**: Other
+   - **Framework Preset**: Vite (detectado automáticamente desde `vercel.json`)
    - **Build Command**: `npm run build:prod`
    - **Output Directory**: `dist`
    - **Install Command**: `npm install`
@@ -45,14 +45,42 @@ El proyecto puede funcionar sin variables de entorno (usa valores por defecto), 
 1. En la configuración del proyecto en Vercel
 2. Ve a **Settings** → **Environment Variables**
 3. Agrega las variables (prefijo `VITE_` es importante):
+   
+   **Para localStorage (default):**
    ```
    VITE_APP_NAME=DebtLite
    VITE_STORAGE_TYPE=localStorage
+   VITE_MAX_PLANS=50
+   VITE_MAX_PLAN_AMOUNT=1000000000
+   VITE_MAX_PLAN_MONTHS=120
+   ```
+   
+   **Para API backend:**
+   ```
+   VITE_APP_NAME=DebtLite
+   VITE_STORAGE_TYPE=api
    VITE_API_URL=https://api.tudominio.com/api
    VITE_MAX_PLANS=50
    VITE_MAX_PLAN_AMOUNT=1000000000
    VITE_MAX_PLAN_MONTHS=120
    ```
+   
+   **Para Supabase:**
+   ```
+   VITE_APP_NAME=DebtLite
+   VITE_STORAGE_TYPE=supabase
+   VITE_SUPABASE_URL=https://xxxxx.supabase.co
+   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   VITE_MAX_PLANS=50
+   VITE_MAX_PLAN_AMOUNT=1000000000
+   VITE_MAX_PLAN_MONTHS=120
+   ```
+   
+   **Nota sobre Supabase:** Para obtener las credenciales de Supabase:
+   1. Ve a [Supabase Dashboard](https://app.supabase.com)
+   2. Selecciona tu proyecto → **Project Settings** → **API**
+   3. Copia **Project URL** como `VITE_SUPABASE_URL`
+   4. Copia **anon public** (bajo "Project API keys") como `VITE_SUPABASE_ANON_KEY`
 
 **Nota:** El plugin de Vite lee automáticamente estas variables de `process.env` durante el build, así que se inyectarán correctamente en `dist/env-config.js`.
 
@@ -102,13 +130,14 @@ Vercel CLI te hará algunas preguntas:
 
 El archivo `vercel.json` ya está configurado con:
 
+- ✅ Framework: `vite` (para mejor detección y optimización)
 - ✅ Build command: `npm run build:prod`
 - ✅ Output directory: `dist`
 - ✅ Rewrites para routing (SPA) con soporte para assets y páginas
 - ✅ Headers de cache para assets
 - ✅ Base path configurado como `/` (rutas absolutas)
 
-**Importante:** El proyecto usa `base: '/'` en `vite.config.ts` para generar rutas absolutas que funcionan correctamente en Vercel.
+**Importante:** El proyecto usa `base: '/'` en `vite.config.ts` para generar rutas absolutas que funcionan correctamente en Vercel. El `framework: "vite"` en `vercel.json` permite que Vercel optimice automáticamente el build y la detección de configuración.
 
 ### Estructura de Archivos en Vercel
 

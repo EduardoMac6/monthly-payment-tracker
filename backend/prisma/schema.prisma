@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  plans     Plan[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Plan {
+  id            String          @id @default(cuid())
+  userId        String
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planName      String
+  totalAmount   Float
+  numberOfMonths Int?
+  monthlyPayment Float
+  debtOwner     String?         @default("self")
+  isActive      Boolean         @default(true)
+  paymentStatus PaymentStatus[]
+  paymentTotals PaymentTotals?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([userId])
+  @@map("plans")
+}
+
+model PaymentStatus {
+  id        String   @id @default(cuid())
+  planId    String
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  monthIndex Int
+  status    String
+  paidAt    DateTime?
+  amount    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([planId])
+  @@map("payment_statuses")
+}
+
+model PaymentTotals {
+  id        String   @id @default(cuid())
+  planId    String   @unique
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  totalPaid Float    @default(0)
+  remaining Float
+  updatedAt DateTime @updatedAt
+
+  @@map("payment_totals")
+}

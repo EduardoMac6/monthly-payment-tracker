@@ -8,6 +8,7 @@ import { ToastService } from '../../components/toast/toast.component.js';
 import { LoadingComponent } from '../../components/loading/loading.component.js';
 import { ErrorStateComponent } from '../../components/error-state/error-state.component.js';
 import { EmptyStateComponent } from '../../components/empty-state/empty-state.component.js';
+import { ConnectionStatusComponent } from '../../components/connection-status/connection-status.component.js';
 import { formatCurrency, formatMonthsText, formatOwnerText } from '../../utils/formatters.js';
 import { ErrorHandler } from '../../utils/errors.js';
 import { escapeHtml } from '../../utils/sanitizer.js';
@@ -39,6 +40,7 @@ export class DashboardPage {
     // Components
     private paymentTable: PaymentTableComponent;
     private planList: PlanListComponent;
+    private connectionStatus: ConnectionStatusComponent;
 
     constructor() {
         // Get DOM elements
@@ -61,6 +63,7 @@ export class DashboardPage {
         // Initialize components
         this.paymentTable = new PaymentTableComponent('payment-table-body');
         this.planList = new PlanListComponent('plans-list');
+        this.connectionStatus = new ConnectionStatusComponent();
 
         // Set up component callbacks
         this.setupComponentCallbacks();
@@ -96,6 +99,9 @@ export class DashboardPage {
             // Render plan list in sidebar
             this.planList.setActivePlan(this.activePlan);
             await this.planList.render(this.filteredPlans);
+
+            // Initialize connection status component
+            this.connectionStatus.init();
         } catch (error) {
             LoadingComponent.hide(loaderId);
             this.showErrorState(

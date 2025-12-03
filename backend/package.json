@@ -1,0 +1,47 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "main": "dist/server.js",
+    "scripts": {
+        "dev": "nodemon --exec ts-node src/server.ts",
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "prisma:generate": "prisma generate",
+        "prisma:migrate": "prisma migrate dev",
+        "prisma:seed": "ts-node prisma/seed.ts",
+        "prisma:studio": "prisma studio",
+        "test": "vitest",
+        "test:ui": "vitest --ui",
+        "test:coverage": "vitest --coverage"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "Backend API for DebtLite - Monthly Payment Tracker",
+    "prisma": {
+        "seed": "ts-node prisma/seed.ts"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.19.0",
+        "@types/express": "^5.0.6",
+        "@types/node": "^24.10.1",
+        "bcryptjs": "^3.0.3",
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.3",
+        "express": "^5.2.1",
+        "jsonwebtoken": "^9.0.2",
+        "prisma": "^6.19.0",
+        "typescript": "^5.9.3",
+        "zod": "^4.1.13"
+    },
+    "devDependencies": {
+        "@types/bcryptjs": "^2.4.6",
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/supertest": "^6.0.3",
+        "@vitest/ui": "^4.0.15",
+        "nodemon": "^3.1.11",
+        "supertest": "^7.1.4",
+        "ts-node": "^10.9.2",
+        "vitest": "^4.0.15"
+    }
+}

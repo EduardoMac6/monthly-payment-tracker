@@ -662,23 +662,58 @@ export class ApiStorageService implements IStorageService {
 - PostgreSQL es robusto y gratuito
 - Gran ecosistema y comunidad
 
-### Estructura de Backend Propuesta
+### Estructura de Backend Implementada
 
 ```
 backend/
 ├── src/
-│   ├── controllers/      # Lógica de endpoints
-│   ├── services/        # Lógica de negocio
-│   ├── models/          # Modelos de Prisma
-│   ├── middleware/      # Auth, validation, etc.
+│   ├── config/          # Configuración
+│   │   ├── database.ts  # Conexión a base de datos
+│   │   └── env.ts       # Variables de entorno
+│   ├── constants/       # Constantes de la aplicación
+│   │   └── index.ts     # Códigos HTTP, mensajes de error
+│   ├── controllers/     # Controladores HTTP (manejo de requests)
+│   │   ├── auth.controller.ts
+│   │   ├── payments.controller.ts
+│   │   └── plans.controller.ts
+│   ├── errors/          # Clases de error personalizadas
+│   │   ├── app.error.ts
+│   │   └── index.ts
+│   ├── middleware/      # Middleware de Express
+│   │   ├── auth.middleware.ts
+│   │   ├── error.middleware.ts
+│   │   └── validation.middleware.ts
 │   ├── routes/          # Definición de rutas
-│   ├── utils/           # Utilidades
-│   └── config/          # Configuración
+│   │   ├── auth.routes.ts
+│   │   ├── payments.routes.ts
+│   │   └── plans.routes.ts
+│   ├── schemas/         # Schemas de validación Zod
+│   │   ├── auth.schemas.ts
+│   │   ├── plans.schemas.ts
+│   │   ├── payments.schemas.ts
+│   │   └── index.ts
+│   ├── services/        # Lógica de negocio
+│   │   ├── auth.service.ts
+│   │   ├── payments.service.ts
+│   │   └── plans.service.ts
+│   ├── types/           # Definiciones de tipos TypeScript
+│   │   ├── auth.types.ts
+│   │   ├── plans.types.ts
+│   │   ├── payments.types.ts
+│   │   ├── common.types.ts
+│   │   ├── express.d.ts  # Extensiones de tipos Express
+│   │   └── index.ts
+│   ├── utils/           # Utilidades generales
+│   │   ├── hash.util.ts    # Funciones de hash de contraseñas
+│   │   ├── token.util.ts   # Funciones de JWT
+│   │   └── index.ts
+│   └── server.ts        # Punto de entrada
 ├── prisma/
 │   ├── schema.prisma    # Esquema de base de datos
-│   └── migrations/      # Migraciones
-├── tests/               # Tests del backend
-└── package.json
+│   └── seed.ts          # Datos de prueba
+└── tests/               # Tests del backend
+    ├── integration/     # Tests de integración
+    └── unit/            # Tests unitarios
 ```
 
 ### Pasos para Implementar Backend (Futuro)
