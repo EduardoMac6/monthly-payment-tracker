@@ -2,6 +2,7 @@ import type { Plan, PaymentStatus, TotalsSnapshot } from '../../types';
 import type { IStorageService } from './storage.interface';
 import { StorageError, ErrorHandler } from '../../utils/errors.js';
 import { HttpClient, HttpError } from '../api/http.client.js';
+import { authService } from '../auth/auth.service.js';
 
 /**
  * API Storage Service
@@ -31,6 +32,28 @@ export class ApiStorageService implements IStorageService {
             retryDelay: 1000,
         });
 
+        // Add request interceptor for authentication
+        this.http.addRequestInterceptor((config) => {
+            const token = authService.getToken();
+            if (token) {
+                config.headers = {
+                    ...config.headers,
+                    Authorization: `Bearer ${token}`,
+                };
+            }
+            return config;
+        });
+
+        // Add response interceptor for handling auth errors
+        this.http.addResponseInterceptor(async (response) => {
+            if (response.status === 401) {
+                // Token expired or invalid, clear auth
+                authService.clearAuth();
+                // Optionally redirect to login (handled by app)
+            }
+            return response;
+        });
+
         // Add request interceptor for logging (optional, can be removed in production)
         if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
             this.http.addRequestInterceptor((config) => {
@@ -46,7 +69,8 @@ export class ApiStorageService implements IStorageService {
      */
     async getPlans(): Promise<Plan[]> {
         try {
-            const plans = await this.http.get<Plan[]>('/plans');
+            const response = await this.http.get<{ success: boolean; data: Plan[] }>('/plans');
+            const plans = response.data || [];
             return Array.isArray(plans) ? plans : [];
         } catch (error) {
             const err = this.handleHttpError(error, 'getPlans');
@@ -71,10 +95,10 @@ export class ApiStorageService implements IStorageService {
 
             if (exists) {
                 // Update existing plan
-                await this.http.put(`/plans/${plan.id}`, plan);
+                await this.http.put<{ success: boolean }>(`/plans/${plan.id}`, plan);
             } else {
                 // Create new plan
-                await this.http.post('/plans', plan);
+                await this.http.post<{ success: boolean }>('/plans', plan);
             }
         } catch (error) {
             const err = this.handleHttpError(error, 'savePlan');
@@ -93,7 +117,7 @@ export class ApiStorageService implements IStorageService {
      */
     async savePlans(plans: Plan[]): Promise<void> {
         try {
-            await this.http.post('/plans/bulk', { plans });
+            await this.http.post<{ success: boolean }>('/plans/bulk', { plans });
         } catch (error) {
             const err = this.handleHttpError(error, 'savePlans');
             throw new StorageError(
@@ -111,7 +135,7 @@ export class ApiStorageService implements IStorageService {
      */
     async deletePlan(planId: string): Promise<void> {
         try {
-            await this.http.delete(`/plans/${planId}`);
+            await this.http.delete<{ success: boolean }>(`/plans/${planId}`);
             // Also delete payment data
             await this.deletePaymentData(planId);
         } catch (error) {
@@ -160,8 +184,10 @@ export class ApiStorageService implements IStorageService {
         try {
             const activePlanId = await this.getActivePlanId();
             if (activePlanId) {
-                const plan = await this.http.get<Plan>(`/plans/${activePlanId}`);
-                return plan || null;
+                const response = await this.http.get<{ success: boolean; data: Plan }>(
+                    `/plans/${activePlanId}`
+                );
+                return response.data || null;
             }
 
             // Fallback: get all plans and find active one
@@ -183,8 +209,14 @@ export class ApiStorageService implements IStorageService {
      */
     async getPaymentStatus(planId: string): Promise<PaymentStatus[]> {
         try {
-            const status = await this.http.get<PaymentStatus[]>(`/plans/${planId}/payments`);
-            return Array.isArray(status) ? status : [];
+            const response = await this.http.get<{ success: boolean; data: PaymentStatus[] }>(
+                `/plans/${planId}/payments`
+            );
+            const status = response.data || [];
+            // Backend returns array of strings, convert 'paid' to 'paid' or 'pagado' if needed
+            return Array.isArray(status)
+                ? status.map((s) => (s === 'paid' ? 'paid' : 'pending') as PaymentStatus)
+                : [];
         } catch (error) {
             const err = this.handleHttpError(error, 'getPaymentStatus');
             ErrorHandler.logError(err, 'ApiStorageService.getPaymentStatus');
@@ -201,7 +233,21 @@ export class ApiStorageService implements IStorageService {
      */
     async savePaymentStatus(planId: string, status: PaymentStatus[]): Promise<void> {
         try {
-            await this.http.put(`/plans/${planId}/payments`, { status });
+            // Get plan to calculate monthly payment amount
+            const plans = await this.getPlans();
+            const plan = plans.find((p) => p.id === planId);
+            const monthlyAmount = plan?.monthlyPayment || 0;
+
+            // Convert PaymentStatus array to format expected by backend
+            const statusData = status.map((s, index) => ({
+                monthIndex: index,
+                status: s === 'pagado' ? 'paid' : s === 'paid' ? 'paid' : 'pending',
+                amount: monthlyAmount,
+                paidAt: s === 'paid' || s === 'pagado' ? new Date().toISOString() : null,
+            }));
+            await this.http.put<{ success: boolean }>(`/plans/${planId}/payments`, {
+                status: statusData,
+            });
         } catch (error) {
             const err = this.handleHttpError(error, 'savePaymentStatus');
             throw new StorageError(
@@ -219,8 +265,10 @@ export class ApiStorageService implements IStorageService {
      */
     async getPaymentTotals(planId: string): Promise<TotalsSnapshot | null> {
         try {
-            const totals = await this.http.get<TotalsSnapshot>(`/plans/${planId}/totals`);
-            return totals || null;
+            const response = await this.http.get<{ success: boolean; data: TotalsSnapshot | null }>(
+                `/plans/${planId}/totals`
+            );
+            return response.data || null;
         } catch (error) {
             const err = this.handleHttpError(error, 'getPaymentTotals');
             ErrorHandler.logError(err, 'ApiStorageService.getPaymentTotals');
@@ -237,7 +285,7 @@ export class ApiStorageService implements IStorageService {
      */
     async savePaymentTotals(planId: string, totals: TotalsSnapshot): Promise<void> {
         try {
-            await this.http.put(`/plans/${planId}/totals`, totals);
+            await this.http.put<{ success: boolean }>(`/plans/${planId}/totals`, totals);
         } catch (error) {
             const err = this.handleHttpError(error, 'savePaymentTotals');
             throw new StorageError(
@@ -255,8 +303,8 @@ export class ApiStorageService implements IStorageService {
      */
     async deletePaymentData(planId: string): Promise<void> {
         try {
-            await this.http.delete(`/plans/${planId}/payments`);
-            await this.http.delete(`/plans/${planId}/totals`);
+            await this.http.delete<{ success: boolean }>(`/plans/${planId}/payments`);
+            // Totals are deleted automatically when plan is deleted (cascade)
         } catch (error) {
             const err = this.handleHttpError(error, 'deletePaymentData');
             ErrorHandler.logError(err, 'ApiStorageService.deletePaymentData');
