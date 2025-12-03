@@ -233,8 +233,11 @@ vercel --prod
 - [ ] Repositorio conectado correctamente
 - [ ] Build command: `npm run build:prod`
 - [ ] Output directory: `dist`
-- [ ] Framework: `Other` o `null`
-- [ ] Variables de entorno configuradas (si es necesario)
+- [ ] Framework: `Vite` (detectado automáticamente desde `vercel.json`)
+- [ ] Variables de entorno configuradas (si es necesario):
+  - [ ] Variables básicas (`VITE_APP_NAME`, `VITE_MAX_PLANS`, etc.)
+  - [ ] Si usas API: `VITE_STORAGE_TYPE=api` y `VITE_API_URL`
+  - [ ] Si usas Supabase: `VITE_STORAGE_TYPE=supabase`, `VITE_SUPABASE_URL`, y `VITE_SUPABASE_ANON_KEY`
 
 ---
 
