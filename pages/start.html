@@ -39,7 +39,7 @@
     <link rel="stylesheet" href="../assets/css/start.css">
     <script src="../assets/js/menu.js"></script>
 </head>
-<body class="bg-pastel-green dark:bg-night-sky min-h-screen flex items-center justify-center p-6 transition-colors duration-300 text-deep-black dark:text-pure-white relative">
+<body class="bg-pastel-green dark:bg-night-sky min-h-screen flex items-center justify-center p-3 sm:p-4 md:p-6 transition-colors duration-300 text-deep-black dark:text-pure-white relative">
     
     <!-- Menu Toggle Button -->
     <button
@@ -64,7 +64,7 @@
     <!-- Side Panel Menu -->
     <aside
         id="side-panel"
-        class="fixed top-0 left-0 z-50 flex h-full w-72 max-w-full -translate-x-full transform flex-col gap-6 bg-pure-white p-8 shadow-2xl transition-transform duration-300 dark:bg-graphite"
+        class="fixed top-0 left-0 z-50 flex h-full w-full sm:w-72 max-w-[85vw] sm:max-w-full -translate-x-full transform flex-col gap-6 bg-pure-white p-6 sm:p-8 shadow-2xl transition-transform duration-300 dark:bg-graphite"
         aria-label="Primary navigation">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -166,13 +166,13 @@
             </span>
         </button>
     </div>
-    <main class="w-full max-w-lg bg-pure-white dark:bg-graphite rounded-[2rem] shadow-2xl px-8 py-10 space-y-8 transition-colors duration-300">
-        <header class="text-center space-y-4">
+    <main class="w-full max-w-lg bg-pure-white dark:bg-graphite rounded-[2rem] shadow-2xl px-4 sm:px-6 md:px-8 py-6 sm:py-8 md:py-10 space-y-6 sm:space-y-8 transition-colors duration-300">
+        <header class="text-center space-y-3 sm:space-y-4">
             <img
                 id="brand-logo"
                 src="../assets/images/Logo_Debtlite_black.svg"
                 alt="DebtLite logo"
-                class="mx-auto h-16 transition-transform duration-300"
+                class="mx-auto h-10 sm:h-12 md:h-16 transition-transform duration-300"
                 data-logo-light="../assets/images/Logo_Debtlite_black.svg"
                 data-logo-dark="../assets/images/Logo_Debtlite_green_white.svg"
                 data-logo-dark="../assets/images/Logo_Debtlite_green_white.svg"
@@ -224,17 +224,17 @@
 
             <div class="space-y-3">
                 <h2 class="text-sm font-medium text-deep-black dark:text-pure-white transition-colors duration-300">Select the number of months</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" role="group" aria-label="Repayment options">
-                    <button type="button" data-months="3" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3" role="group" aria-label="Repayment options">
+                    <button type="button" data-months="3" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
                         3 months
                     </button>
-                    <button type="button" data-months="6" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
+                    <button type="button" data-months="6" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
                         6 months
                     </button>
-                    <button type="button" data-months="9" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
+                    <button type="button" data-months="9" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
                         9 months
                     </button>
-                    <button type="button" data-months="12" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-3 text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
+                    <button type="button" data-months="12" class="month-button rounded-2xl border border-soft-gray bg-soft-gray/40 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-deep-black transition focus:outline-none focus:ring-2 focus:ring-lime-vibrant hover:bg-soft-gray dark:border-charcoal-gray dark:bg-charcoal-gray/50 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-pure-white">
                         12 months
                     </button>
                 </div>

@@ -93,55 +93,62 @@
 
             <section id="sign-in" class="relative">
                 <div class="absolute -top-16 -right-10 hidden h-48 w-48 rounded-full bg-gradient-to-br from-purple-400/70 via-pink-400/40 to-transparent blur-3xl md:block"></div>
-                <div class="relative space-y-6">
-                    <div class="relative flex flex-col p-6 text-pure-white shadow-2xl backdrop-blur-md" style="border-radius: 26.529px; background: linear-gradient(244deg, rgba(255, 130, 253, 0.20) -7.21%, rgba(164, 234, 1, 0.20) 120.76%), rgba(255, 255, 255, 0.20); width: 523.94px; height: 313.04px;">
-                        <!-- Logo en la parte superior izquierda -->
-                        <div>
-                            <img src="assets/images/Logo_Debtlite_green_white.svg" alt="DebtLite logo" class="h-8 w-auto">
+                <div class="relative w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto">
+                    <form id="login-form" class="relative flex flex-col w-full p-6 sm:p-8 text-pure-white shadow-2xl backdrop-blur-md rounded-3xl space-y-6" style="background: linear-gradient(244deg, rgba(255, 130, 253, 0.20) -7.21%, rgba(164, 234, 1, 0.20) 120.76%), rgba(255, 255, 255, 0.20);" autocomplete="on" novalidate>
+                        <!-- Logo -->
+                        <div class="flex justify-center mb-2">
+                            <img src="assets/images/Logo_Debtlite_green_white.svg" alt="DebtLite logo" class="h-10 w-auto">
                         </div>
                         
-                        <!-- Icono de chip de tarjeta alineado a la derecha, en el espacio intermedio -->
-                        <div class="flex justify-end" style="margin-top: 73px; margin-bottom: auto;">
-                            <img src="assets/images/line.svg" alt="Credit card chip" class="h-auto w-auto">
+                        <!-- Título -->
+                        <div class="text-center mb-6">
+                            <h2 class="text-2xl font-bold text-pure-white mb-2">Welcome back</h2>
+                            <p class="text-sm text-pure-white/70">Sign in to access your account</p>
                         </div>
-                        
-                        <!-- Username y password en la parte inferior -->
-                        <div class="mt-auto space-y-3">
-                            <div class="space-y-1">
-                                <div id="username-display" class="cursor-pointer text-2xl font-semibold text-pure-white transition hover:text-lime-vibrant">User name</div>
-                                <input
-                                    id="card-name"
-                                    type="text"
-                                    placeholder="User name"
-                                    class="hidden w-full rounded-xl border border-transparent bg-pure-white/10 px-4 py-2 text-lg font-semibold text-pure-white placeholder:text-pure-white/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant">
-                            </div>
-                            <div class="space-y-1">
-                                <!-- <div class="text-sm text-pure-white/60">input password</div> -->
-                                <div class="relative">
-                                    <input
-                                        id="card-password"
-                                        type="password"
-                                        placeholder="••••••••"
-                                        class="w-full rounded-xl border border-transparent bg-pure-white/0 px-4 py-2 pr-14 text-sm font-semibold text-pure-white placeholder:text-pure-white/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant">
-                                    <button
-                                        type="button"
-                                        id="card-toggle-password"
-                                        class="absolute inset-y-1 right-1 flex items-center justify-center rounded-full bg-pure-white/10 p-2 text-pure-white/80 transition hover:bg-pure-white/20 focus:outline-none focus:ring-2 focus:ring-lime-vibrant">
-                                        <svg id="eye-icon" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <form id="login-form" class="space-y-5" autocomplete="on" novalidate>
-                        <div id="error-message" class="hidden rounded-xl bg-red-500/20 px-4 py-2 text-xs font-semibold text-red-300"></div>
+                        <!-- Error Message -->
+                        <div id="error-message" class="hidden rounded-xl bg-red-500/20 border border-red-500/30 px-4 py-3 text-xs font-semibold text-red-300"></div>
+
+                        <!-- Username Field -->
+                        <div class="space-y-2">
+                            <label for="card-name" class="block text-sm font-medium text-pure-white/90">Username</label>
+                            <input
+                                id="card-name"
+                                name="username"
+                                type="text"
+                                placeholder="Enter your username"
+                                required
+                                class="w-full rounded-xl border border-pure-white/20 bg-pure-white/10 px-4 py-3 text-base font-medium text-pure-white placeholder:text-pure-white/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-lime-vibrant transition-all duration-200">
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="space-y-2">
+                            <label for="card-password" class="block text-sm font-medium text-pure-white/90">Password</label>
+                            <div class="relative">
+                                <input
+                                    id="card-password"
+                                    name="password"
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    required
+                                    class="w-full rounded-xl border border-pure-white/20 bg-pure-white/10 px-4 py-3 pr-12 text-base font-medium text-pure-white placeholder:text-pure-white/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-lime-vibrant transition-all duration-200">
+                                <button
+                                    type="button"
+                                    id="card-toggle-password"
+                                    aria-label="Toggle password visibility"
+                                    class="absolute inset-y-0 right-0 flex items-center justify-center pr-3 text-pure-white/60 hover:text-pure-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:ring-offset-2 focus:ring-offset-transparent rounded-r-xl">
+                                    <svg id="eye-icon" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
                         <button
                             type="submit"
-                            class="w-full rounded-2xl bg-pure-white py-3 text-sm font-semibold text-deep-black transition hover:bg-pure-white/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pure-white">
+                            class="w-full rounded-xl bg-pure-white py-3.5 text-base font-semibold text-deep-black transition-all duration-200 hover:bg-pure-white/90 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pure-white focus:ring-offset-transparent shadow-lg">
                             Sign in
                         </button>
                     </form>
@@ -161,7 +168,7 @@
         const passwordInput = document.getElementById('card-password');
         const errorMessage = document.getElementById('error-message');
         const togglePasswordBtn = document.getElementById('card-toggle-password');
-        const usernameDisplay = document.getElementById('username-display');
+        const eyeIcon = document.getElementById('eye-icon');
 
         // Función para mostrar errores
         function showError(message) {
@@ -175,17 +182,18 @@
         }
 
         // Manejar el toggle de mostrar/ocultar contraseña
-        if (togglePasswordBtn) {
-            const eyeIcon = document.getElementById('eye-icon');
-            
-            togglePasswordBtn.addEventListener('click', function() {
-                if (passwordInput.type === 'password') {
-                    passwordInput.type = 'text';
-                    // Cambiar a icono de ojo cerrado (ocultar contraseña)
+        if (togglePasswordBtn && eyeIcon) {
+            togglePasswordBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                
+                // Cambiar icono
+                if (isPassword) {
+                    // Mostrar icono de ojo cerrado (ocultar contraseña)
                     eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>`;
                 } else {
-                    passwordInput.type = 'password';
-                    // Cambiar a icono de ojo abierto (mostrar contraseña)
+                    // Mostrar icono de ojo abierto (mostrar contraseña)
                     eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
                 }
@@ -200,6 +208,12 @@
             const username = nameInput.value.trim();
             const password = passwordInput.value.trim();
 
+            // Validación básica
+            if (!username || !password) {
+                showError('Por favor, completa todos los campos');
+                return;
+            }
+
             // Validar credenciales
             if (username === VALID_USERNAME && password === VALID_PASSWORD) {
                 // Credenciales correctas, redirigir a start.html
@@ -210,32 +224,8 @@
             }
         });
 
-        // Actualizar el display del nombre de usuario cuando se escribe
-        nameInput.addEventListener('input', function() {
-            const value = this.value.trim();
-            usernameDisplay.textContent = value || 'User name';
-            hideError();
-        });
-
-        // Actualizar el display cuando el campo pierde el foco
-        nameInput.addEventListener('blur', function() {
-            const value = this.value.trim();
-            if (value) {
-                usernameDisplay.textContent = value;
-                usernameDisplay.classList.remove('hidden');
-                nameInput.classList.add('hidden');
-            }
-        });
-
-        // Hacer el campo de nombre visible cuando se hace clic en el display
-        usernameDisplay.addEventListener('click', function() {
-            usernameDisplay.classList.add('hidden');
-            nameInput.classList.remove('hidden');
-            nameInput.focus();
-            nameInput.select();
-        });
-
         // Limpiar mensaje de error cuando el usuario empiece a escribir
+        nameInput.addEventListener('input', hideError);
         passwordInput.addEventListener('input', hideError);
     </script>
 </body>
