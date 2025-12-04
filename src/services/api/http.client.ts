@@ -181,7 +181,10 @@ export class HttpClient {
                 // Prepare request body
                 let body: string | undefined;
                 if (config.body !== undefined) {
-                    if (config.headers['Content-Type']?.includes('application/json')) {
+                    if (
+                        config.headers &&
+                        config.headers['Content-Type']?.includes('application/json')
+                    ) {
                         body = JSON.stringify(config.body);
                     } else {
                         body = config.body as string;
