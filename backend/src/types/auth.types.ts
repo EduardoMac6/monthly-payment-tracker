@@ -18,3 +18,7 @@ export interface TokenPayload {
     email: string;
 }
 
+export interface GoogleAuthInput {
+    credential: string; // Google ID token
+}
+

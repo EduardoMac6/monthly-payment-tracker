@@ -6,7 +6,7 @@
 import { Router } from 'express';
 import { authController } from '../controllers/auth.controller.js';
 import { validateBody } from '../middleware/validation.middleware.js';
-import { registerSchema, loginSchema } from '../schemas/auth.schemas.js';
+import { registerSchema, loginSchema, googleAuthSchema } from '../schemas/auth.schemas.js';
 
 const router = Router();
 
@@ -21,6 +21,12 @@ router.post(
     '/login',
     validateBody(loginSchema),
     authController.login.bind(authController)
+);
+
+router.post(
+    '/google',
+    validateBody(googleAuthSchema),
+    authController.googleAuth.bind(authController)
 );
 
 export default router;

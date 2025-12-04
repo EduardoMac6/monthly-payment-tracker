@@ -10,6 +10,7 @@ dist/
 scripts.js
 start.js
 env-config.js
+js/
 
 # Environment variables
 .env

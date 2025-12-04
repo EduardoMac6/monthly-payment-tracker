@@ -15,6 +15,7 @@ export interface EnvConfig {
     JWT_SECRET: string;
     JWT_EXPIRES_IN: string;
     CORS_ORIGIN: string;
+    GOOGLE_CLIENT_ID?: string;
 }
 
 /**
@@ -53,6 +54,7 @@ export const env: EnvConfig = {
     JWT_SECRET: getEnvVar('JWT_SECRET', 'change-me-in-production'),
     JWT_EXPIRES_IN: getEnvVar('JWT_EXPIRES_IN', '7d'),
     CORS_ORIGIN: getEnvVar('CORS_ORIGIN', 'http://localhost:5173'),
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
 };
 
 /**
