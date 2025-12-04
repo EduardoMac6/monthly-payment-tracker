@@ -4,14 +4,27 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ApiStorageService } from './api.service.js';
-import { HttpClient, HttpError } from '../api/http.client.js';
+import { HttpError } from '../api/http.client.js';
 import { StorageError } from '../../utils/errors.js';
 import type { Plan, PaymentStatus, TotalsSnapshot } from '../../types/index.js';
 
 // Mock HttpClient
+const mockHttpClientInstance = {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+    addRequestInterceptor: vi.fn(),
+    addResponseInterceptor: vi.fn(),
+};
+
 vi.mock('../api/http.client.js', () => {
     return {
-        HttpClient: vi.fn(),
+        HttpClient: class {
+            constructor() {
+                return mockHttpClientInstance;
+            }
+        },
         HttpError: class extends Error {
             status: number;
             statusText: string;
@@ -45,6 +58,8 @@ describe('ApiStorageService', () => {
         post: ReturnType<typeof vi.fn>;
         put: ReturnType<typeof vi.fn>;
         delete: ReturnType<typeof vi.fn>;
+        addRequestInterceptor: ReturnType<typeof vi.fn>;
+        addResponseInterceptor: ReturnType<typeof vi.fn>;
     };
 
     const mockPlans: Plan[] = [
@@ -71,14 +86,19 @@ describe('ApiStorageService', () => {
     ];
 
     beforeEach(() => {
-        mockHttpClient = {
-            get: vi.fn(),
-            post: vi.fn(),
-            put: vi.fn(),
-            delete: vi.fn(),
-        };
+        // Reset all mocks
+        vi.clearAllMocks();
 
-        (HttpClient as any).mockImplementation(() => mockHttpClient);
+        // Use the shared mock instance
+        mockHttpClient = mockHttpClientInstance;
+
+        // Reset the mock instance methods
+        mockHttpClient.get = vi.fn();
+        mockHttpClient.post = vi.fn();
+        mockHttpClient.put = vi.fn();
+        mockHttpClient.delete = vi.fn();
+        mockHttpClient.addRequestInterceptor = vi.fn();
+        mockHttpClient.addResponseInterceptor = vi.fn();
 
         service = new ApiStorageService('https://api.example.com');
 
@@ -95,7 +115,7 @@ describe('ApiStorageService', () => {
 
     describe('getPlans', () => {
         it('should return plans from API', async () => {
-            mockHttpClient.get.mockResolvedValue(mockPlans);
+            mockHttpClient.get.mockResolvedValue({ success: true, data: mockPlans });
 
             const result = await service.getPlans();
 
@@ -104,7 +124,7 @@ describe('ApiStorageService', () => {
         });
 
         it('should return empty array when API returns non-array', async () => {
-            mockHttpClient.get.mockResolvedValue(null);
+            mockHttpClient.get.mockResolvedValue({ success: true, data: null });
 
             const result = await service.getPlans();
 
@@ -121,8 +141,8 @@ describe('ApiStorageService', () => {
     describe('savePlan', () => {
         it('should create new plan when plan does not exist', async () => {
             const newPlan = mockPlans[0];
-            mockHttpClient.get.mockResolvedValue([]);
-            mockHttpClient.post.mockResolvedValue(newPlan);
+            mockHttpClient.get.mockResolvedValue({ success: true, data: [] });
+            mockHttpClient.post.mockResolvedValue({ success: true });
 
             await service.savePlan(newPlan);
 
@@ -132,8 +152,8 @@ describe('ApiStorageService', () => {
         it('should update existing plan', async () => {
             const existingPlan = mockPlans[0];
             const updatedPlan = { ...existingPlan, planName: 'Updated Plan' };
-            mockHttpClient.get.mockResolvedValue([existingPlan]);
-            mockHttpClient.put.mockResolvedValue(updatedPlan);
+            mockHttpClient.get.mockResolvedValue({ success: true, data: [existingPlan] });
+            mockHttpClient.put.mockResolvedValue({ success: true });
 
             await service.savePlan(updatedPlan);
 
@@ -145,7 +165,7 @@ describe('ApiStorageService', () => {
 
         it('should throw StorageError on API error', async () => {
             const plan = mockPlans[0];
-            mockHttpClient.get.mockResolvedValue([]);
+            mockHttpClient.get.mockResolvedValue({ success: true, data: [] });
             mockHttpClient.post.mockRejectedValue(new HttpError(500, 'Internal Server Error'));
 
             await expect(service.savePlan(plan)).rejects.toThrow(StorageError);
@@ -178,11 +198,15 @@ describe('ApiStorageService', () => {
         });
 
         it('should also delete payment data', async () => {
-            mockHttpClient.delete.mockResolvedValue(undefined);
+            mockHttpClient.delete.mockResolvedValue({ success: true });
 
             await service.deletePlan('1');
 
-            expect(mockHttpClient.delete).toHaveBeenCalledTimes(3); // plan, payments, totals
+            // deletePlan calls delete on plan, then deletePaymentData which only deletes payments
+            // (totals are deleted automatically via cascade, so only 2 delete calls)
+            expect(mockHttpClient.delete).toHaveBeenCalledTimes(2); // plan, payments
+            expect(mockHttpClient.delete).toHaveBeenCalledWith('/plans/1');
+            expect(mockHttpClient.delete).toHaveBeenCalledWith('/plans/1/payments');
         });
 
         it('should throw StorageError on API error', async () => {
@@ -223,7 +247,7 @@ describe('ApiStorageService', () => {
         it('should return active plan from API', async () => {
             const activePlan = mockPlans[0];
             (window.localStorage.getItem as any).mockReturnValue('1');
-            mockHttpClient.get.mockResolvedValue(activePlan);
+            mockHttpClient.get.mockResolvedValue({ success: true, data: activePlan });
 
             const result = await service.getActivePlan();
 
@@ -242,7 +266,7 @@ describe('ApiStorageService', () => {
 
         it('should fallback to finding active plan from all plans', async () => {
             (window.localStorage.getItem as any).mockReturnValue(null);
-            mockHttpClient.get.mockResolvedValue(mockPlans);
+            mockHttpClient.get.mockResolvedValue({ success: true, data: mockPlans });
 
             const result = await service.getActivePlan();
 
@@ -253,7 +277,7 @@ describe('ApiStorageService', () => {
     describe('getPaymentStatus', () => {
         it('should return payment status from API', async () => {
             const status: PaymentStatus[] = ['paid', 'pending', 'paid'];
-            mockHttpClient.get.mockResolvedValue(status);
+            mockHttpClient.get.mockResolvedValue({ success: true, data: status });
 
             const result = await service.getPaymentStatus('1');
 
@@ -273,11 +297,20 @@ describe('ApiStorageService', () => {
     describe('savePaymentStatus', () => {
         it('should save payment status to API', async () => {
             const status: PaymentStatus[] = ['paid', 'pending'];
-            mockHttpClient.put.mockResolvedValue(undefined);
+            mockHttpClient.get.mockResolvedValue({ success: true, data: mockPlans });
+            mockHttpClient.put.mockResolvedValue({ success: true });
 
             await service.savePaymentStatus('1', status);
 
-            expect(mockHttpClient.put).toHaveBeenCalledWith('/plans/1/payments', { status });
+            // The service transforms the status array into statusData format
+            expect(mockHttpClient.put).toHaveBeenCalledWith(
+                '/plans/1/payments',
+                expect.objectContaining({
+                    status: expect.arrayContaining([
+                        expect.objectContaining({ monthIndex: expect.any(Number) }),
+                    ]),
+                })
+            );
         });
 
         it('should throw StorageError on API error', async () => {
@@ -291,7 +324,7 @@ describe('ApiStorageService', () => {
     describe('getPaymentTotals', () => {
         it('should return payment totals from API', async () => {
             const totals: TotalsSnapshot = { totalPaid: 5000, remaining: 7000 };
-            mockHttpClient.get.mockResolvedValue(totals);
+            mockHttpClient.get.mockResolvedValue({ success: true, data: totals });
 
             const result = await service.getPaymentTotals('1');
 
@@ -328,12 +361,13 @@ describe('ApiStorageService', () => {
 
     describe('deletePaymentData', () => {
         it('should delete payment data from API', async () => {
-            mockHttpClient.delete.mockResolvedValue(undefined);
+            mockHttpClient.delete.mockResolvedValue({ success: true });
 
             await service.deletePaymentData('1');
 
+            // deletePaymentData only deletes payments (totals are deleted automatically via cascade)
             expect(mockHttpClient.delete).toHaveBeenCalledWith('/plans/1/payments');
-            expect(mockHttpClient.delete).toHaveBeenCalledWith('/plans/1/totals');
+            expect(mockHttpClient.delete).toHaveBeenCalledTimes(1);
         });
 
         it('should not throw on error', async () => {

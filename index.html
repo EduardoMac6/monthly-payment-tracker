@@ -39,6 +39,25 @@
             width: 20px;
             height: 20px;
         }
+
+        /* Card transition animations */
+        .auth-card {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .auth-card.hidden {
+            display: none;
+        }
+
+        .auth-card.fade-out {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .auth-card.fade-in {
+            opacity: 1;
+            transform: translateX(0);
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-midnight via-slate-night to-cobalt-shadow text-pure-white relative overflow-hidden">
@@ -82,19 +101,43 @@
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-4">
-                    <a href="pages/start.html" class="rounded-full bg-lime-vibrant px-6 py-3 text-sm font-semibold text-deep-black transition hover:bg-lime-vibrant/90">
-                        Build my plan
+                    <!-- App Store Button -->
+                    <a 
+                        href="https://apps.apple.com/app/debtlite" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-3 rounded-xl bg-pure-white/10 backdrop-blur-sm border border-pure-white/20 px-5 py-3.5 text-sm font-semibold text-pure-white transition-all duration-200 hover:bg-pure-white/20 hover:border-pure-white/40 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-pure-white focus:ring-offset-2 focus:ring-offset-transparent">
+                        <svg class="h-6 w-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                        </svg>
+                        <div class="flex flex-col items-start leading-tight">
+                            <span class="text-[10px] uppercase tracking-wide opacity-80">Download on the</span>
+                            <span class="text-base font-semibold">App Store</span>
+                        </div>
                     </a>
-                    <a href="pages/dashboard.html" class="rounded-full border border-pure-white/20 px-6 py-3 text-sm font-semibold text-pure-white transition hover:border-pure-white hover:bg-pure-white/10">
-                        Explore dashboard
+
+                    <!-- Google Play Button -->
+                    <a 
+                        href="https://play.google.com/store/apps/details?id=com.debtlite" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-3 rounded-xl bg-pure-white/10 backdrop-blur-sm border border-pure-white/20 px-5 py-3.5 text-sm font-semibold text-pure-white transition-all duration-200 hover:bg-pure-white/20 hover:border-pure-white/40 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-pure-white focus:ring-offset-2 focus:ring-offset-transparent">
+                        <svg class="h-6 w-6 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35zm13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27zm-4.95-4.96l-2.27 2.27L6.05 2.66l10.76 6.5zm1.49-5.46l-4.07 4.07 2.27 2.27 4.07-4.07-2.27-2.27z"/>
+                        </svg>
+                        <div class="flex flex-col items-start leading-tight">
+                            <span class="text-[10px] uppercase tracking-wide opacity-80">Get it on</span>
+                            <span class="text-base font-semibold">Google Play</span>
+                        </div>
                     </a>
                 </div>
             </section>
 
-            <section id="sign-in" class="relative">
+            <section id="auth-section" class="relative">
                 <div class="absolute -top-16 -right-10 hidden h-48 w-48 rounded-full bg-gradient-to-br from-purple-400/70 via-pink-400/40 to-transparent blur-3xl md:block"></div>
                 <div class="relative w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto">
-                    <form id="login-form" class="relative flex flex-col w-full p-6 sm:p-8 text-pure-white shadow-2xl backdrop-blur-md rounded-3xl space-y-6" style="background: linear-gradient(244deg, rgba(255, 130, 253, 0.20) -7.21%, rgba(164, 234, 1, 0.20) 120.76%), rgba(255, 255, 255, 0.20);" autocomplete="on" novalidate>
+                    <!-- Login Form -->
+                    <form id="login-form" class="auth-card relative flex flex-col w-full p-6 sm:p-8 text-pure-white shadow-2xl backdrop-blur-md rounded-3xl space-y-6" style="background: linear-gradient(244deg, rgba(255, 130, 253, 0.20) -7.21%, rgba(164, 234, 1, 0.20) 120.76%), rgba(255, 255, 255, 0.20);" autocomplete="on" novalidate>
                         <!-- Logo -->
                         <div class="flex justify-center mb-2">
                             <img src="assets/images/Logo_Debtlite_green_white.svg" alt="DebtLite logo" class="h-10 w-auto">
@@ -103,20 +146,20 @@
                         <!-- Título -->
                         <div class="text-center mb-6">
                             <h2 class="text-2xl font-bold text-pure-white mb-2">Welcome back</h2>
-                            <p class="text-sm text-pure-white/70">Sign in to access your account</p>
+                            <p class="text-sm text-pure-white/70">Log in to access your account</p>
                         </div>
 
                         <!-- Error Message -->
                         <div id="error-message" class="hidden rounded-xl bg-red-500/20 border border-red-500/30 px-4 py-3 text-xs font-semibold text-red-300"></div>
 
-                        <!-- Username Field -->
+                        <!-- Email Field -->
                         <div class="space-y-2">
-                            <label for="card-name" class="block text-sm font-medium text-pure-white/90">Username</label>
+                            <label for="login-email" class="block text-sm font-medium text-pure-white/90">Email</label>
                             <input
-                                id="card-name"
-                                name="username"
-                                type="text"
-                                placeholder="Enter your username"
+                                id="login-email"
+                                name="email"
+                                type="email"
+                                placeholder="Enter your email"
                                 required
                                 class="w-full rounded-xl border border-pure-white/20 bg-pure-white/10 px-4 py-3 text-base font-medium text-pure-white placeholder:text-pure-white/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-lime-vibrant transition-all duration-200">
                         </div>
@@ -148,85 +191,664 @@
                         <!-- Submit Button -->
                         <button
                             type="submit"
-                            class="w-full rounded-xl bg-pure-white py-3.5 text-base font-semibold text-deep-black transition-all duration-200 hover:bg-pure-white/90 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pure-white focus:ring-offset-transparent shadow-lg">
-                            Sign in
+                            id="login-submit-btn"
+                            class="w-full rounded-xl bg-pure-white py-3.5 text-base font-semibold text-deep-black transition-all duration-200 hover:bg-pure-white/90 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pure-white focus:ring-offset-transparent shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="login-btn-text">Log in</span>
+                            <span id="login-btn-loading" class="hidden">
+                                <svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </span>
                         </button>
+
+                        <!-- Divider -->
+                        <div class="relative my-4">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-pure-white/20"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 bg-transparent text-pure-white/60">Or continue with</span>
+                            </div>
+                        </div>
+
+                        <!-- Google Login Button -->
+                        <button
+                            type="button"
+                            id="google-login-btn"
+                            class="w-full rounded-xl border border-pure-white/20 bg-pure-white/10 py-3.5 text-base font-semibold text-pure-white transition-all duration-200 hover:bg-pure-white/20 hover:border-pure-white/40 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span>Sign in with Google</span>
+                        </button>
+
+                        <!-- Sign up link -->
+                        <div class="text-center pt-2">
+                            <p class="text-sm text-pure-white/70">
+                                Don't have an account? 
+                                <button type="button" id="show-signup-btn" class="text-lime-vibrant font-semibold hover:text-lime-vibrant/80 transition-colors">
+                                    Sign up
+                                </button>
+                            </p>
+                        </div>
+                    </form>
+
+                    <!-- Signup Form -->
+                    <form id="signup-form" class="auth-card hidden relative flex flex-col w-full p-6 sm:p-8 text-pure-white shadow-2xl backdrop-blur-md rounded-3xl space-y-6" style="background: linear-gradient(244deg, rgba(255, 130, 253, 0.20) -7.21%, rgba(164, 234, 1, 0.20) 120.76%), rgba(255, 255, 255, 0.20);" autocomplete="on" novalidate>
+                        <!-- Logo -->
+                        <div class="flex justify-center mb-2">
+                            <img src="assets/images/Logo_Debtlite_green_white.svg" alt="DebtLite logo" class="h-10 w-auto">
+                        </div>
+                        
+                        <!-- Título -->
+                        <div class="text-center mb-6">
+                            <h2 class="text-2xl font-bold text-pure-white mb-2">Create your account</h2>
+                            <p class="text-sm text-pure-white/70">Sign up to get started</p>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="signup-error-message" class="hidden rounded-xl bg-red-500/20 border border-red-500/30 px-4 py-3 text-xs font-semibold text-red-300"></div>
+
+                        <!-- Email Field -->
+                        <div class="space-y-2">
+                            <label for="signup-email" class="block text-sm font-medium text-pure-white/90">Email</label>
+                            <input
+                                id="signup-email"
+                                name="email"
+                                type="email"
+                                placeholder="Enter your email"
+                                required
+                                class="w-full rounded-xl border border-pure-white/20 bg-pure-white/10 px-4 py-3 text-base font-medium text-pure-white placeholder:text-pure-white/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-lime-vibrant transition-all duration-200">
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="space-y-2">
+                            <label for="signup-password" class="block text-sm font-medium text-pure-white/90">Password</label>
+                            <div class="relative">
+                                <input
+                                    id="signup-password"
+                                    name="password"
+                                    type="password"
+                                    placeholder="Create a password (min 6 characters)"
+                                    required
+                                    minlength="6"
+                                    class="w-full rounded-xl border border-pure-white/20 bg-pure-white/10 px-4 py-3 pr-12 text-base font-medium text-pure-white placeholder:text-pure-white/40 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:border-lime-vibrant transition-all duration-200">
+                                <button
+                                    type="button"
+                                    id="signup-toggle-password"
+                                    aria-label="Toggle password visibility"
+                                    class="absolute inset-y-0 right-0 flex items-center justify-center pr-3 text-pure-white/60 hover:text-pure-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:ring-offset-2 focus:ring-offset-transparent rounded-r-xl">
+                                    <svg id="signup-eye-icon" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button
+                            type="submit"
+                            id="signup-submit-btn"
+                            class="w-full rounded-xl bg-pure-white py-3.5 text-base font-semibold text-deep-black transition-all duration-200 hover:bg-pure-white/90 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pure-white focus:ring-offset-transparent shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="signup-btn-text">Sign up</span>
+                            <span id="signup-btn-loading" class="hidden">
+                                <svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </span>
+                        </button>
+
+                        <!-- Divider -->
+                        <div class="relative my-4">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-pure-white/20"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 bg-transparent text-pure-white/60">Or continue with</span>
+                            </div>
+                        </div>
+
+                        <!-- Google Signup Button -->
+                        <button
+                            type="button"
+                            id="google-signup-btn"
+                            class="w-full rounded-xl border border-pure-white/20 bg-pure-white/10 py-3.5 text-base font-semibold text-pure-white transition-all duration-200 hover:bg-pure-white/20 hover:border-pure-white/40 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span>Sign up with Google</span>
+                        </button>
+
+                        <!-- Log in link -->
+                        <div class="text-center pt-2">
+                            <p class="text-sm text-pure-white/70">
+                                Already have an account? 
+                                <button type="button" id="show-login-btn" class="text-lime-vibrant font-semibold hover:text-lime-vibrant/80 transition-colors">
+                                    Log in
+                                </button>
+                            </p>
+                        </div>
                     </form>
                 </div>
             </section>
         </main>
     </div>
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="env-config.js"></script>
     <script>
-        // Credenciales válidas
-        const VALID_USERNAME = 'admin';
-        const VALID_PASSWORD = '12345';
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuration
+            const getEnvVar = (key, defaultValue) => {
+                if (typeof window !== 'undefined' && window.__ENV__) {
+                    return window.__ENV__[key] !== undefined ? window.__ENV__[key] : defaultValue;
+                }
+                return defaultValue;
+            };
 
-        // Referencias a los elementos del formulario
-        const loginForm = document.getElementById('login-form');
-        const nameInput = document.getElementById('card-name');
-        const passwordInput = document.getElementById('card-password');
-        const errorMessage = document.getElementById('error-message');
-        const togglePasswordBtn = document.getElementById('card-toggle-password');
-        const eyeIcon = document.getElementById('eye-icon');
+            const API_URL = getEnvVar('VITE_API_URL', 'http://localhost:3000/api');
+            const STORAGE_TYPE = getEnvVar('VITE_STORAGE_TYPE', 'localStorage');
+            const GOOGLE_CLIENT_ID = getEnvVar('VITE_GOOGLE_CLIENT_ID', '');
+            
+            // Auth storage keys
+            const AUTH_TOKEN_KEY = 'debtLiteAuthToken';
+            const AUTH_USER_KEY = 'debtLiteAuthUser';
 
-        // Función para mostrar errores
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.remove('hidden');
+            // Check if already authenticated (early redirect)
+            const token = localStorage.getItem(AUTH_TOKEN_KEY);
+            if (token && STORAGE_TYPE === 'api') {
+                window.location.href = 'pages/dashboard.html';
+                return;
+            }
+
+            // Elements
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const loginEmailInput = document.getElementById('login-email');
+            const loginPasswordInput = document.getElementById('card-password');
+            const signupEmailInput = document.getElementById('signup-email');
+            const signupPasswordInput = document.getElementById('signup-password');
+            const loginErrorMessage = document.getElementById('error-message');
+            const signupErrorMessage = document.getElementById('signup-error-message');
+            const showSignupBtn = document.getElementById('show-signup-btn');
+            const showLoginBtn = document.getElementById('show-login-btn');
+            const loginTogglePassword = document.getElementById('card-toggle-password');
+            const signupTogglePassword = document.getElementById('signup-toggle-password');
+            const loginEyeIcon = document.getElementById('eye-icon');
+            const signupEyeIcon = document.getElementById('signup-eye-icon');
+            const loginSubmitBtn = document.getElementById('login-submit-btn');
+            const signupSubmitBtn = document.getElementById('signup-submit-btn');
+            const loginBtnText = document.getElementById('login-btn-text');
+            const loginBtnLoading = document.getElementById('login-btn-loading');
+            const signupBtnText = document.getElementById('signup-btn-text');
+            const signupBtnLoading = document.getElementById('signup-btn-loading');
+            const googleLoginBtn = document.getElementById('google-login-btn');
+            const googleSignupBtn = document.getElementById('google-signup-btn');
+
+        // Utility functions
+        function showError(formType, message) {
+            const errorEl = formType === 'login' ? loginErrorMessage : signupErrorMessage;
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
         }
 
-        // Función para ocultar errores
-        function hideError() {
-            errorMessage.classList.add('hidden');
+        function hideError(formType) {
+            const errorEl = formType === 'login' ? loginErrorMessage : signupErrorMessage;
+            errorEl.classList.add('hidden');
         }
 
-        // Manejar el toggle de mostrar/ocultar contraseña
-        if (togglePasswordBtn && eyeIcon) {
-            togglePasswordBtn.addEventListener('click', function(e) {
+        function setLoading(formType, isLoading) {
+            if (formType === 'login') {
+                loginSubmitBtn.disabled = isLoading;
+                googleLoginBtn.disabled = isLoading;
+                if (isLoading) {
+                    loginBtnText.classList.add('hidden');
+                    loginBtnLoading.classList.remove('hidden');
+                } else {
+                    loginBtnText.classList.remove('hidden');
+                    loginBtnLoading.classList.add('hidden');
+                }
+            } else {
+                signupSubmitBtn.disabled = isLoading;
+                googleSignupBtn.disabled = isLoading;
+                if (isLoading) {
+                    signupBtnText.classList.add('hidden');
+                    signupBtnLoading.classList.remove('hidden');
+                } else {
+                    signupBtnText.classList.remove('hidden');
+                    signupBtnLoading.classList.add('hidden');
+                }
+            }
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+
+        // Card transition
+        function switchCard(toCard) {
+            const loginCard = loginForm;
+            const signupCard = signupForm;
+            
+            if (toCard === 'signup') {
+                loginCard.classList.add('fade-out');
+                setTimeout(() => {
+                    loginCard.classList.add('hidden');
+                    loginCard.classList.remove('fade-out');
+                    signupCard.classList.remove('hidden');
+                    signupCard.classList.add('fade-in');
+                    setTimeout(() => {
+                        signupCard.classList.remove('fade-in');
+                    }, 300);
+                }, 300);
+            } else {
+                signupCard.classList.add('fade-out');
+                setTimeout(() => {
+                    signupCard.classList.add('hidden');
+                    signupCard.classList.remove('fade-out');
+                    loginCard.classList.remove('hidden');
+                    loginCard.classList.add('fade-in');
+                    setTimeout(() => {
+                        loginCard.classList.remove('fade-in');
+                    }, 300);
+                }, 300);
+            }
+        }
+
+        // Auth API functions
+        async function login(email, password) {
+            // If using localStorage mode, skip API and redirect directly
+            if (STORAGE_TYPE === 'localStorage') {
+                // For localStorage mode, we can skip authentication or use a simple check
+                // Store a simple flag to indicate user is "logged in"
+                localStorage.setItem(AUTH_TOKEN_KEY, 'local-auth');
+                localStorage.setItem(AUTH_USER_KEY, JSON.stringify({ email, id: 'local-user' }));
+                window.location.href = 'pages/start.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                if (!response.ok) {
+                    const data = await response.json().catch(() => ({}));
+                    throw new Error(data.error?.message || data.message || 'Login failed');
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    // Store auth data
+                    localStorage.setItem(AUTH_TOKEN_KEY, data.data.token);
+                    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.data.user));
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'pages/dashboard.html';
+                } else {
+                    throw new Error('Invalid response from server');
+                }
+            } catch (error) {
+                // Handle network errors
+                if (error.message.includes('fetch') || error.message.includes('network')) {
+                    throw new Error('Unable to connect to server. Please check your connection or try again later.');
+                }
+                console.error('Login error:', error);
+                throw error;
+            }
+        }
+
+        async function register(email, password) {
+            // If using localStorage mode, skip API and redirect directly
+            if (STORAGE_TYPE === 'localStorage') {
+                // For localStorage mode, we can skip authentication
+                localStorage.setItem(AUTH_TOKEN_KEY, 'local-auth');
+                localStorage.setItem(AUTH_USER_KEY, JSON.stringify({ email, id: 'local-user' }));
+                window.location.href = 'pages/start.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                if (!response.ok) {
+                    const data = await response.json().catch(() => ({}));
+                    throw new Error(data.error?.message || data.message || 'Registration failed');
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    // Store auth data
+                    localStorage.setItem(AUTH_TOKEN_KEY, data.data.token);
+                    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.data.user));
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'pages/dashboard.html';
+                } else {
+                    throw new Error('Invalid response from server');
+                }
+            } catch (error) {
+                // Handle network errors
+                if (error.message.includes('fetch') || error.message.includes('network')) {
+                    throw new Error('Unable to connect to server. Please check your connection or try again later.');
+                }
+                console.error('Registration error:', error);
+                throw error;
+            }
+        }
+
+        // Password toggle
+        function setupPasswordToggle(toggleBtn, eyeIcon, passwordInput) {
+            if (!toggleBtn || !eyeIcon || !passwordInput) return;
+            
+            toggleBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const isPassword = passwordInput.type === 'password';
                 passwordInput.type = isPassword ? 'text' : 'password';
                 
-                // Cambiar icono
                 if (isPassword) {
-                    // Mostrar icono de ojo cerrado (ocultar contraseña)
                     eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>`;
                 } else {
-                    // Mostrar icono de ojo abierto (mostrar contraseña)
-                    eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
+                    eyeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>`;
                 }
             });
         }
 
-        // Manejar el envío del formulario
-        loginForm.addEventListener('submit', function(e) {
+        // Login form handler
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            hideError();
+            hideError('login');
 
-            const username = nameInput.value.trim();
-            const password = passwordInput.value.trim();
+            const email = loginEmailInput.value.trim();
+            const password = loginPasswordInput.value.trim();
 
-            // Validación básica
-            if (!username || !password) {
-                showError('Por favor, completa todos los campos');
+            // Validation
+            if (!email || !password) {
+                showError('login', 'Please fill in all fields');
                 return;
             }
 
-            // Validar credenciales
-            if (username === VALID_USERNAME && password === VALID_PASSWORD) {
-                // Credenciales correctas, redirigir a start.html
-                window.location.href = 'pages/start.html';
-            } else {
-                // Credenciales incorrectas, mostrar error
-                showError('Usuario o contraseña incorrectos. Intenta con admin / 12345');
+            if (!validateEmail(email)) {
+                showError('login', 'Please enter a valid email address');
+                return;
+            }
+
+            setLoading('login', true);
+
+            try {
+                await login(email, password);
+            } catch (error) {
+                showError('login', error.message || 'Invalid email or password. Please try again.');
+            } finally {
+                setLoading('login', false);
             }
         });
 
-        // Limpiar mensaje de error cuando el usuario empiece a escribir
-        nameInput.addEventListener('input', hideError);
-        passwordInput.addEventListener('input', hideError);
+        // Signup form handler
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError('signup');
+
+            const email = signupEmailInput.value.trim();
+            const password = signupPasswordInput.value.trim();
+
+            // Validation
+            if (!email || !password) {
+                showError('signup', 'Please fill in all fields');
+                return;
+            }
+
+            if (!validateEmail(email)) {
+                showError('signup', 'Please enter a valid email address');
+                return;
+            }
+
+            if (!validatePassword(password)) {
+                showError('signup', 'Password must be at least 6 characters long');
+                return;
+            }
+
+            setLoading('signup', true);
+
+            try {
+                await register(email, password);
+            } catch (error) {
+                const message = error.message.includes('already exists') 
+                    ? 'An account with this email already exists. Please log in instead.'
+                    : error.message || 'Registration failed. Please try again.';
+                showError('signup', message);
+            } finally {
+                setLoading('signup', false);
+            }
+        });
+
+        // Card switching
+        showSignupBtn.addEventListener('click', () => {
+            hideError('login');
+            switchCard('signup');
+        });
+
+        showLoginBtn.addEventListener('click', () => {
+            hideError('signup');
+            switchCard('login');
+        });
+
+        // Password toggles
+        setupPasswordToggle(loginTogglePassword, loginEyeIcon, loginPasswordInput);
+        setupPasswordToggle(signupTogglePassword, signupEyeIcon, signupPasswordInput);
+
+        // Clear errors on input
+        loginEmailInput.addEventListener('input', () => hideError('login'));
+        loginPasswordInput.addEventListener('input', () => hideError('login'));
+        signupEmailInput.addEventListener('input', () => hideError('signup'));
+        signupPasswordInput.addEventListener('input', () => hideError('signup'));
+
+        // Google OAuth function
+        async function authenticateWithGoogle(credential) {
+            if (STORAGE_TYPE === 'localStorage') {
+                // For localStorage mode, skip API and redirect directly
+                localStorage.setItem(AUTH_TOKEN_KEY, 'local-auth-google');
+                localStorage.setItem(AUTH_USER_KEY, JSON.stringify({ email: 'google-user', id: 'local-google-user' }));
+                window.location.href = 'pages/dashboard.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/google`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ credential }),
+                });
+
+                if (!response.ok) {
+                    const data = await response.json().catch(() => ({}));
+                    throw new Error(data.error?.message || data.message || 'Google authentication failed');
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    // Store auth data
+                    localStorage.setItem(AUTH_TOKEN_KEY, data.data.token);
+                    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.data.user));
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'pages/dashboard.html';
+                } else {
+                    throw new Error('Invalid response from server');
+                }
+            } catch (error) {
+                // Handle network errors
+                if (error.message.includes('fetch') || error.message.includes('network')) {
+                    throw new Error('Unable to connect to server. Please check your connection or try again later.');
+                }
+                console.error('Google authentication error:', error);
+                throw error;
+            }
+        }
+
+        // Initialize Google Identity Services
+        function initGoogleSignIn() {
+            if (!GOOGLE_CLIENT_ID) {
+                // Disable Google buttons if client ID is not configured
+                googleLoginBtn.disabled = true;
+                googleSignupBtn.disabled = true;
+                googleLoginBtn.title = 'Google OAuth is not configured. Please set VITE_GOOGLE_CLIENT_ID environment variable.';
+                googleSignupBtn.title = 'Google OAuth is not configured. Please set VITE_GOOGLE_CLIENT_ID environment variable.';
+                return;
+            }
+
+            // Function to handle Google OAuth callback
+            function handleGoogleCallback(response) {
+                return authenticateWithGoogle(response.credential);
+            }
+
+            // Wait for Google Identity Services to load
+            function initializeGoogle() {
+                if (window.google && window.google.accounts && window.google.accounts.id) {
+                    google.accounts.id.initialize({
+                        client_id: GOOGLE_CLIENT_ID,
+                        callback: async function(response) {
+                            try {
+                                const activeForm = loginForm.classList.contains('hidden') ? 'signup' : 'login';
+                                setLoading(activeForm, true);
+                                hideError(activeForm);
+                                await authenticateWithGoogle(response.credential);
+                            } catch (error) {
+                                const message = error.message || 'Google authentication failed. Please try again.';
+                                const activeForm = loginForm.classList.contains('hidden') ? 'signup' : 'login';
+                                showError(activeForm, message);
+                            } finally {
+                                setLoading('login', false);
+                                setLoading('signup', false);
+                            }
+                        },
+                    });
+                }
+            }
+
+            // Try to initialize immediately if already loaded
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                initializeGoogle();
+            } else {
+                // Wait for script to load
+                const checkGoogle = setInterval(() => {
+                    if (window.google && window.google.accounts && window.google.accounts.id) {
+                        clearInterval(checkGoogle);
+                        initializeGoogle();
+                    }
+                }, 100);
+
+                // Timeout after 5 seconds
+                setTimeout(() => {
+                    clearInterval(checkGoogle);
+                    if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+                        console.error('Google Identity Services failed to load');
+                        googleLoginBtn.disabled = true;
+                        googleSignupBtn.disabled = true;
+                    }
+                }, 5000);
+            }
+
+            // Set up button click handlers to trigger Google sign-in
+            function handleGoogleButtonClick(formType) {
+                hideError(formType);
+                
+                if (!GOOGLE_CLIENT_ID) {
+                    showError(formType, 'Google OAuth is not configured. Please contact support.');
+                    return;
+                }
+
+                if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+                    showError(formType, 'Google sign-in is not available. Please refresh the page and try again.');
+                    return;
+                }
+
+                try {
+                    setLoading(formType, true);
+                    
+                    // Create a hidden div for Google button
+                    const buttonId = formType === 'login' ? 'google-login-hidden' : 'google-signup-hidden';
+                    let hiddenButton = document.getElementById(buttonId);
+                    
+                    if (!hiddenButton) {
+                        hiddenButton = document.createElement('div');
+                        hiddenButton.id = buttonId;
+                        hiddenButton.style.cssText = 'position: absolute; left: -9999px; opacity: 0; pointer-events: none;';
+                        document.body.appendChild(hiddenButton);
+                        
+                        // Render Google button
+                        google.accounts.id.renderButton(hiddenButton, {
+                            type: 'standard',
+                            theme: 'outline',
+                            size: 'large',
+                            text: 'signin_with',
+                            width: 300,
+                        });
+                        
+                        // Wait a bit for button to render, then click it
+                        setTimeout(() => {
+                            const clickableButton = hiddenButton.querySelector('div[role="button"]');
+                            if (clickableButton) {
+                                clickableButton.click();
+                            } else {
+                                setLoading(formType, false);
+                                showError(formType, 'Failed to initiate Google sign-in. Please try again.');
+                            }
+                        }, 100);
+                    } else {
+                        // Button already exists, just click it
+                        const clickableButton = hiddenButton.querySelector('div[role="button"]');
+                        if (clickableButton) {
+                            clickableButton.click();
+                        } else {
+                            setLoading(formType, false);
+                            showError(formType, 'Failed to initiate Google sign-in. Please try again.');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Google sign-in error:', error);
+                    showError(formType, 'Failed to initiate Google sign-in. Please try again.');
+                    setLoading(formType, false);
+                }
+            }
+
+            googleLoginBtn.addEventListener('click', () => handleGoogleButtonClick('login'));
+            googleSignupBtn.addEventListener('click', () => handleGoogleButtonClick('signup'));
+        }
+
+        // Initialize Google Sign In when DOM is ready
+        initGoogleSignIn();
+        });
     </script>
 </body>
 </html>

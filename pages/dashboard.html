@@ -140,10 +140,25 @@
         </div>
 
         <!-- Lista de Planes Guardados -->
-        <div class="mb-4">
+        <div class="mb-4 flex-1 overflow-y-auto">
             <div id="plans-list" class="max-h-80 overflow-y-auto">
                 <!-- Los planes se cargarán dinámicamente aquí con secciones separadas -->
             </div>
+        </div>
+
+        <!-- Logout Button -->
+        <div class="mt-auto pt-4 border-t border-soft-gray/60 dark:border-charcoal-gray/60">
+            <button
+                id="logout-btn"
+                type="button"
+                class="w-full flex items-center justify-center gap-2 rounded-lg bg-soft-gray/60 px-4 py-3 text-sm font-medium text-deep-black transition hover:bg-soft-gray focus:outline-none focus:ring-2 focus:ring-lime-vibrant focus:ring-offset-2 dark:bg-charcoal-gray/80 dark:text-pure-white dark:hover:bg-charcoal-gray dark:focus:ring-offset-graphite">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Sign out</span>
+            </button>
         </div>
 
     </aside>
@@ -348,5 +363,21 @@
     <!-- Environment configuration (must load before scripts.js) -->
     <script src="../env-config.js"></script>
     <script type="module" src="../scripts.js"></script>
+    <script>
+        // Logout functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    // Clear authentication data
+                    localStorage.removeItem('debtLiteAuthToken');
+                    localStorage.removeItem('debtLiteAuthUser');
+                    
+                    // Redirect to login page
+                    window.location.href = '../index.html';
+                });
+            }
+        });
+    </script>
 </body>
 </html>
