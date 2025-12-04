@@ -1,8 +1,9 @@
 import type { IStorageService } from './storage.interface.js';
 import { LocalStorageService } from './localStorage.service.js';
 import { ApiStorageService } from './api.service.js';
+import { SupabaseStorageService } from './supabase.service.js';
 import { getStorageType } from '../../config/storage.config.js';
-import { getApiUrl } from '../../config/env.config.js';
+import { getApiUrl, getSupabaseUrl, getSupabaseAnonKey } from '../../config/env.config.js';
 
 /**
  * Storage Factory
@@ -35,6 +36,17 @@ export class StorageFactory {
                     );
                 }
                 this.instance = new ApiStorageService(apiUrl);
+                break;
+            }
+            case 'supabase': {
+                const supabaseUrl = getSupabaseUrl();
+                const supabaseAnonKey = getSupabaseAnonKey();
+                if (!supabaseUrl || !supabaseAnonKey) {
+                    throw new Error(
+                        'Supabase storage requires VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to be configured. Please set them in your environment variables.'
+                    );
+                }
+                this.instance = new SupabaseStorageService();
                 break;
             }
             default:

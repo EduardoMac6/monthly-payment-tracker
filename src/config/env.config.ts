@@ -11,8 +11,10 @@
  */
 export interface EnvConfig {
     VITE_APP_NAME: string;
-    VITE_STORAGE_TYPE: 'localStorage' | 'api';
+    VITE_STORAGE_TYPE: 'localStorage' | 'api' | 'supabase';
     VITE_API_URL: string;
+    VITE_SUPABASE_URL: string;
+    VITE_SUPABASE_ANON_KEY: string;
     VITE_MAX_PLANS: number;
     VITE_MAX_PLAN_AMOUNT: number;
     VITE_MAX_PLAN_MONTHS: number;
@@ -26,6 +28,8 @@ const DEFAULT_CONFIG: EnvConfig = {
     VITE_APP_NAME: 'DebtLite',
     VITE_STORAGE_TYPE: 'localStorage',
     VITE_API_URL: 'http://localhost:3000/api',
+    VITE_SUPABASE_URL: '',
+    VITE_SUPABASE_ANON_KEY: '',
     VITE_MAX_PLANS: 50,
     VITE_MAX_PLAN_AMOUNT: 1000000000,
     VITE_MAX_PLAN_MONTHS: 120,
@@ -86,6 +90,11 @@ export const env: EnvConfig = {
     VITE_APP_NAME: getEnvVar('VITE_APP_NAME', DEFAULT_CONFIG.VITE_APP_NAME),
     VITE_STORAGE_TYPE: getEnvVar('VITE_STORAGE_TYPE', DEFAULT_CONFIG.VITE_STORAGE_TYPE),
     VITE_API_URL: getEnvVar('VITE_API_URL', DEFAULT_CONFIG.VITE_API_URL),
+    VITE_SUPABASE_URL: getEnvVar('VITE_SUPABASE_URL', DEFAULT_CONFIG.VITE_SUPABASE_URL),
+    VITE_SUPABASE_ANON_KEY: getEnvVar(
+        'VITE_SUPABASE_ANON_KEY',
+        DEFAULT_CONFIG.VITE_SUPABASE_ANON_KEY
+    ),
     VITE_MAX_PLANS: getEnvVar('VITE_MAX_PLANS', DEFAULT_CONFIG.VITE_MAX_PLANS),
     VITE_MAX_PLAN_AMOUNT: getEnvVar('VITE_MAX_PLAN_AMOUNT', DEFAULT_CONFIG.VITE_MAX_PLAN_AMOUNT),
     VITE_MAX_PLAN_MONTHS: getEnvVar('VITE_MAX_PLAN_MONTHS', DEFAULT_CONFIG.VITE_MAX_PLAN_MONTHS),
@@ -101,7 +110,7 @@ export function getAppName(): string {
 /**
  * Get storage type from environment
  */
-export function getEnvStorageType(): 'localStorage' | 'api' {
+export function getEnvStorageType(): 'localStorage' | 'api' | 'supabase' {
     return env.VITE_STORAGE_TYPE;
 }
 
@@ -131,4 +140,18 @@ export function getMaxPlanAmount(): number {
  */
 export function getMaxPlanMonths(): number {
     return env.VITE_MAX_PLAN_MONTHS;
+}
+
+/**
+ * Get Supabase URL
+ */
+export function getSupabaseUrl(): string {
+    return env.VITE_SUPABASE_URL;
+}
+
+/**
+ * Get Supabase anonymous key
+ */
+export function getSupabaseAnonKey(): string {
+    return env.VITE_SUPABASE_ANON_KEY;
 }

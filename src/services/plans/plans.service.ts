@@ -36,11 +36,30 @@ export class PlansService {
     private static storage: IStorageService = StorageFactory.create();
 
     /**
+     * Reset storage instance (useful for testing)
+     * Forces recreation of storage service from factory
+     */
+    static resetStorage(): void {
+        this.storage = null as any;
+    }
+
+    /**
+     * Get storage instance (recreates from factory if needed)
+     * @returns Storage service instance
+     */
+    private static getStorage(): IStorageService {
+        if (!this.storage) {
+            this.storage = StorageFactory.create();
+        }
+        return this.storage;
+    }
+
+    /**
      * Get all plans
      * @returns Promise that resolves to array of all plans
      */
     static async getAllPlans(): Promise<Plan[]> {
-        return await this.storage.getPlans();
+        return await this.getStorage().getPlans();
     }
 
     /**
@@ -48,7 +67,7 @@ export class PlansService {
      * @returns Promise that resolves to active plan or null
      */
     static async getActivePlan(): Promise<Plan | null> {
-        return await this.storage.getActivePlan();
+        return await this.getStorage().getActivePlan();
     }
 
     /**
@@ -145,8 +164,8 @@ export class PlansService {
         existingPlans.push(newPlan);
 
         // Save plans
-        await this.storage.savePlans(existingPlans);
-        await this.storage.setActivePlanId(newPlan.id);
+        await this.getStorage().savePlans(existingPlans);
+        await this.getStorage().setActivePlanId(newPlan.id);
 
         return newPlan;
     }
@@ -183,7 +202,7 @@ export class PlansService {
         }
 
         plans[planIndex] = updatedPlan;
-        await this.storage.savePlans(plans);
+        await this.getStorage().savePlans(plans);
 
         return updatedPlan;
     }
@@ -195,14 +214,16 @@ export class PlansService {
      */
     static async deletePlan(planId: string): Promise<void> {
         const plans = await this.getAllPlans();
-        const remainingPlans = plans.filter((p) => p.id !== planId);
+        const planToDelete = plans.find((p) => p.id === planId);
 
-        if (remainingPlans.length === plans.length) {
+        if (!planToDelete) {
             throw new Error(`Plan with ID ${planId} not found`);
         }
 
+        const remainingPlans = plans.filter((p) => p.id !== planId);
+
         // Delete payment data associated with the plan
-        await this.storage.deletePaymentData(planId);
+        await this.getStorage().deletePaymentData(planId);
 
         // If deleting active plan, activate another one
         const activePlan = await this.getActivePlan();
@@ -213,15 +234,29 @@ export class PlansService {
                     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
                 )[0];
                 nextPlan.isActive = true;
-                await this.storage.setActivePlanId(nextPlan.id);
+                await this.getStorage().setActivePlanId(nextPlan.id);
             } else {
                 // No more plans, clear active plan ID
-                await this.storage.clearActivePlanId();
+                await this.getStorage().clearActivePlanId();
+            }
+        } else {
+            // If deleting non-active plan, ensure the active plan stays active
+            // This is important to prevent issues when the remaining plans list
+            // doesn't have the correct isActive flags set
+            if (activePlan && remainingPlans.some((p) => p.id === activePlan.id)) {
+                // Make sure the active plan is marked as active in the remaining plans
+                const activePlanInRemaining = remainingPlans.find((p) => p.id === activePlan.id);
+                if (activePlanInRemaining) {
+                    // Ensure all other plans are inactive
+                    remainingPlans.forEach((plan) => {
+                        plan.isActive = plan.id === activePlan.id;
+                    });
+                }
             }
         }
 
         // Save updated plans
-        await this.storage.savePlans(remainingPlans);
+        await this.getStorage().savePlans(remainingPlans);
     }
 
     /**
@@ -246,7 +281,7 @@ export class PlansService {
         targetPlan.isActive = true;
 
         // Save changes
-        await this.storage.savePlans(plans);
-        await this.storage.setActivePlanId(planId);
+        await this.getStorage().savePlans(plans);
+        await this.getStorage().setActivePlanId(planId);
     }
 }

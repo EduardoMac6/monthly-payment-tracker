@@ -5,7 +5,7 @@
 
 import { getEnvStorageType } from './env.config.js';
 
-export type StorageType = 'localStorage' | 'api';
+export type StorageType = 'localStorage' | 'api' | 'supabase';
 
 /**
  * Get storage type from environment or default to localStorage
