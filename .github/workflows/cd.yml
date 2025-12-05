@@ -49,7 +49,7 @@ jobs:
       - name: Check Vercel secrets
         id: check-secrets
         run: |
-          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ]; then
+          if [ -z "$VERCEL_TOKEN" ]; then
             echo "has_secrets=false" >> $GITHUB_OUTPUT
           else
             echo "has_secrets=true" >> $GITHUB_OUTPUT
@@ -59,25 +59,44 @@ jobs:
           else
             echo "has_project_id=false" >> $GITHUB_OUTPUT
           fi
+          if [ -n "$VERCEL_ORG_SLUG" ]; then
+            echo "has_org_slug=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_org_slug=false" >> $GITHUB_OUTPUT
+          fi
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_ORG_SLUG: ${{ secrets.VERCEL_ORG_SLUG }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       
       - name: Install Vercel CLI
         if: steps.check-secrets.outputs.has_secrets == 'true'
         run: npm install --global vercel@latest
       
-      - name: Deploy to Vercel (with project ID)
-        if: steps.check-secrets.outputs.has_secrets == 'true' && steps.check-secrets.outputs.has_project_id == 'true'
+      - name: Deploy to Vercel (with project ID and team)
+        if: steps.check-secrets.outputs.has_secrets == 'true' && steps.check-secrets.outputs.has_project_id == 'true' && steps.check-secrets.outputs.has_org_slug == 'true'
         run: |
-          echo "Deploying to Vercel with project ID..."
+          echo "Deploying to Vercel with project ID and team..."
           vercel deploy --prod \
             --token ${{ secrets.VERCEL_TOKEN }} \
             --yes \
-            --scope ${{ secrets.VERCEL_ORG_ID }}
+            --project ${{ secrets.VERCEL_PROJECT_ID }} \
+            --team ${{ secrets.VERCEL_ORG_SLUG }}
         env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_SLUG: ${{ secrets.VERCEL_ORG_SLUG }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      
+      - name: Deploy to Vercel (with project ID only)
+        if: steps.check-secrets.outputs.has_secrets == 'true' && steps.check-secrets.outputs.has_project_id == 'true' && steps.check-secrets.outputs.has_org_slug == 'false'
+        run: |
+          echo "Deploying to Vercel with project ID (auto-detect team)..."
+          vercel deploy --prod \
+            --token ${{ secrets.VERCEL_TOKEN }} \
+            --yes \
+            --project ${{ secrets.VERCEL_PROJECT_ID }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       
       - name: Deploy to Vercel (auto-detect, no org/project ID)
