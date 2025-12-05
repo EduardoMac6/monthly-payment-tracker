@@ -156,7 +156,61 @@ dist/
 
 ---
 
+## 🤖 Configuración de GitHub Actions (Deployment Automático)
+
+Si quieres que el proyecto se despliegue automáticamente a Vercel cuando hagas push a `main`, necesitas configurar los siguientes secrets en GitHub:
+
+### Paso 1: Obtener el Token de Vercel
+
+1. Ve a [Vercel Dashboard](https://vercel.com/account/tokens)
+2. Click en **"Create Token"**
+3. Dale un nombre (ej: "GitHub Actions")
+4. Copia el token generado
+
+### Paso 2: Obtener el Project ID
+
+1. Ve a tu proyecto en Vercel Dashboard
+2. Ve a **Settings** → **General**
+3. En la sección **"Project ID"**, copia el ID
+
+### Paso 3: Obtener el Team Slug (Opcional, pero recomendado)
+
+El **Team Slug** es el nombre de tu equipo/organización en Vercel (no el ID).
+
+1. Si estás en un equipo, el slug aparece en la URL: `https://vercel.com/[TEAM_SLUG]/projects`
+2. Si es tu cuenta personal, el slug es tu nombre de usuario
+3. También puedes obtenerlo ejecutando: `vercel teams ls` (si tienes Vercel CLI instalado)
+
+### Paso 4: Configurar Secrets en GitHub
+
+1. Ve a tu repositorio en GitHub
+2. Ve a **Settings** → **Secrets and variables** → **Actions**
+3. Agrega los siguientes secrets:
+
+   - **`VERCEL_TOKEN`**: El token que obtuviste en el Paso 1
+   - **`VERCEL_PROJECT_ID`**: El Project ID del Paso 2
+   - **`VERCEL_ORG_SLUG`**: El Team Slug del Paso 3 (opcional, pero recomendado)
+
+**Nota:** Si no configuras `VERCEL_ORG_SLUG`, el workflow intentará auto-detectar el equipo desde el token, pero puede fallar si tienes múltiples equipos.
+
+### Paso 5: Verificar el Deployment
+
+Una vez configurados los secrets, cada push a `main` desplegará automáticamente a Vercel. Puedes ver el progreso en:
+- **GitHub**: Actions tab → CD workflow
+- **Vercel**: Dashboard → Deployments
+
+---
+
 ## 🔧 Solución de Problemas
+
+### Error: "The specified scope does not exist"
+
+**Causa**: El `VERCEL_ORG_ID` o `VERCEL_ORG_SLUG` está incorrecto o no existe.
+
+**Solución**:
+1. Verifica que `VERCEL_ORG_SLUG` en GitHub Secrets sea el **slug del equipo** (nombre), no el ID
+2. Si es tu cuenta personal, usa tu nombre de usuario como slug
+3. Puedes eliminar `VERCEL_ORG_SLUG` y dejar que Vercel lo auto-detecte desde el token (si solo tienes un equipo)
 
 ### Error: "Build failed"
 
